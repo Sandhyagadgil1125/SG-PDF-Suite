@@ -169,23 +169,22 @@
             overflow-y: auto;
         }
 
+        /* Updated Hero Section for Compact Layout */
         .hero {
             text-align: center;
-            padding: 4rem 1rem;
-            background: radial-gradient(circle at center, #1c222d 0%, var(--bg-main) 70%);
-            border-radius: 10px;
-            margin-bottom: 3rem;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
+            padding: 0 1rem 2rem 1rem;
             margin-bottom: 1rem;
         }
 
+        .hero h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
         .hero p {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
-            margin-bottom: 2rem;
+            margin-bottom: 0;
         }
 
         /* Buttons */
@@ -212,13 +211,6 @@
         .small-btn { padding: 8px 15px; font-size: 0.9rem; }
 
         /* --- Tools Grid --- */
-        .section-title {
-            margin-bottom: 2rem;
-            font-size: 2rem;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -384,7 +376,7 @@
             .layout-wrapper { flex-direction: column; }
             .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--accent-glow); }
             .tools-grid { grid-template-columns: 1fr; }
-            .hero h1 { font-size: 2rem; }
+            .hero h1 { font-size: 1.5rem; } /* Even smaller on mobile */
         }
     </style>
 </head>
@@ -394,7 +386,7 @@
     <header class="navbar">
         <div class="logo">
             <span class="icon">⚡</span>
-            <span class="logo-text">SG PDF Suite <span class="sub-logo">- SG PDF Suite</span></span>
+            <span class="logo-text">Prompt Minds <span class="sub-logo">- SG PDF Suite</span></span>
         </div>
         <nav class="nav-links" id="nav-links">
             <a href="#" class="active" onclick="filterTools('All'); closeMobileMenu();">Home</a>
@@ -424,16 +416,14 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <!-- Hero Section -->
+            <!-- Simplified Hero Section -->
             <section class="hero" id="about">
-                <h1 class="glow-text">SG PDF Suite-Free Online PDF Converter Tools </h1>
+                <h1 class="glow-text">SG PDF Suite - Free Online PDF Converter Tools</h1>
                 <p>Process, convert, and secure your files directly in your browser with our futuristic tool suite.</p>
-                <button class="btn-glow" onclick="document.getElementById('tools-section').scrollIntoView()">Explore Tools</button>
             </section>
 
-            <!-- Tools Grid -->
+            <!-- Tools Grid (Heading removed as requested) -->
             <section id="tools-section">
-                <h2 class="section-title">Available <span class="glow-text">Tools</span></h2>
                 <div class="tools-grid" id="tools-grid">
                     <!-- Tools will be injected here by JavaScript -->
                 </div>
