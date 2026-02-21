@@ -3,536 +3,676 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy PDF - Convert PNG to PDF Client-Side</title>
-    <meta name="description" content="Lightweight, privacy-first tool to convert PNG images to individual or combined PDFs. No uploads, 100% browser-based.">
+    <title>SG PDF Suite – Free Online PDF Tools</title>
+    <!-- Futuristic Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
     
-    <!-- Dependencies -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; }
-        .drop-zone.active { border-color: #3b82f6; background-color: #eff6ff; }
-        .dark .drop-zone.active { border-color: #60a5fa; background-color: #1e293b; }
-        .sortable-ghost { opacity: 0.4; background-color: #dbeafe; }
-        progress::-webkit-progress-value { background-color: #3b82f6; transition: width 0.3s ease; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        /* --- Variables & Theme Setup --- */
+        :root {
+            --bg-main: #0d0f14;
+            --bg-nav: #1c222d;
+            --bg-sidebar: #12151a;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --accent-glow: #42f8f5;
+            --glow-shadow: rgba(66, 248, 245, 0.6);
+            --font-main: 'Orbitron', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        /* --- Typography & Utilities --- */
+        .glow-text {
+            color: var(--accent-glow);
+            text-shadow: 0 0 10px var(--glow-shadow);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: 0.3s ease;
+        }
+
+        /* --- Navbar --- */
+        .navbar {
+            background-color: var(--bg-nav);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-glow);
+            box-shadow: 0 4px 15px var(--glow-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-glow);
+            text-shadow: 0 0 8px var(--glow-shadow);
+        }
+
+        .sub-logo {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-shadow: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--accent-glow);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent-glow);
+            box-shadow: 0 0 8px var(--accent-glow);
+            transition: 0.3s ease;
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--accent-glow);
+            box-shadow: 0 0 5px var(--glow-shadow);
+        }
+
+        /* --- Layout --- */
+        .layout-wrapper {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--accent-glow);
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            padding: 2rem 1rem;
+            transition: 0.3s ease;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar ul li:hover, .sidebar ul li.active {
+            background-color: rgba(66, 248, 245, 0.1);
+            border-left: 3px solid var(--accent-glow);
+            color: var(--accent-glow);
+            text-shadow: 0 0 5px var(--glow-shadow);
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            background: radial-gradient(circle at center, #1c222d 0%, var(--bg-main) 70%);
+            border-radius: 10px;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Buttons */
+        .btn-glow {
+            background-color: var(--bg-sidebar);
+            color: var(--text-primary);
+            border: 2px solid var(--accent-glow);
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-family: var(--font-main);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(66, 248, 245, 0.2);
+        }
+
+        .btn-glow:hover {
+            background-color: var(--accent-glow);
+            color: var(--bg-sidebar);
+            box-shadow: 0 0 20px var(--glow-shadow);
+            font-weight: bold;
+        }
+
+        .small-btn { padding: 8px 15px; font-size: 0.9rem; }
+
+        /* --- Tools Grid --- */
+        .section-title {
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .tool-card {
+            background-color: var(--bg-sidebar);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, var(--glow-shadow) 10%, transparent 60%);
+            opacity: 0;
+            transition: 0.4s ease;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .tool-card:hover {
+            border-color: var(--accent-glow);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--glow-shadow);
+        }
+
+        .tool-card:hover::before { opacity: 0.15; }
+
+        .tool-card > * { position: relative; z-index: 1; }
+
+        .tool-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .tool-card h3 { margin-bottom: 10px; font-size: 1.2rem; }
+        .tool-card p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px; }
+
+        /* --- Modal UI --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(13, 15, 20, 0.9);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal-content {
+            background: var(--bg-nav);
+            border: 2px solid var(--accent-glow);
+            box-shadow: 0 0 30px var(--glow-shadow);
+            padding: 2.5rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            transform: translateY(-50px);
+            transition: 0.4s ease;
+        }
+
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+
+        .close-modal {
+            position: absolute;
+            top: 10px; right: 15px;
+            background: none; border: none;
+            color: var(--accent-glow);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: white;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--accent-glow);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            background: rgba(66, 248, 245, 0.05);
+            transition: 0.3s;
+        }
+
+        .upload-zone.dragover {
+            background: rgba(66, 248, 245, 0.2);
+        }
+
+        .upload-icon { font-size: 3rem; margin-bottom: 10px; }
+        .small-text { font-size: 0.8rem; margin: 10px 0; color: #888; }
+
+        .processing-zone { margin-top: 2rem; }
+        .progress-bar-container {
+            width: 100%; height: 10px;
+            background: #333;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%; height: 100%;
+            background: var(--accent-glow);
+            box-shadow: 0 0 10px var(--accent-glow);
+            transition: width 0.3s ease;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--bg-nav);
+            border-top: 2px solid var(--accent-glow);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 -4px 15px var(--glow-shadow);
+        }
+
+        .footer-content p { margin-bottom: 10px; }
+        .footer-links a { margin: 0 10px; }
+        .footer-links a:hover { color: var(--accent-glow); text-shadow: 0 0 5px var(--glow-shadow); }
+        .social-icons { margin-top: 15px; font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; gap: 20px;}
+        .social-icons span { transition: 0.3s; }
+        .social-icons span:hover { filter: drop-shadow(0 0 8px var(--accent-glow)); transform: scale(1.2); }
+
+        /* --- Responsive Media Queries --- */
+        @media (max-width: 992px) {
+            .tools-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            .nav-links { 
+                display: none; 
+                flex-direction: column; 
+                position: absolute; 
+                top: 70px; 
+                right: 0; 
+                background: var(--bg-nav); 
+                padding: 20px; 
+                border-bottom: 2px solid var(--accent-glow); 
+                border-left: 2px solid var(--accent-glow); 
+                border-radius: 0 0 0 10px;
+                width: 200px;
+            }
+            .layout-wrapper { flex-direction: column; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--accent-glow); }
+            .tools-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen">
+<body>
 
-    <!-- Header -->
-    <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <i data-lucide="file-type-2" class="text-blue-600 w-8 h-8"></i>
-                <h1 class="font-bold text-xl tracking-tight hidden sm:block" id="t-brand">Privacy PDF</h1>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
-                    <button onclick="setLanguage('en')" class="px-3 py-1 text-xs font-medium rounded-md lang-btn bg-white dark:bg-slate-700 shadow-sm" id="btn-en">EN</button>
-                    <button onclick="setLanguage('es')" class="px-3 py-1 text-xs font-medium rounded-md lang-btn" id="btn-es">ES</button>
-                </div>
-                <button onclick="toggleDarkMode()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
-                    <i data-lucide="sun" id="sun-icon"></i>
-                    <i data-lucide="moon" id="moon-icon" class="hidden"></i>
-                </button>
-            </div>
+    <!-- Top Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <span class="icon">⚡</span>
+            <span class="logo-text">Prompt Minds <span class="sub-logo">- SG PDF Suite</span></span>
+        </div>
+        <nav class="nav-links" id="nav-links">
+            <a href="#" class="active" onclick="filterTools('All'); closeMobileMenu();">Home</a>
+            <a href="#tools-section" onclick="closeMobileMenu();">Tools</a>
+            <a href="#about" onclick="closeMobileMenu();">About</a>
+            <a href="#contact" onclick="closeMobileMenu();">Contact</a>
+        </nav>
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto p-4 lg:p-8 grid lg:grid-cols-12 gap-8">
-        
-        <!-- Left Column: Upload & Queue -->
-        <div class="lg:col-span-8 space-y-6">
-            
-            <!-- Drop Zone -->
-            <div id="drop-zone" class="drop-zone border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-12 text-center transition-all cursor-pointer hover:border-blue-400 group relative">
-                <input type="file" id="file-input" multiple accept="image/png" class="absolute inset-0 opacity-0 cursor-pointer">
-                <div class="space-y-4 pointer-events-none">
-                    <div class="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 text-blue-600 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                        <i data-lucide="upload-cloud" class="w-8 h-8"></i>
-                    </div>
-                    <div>
-                        <p class="text-lg font-semibold" id="t-drop-title">Drop your PNGs here</p>
-                        <p class="text-slate-500 text-sm" id="t-drop-subtitle">or click to browse from your device</p>
-                    </div>
-                    <p class="text-xs text-slate-400" id="t-privacy-note">Privacy Check: Files are processed 100% locally. No uploads to servers.</p>
-                </div>
-            </div>
-
-            <!-- Queue Header -->
-            <div id="queue-container" class="hidden space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="font-bold text-lg flex items-center gap-2">
-                        <span id="t-queue-count">Files</span>
-                        <span id="file-count-badge" class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">0</span>
-                    </h2>
-                    <div class="flex gap-2">
-                        <button onclick="clearQueue()" class="text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1.5 rounded-lg flex items-center gap-1">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            <span id="t-clear-btn">Clear (X)</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Sortable List -->
-                <div id="sortable-list" class="grid gap-3 sm:grid-cols-2">
-                    <!-- Cards will be injected here -->
-                </div>
-            </div>
-
-            <!-- Empty State -->
-            <div id="empty-state" class="py-20 text-center opacity-50">
-                <i data-lucide="images" class="w-12 h-12 mx-auto mb-4"></i>
-                <p id="t-empty-msg">No images selected yet. Start by adding some PNGs.</p>
-            </div>
-        </div>
-
-        <!-- Right Column: Settings & Actions -->
-        <aside class="lg:col-span-4 space-y-6">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sticky top-24 shadow-sm">
-                <h2 class="font-bold text-lg mb-6 flex items-center gap-2">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                    <span id="t-settings-title">PDF Settings</span>
-                </h2>
-
-                <div class="space-y-5">
-                    <!-- Page Size -->
-                    <div class="space-y-2">
-                        <label class="text-sm font-medium text-slate-500 uppercase tracking-wider" id="t-setting-size">Page Size</label>
-                        <select id="setting-page-size" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="a4">A4 (210 × 297mm)</option>
-                            <option value="letter">Letter (8.5 × 11")</option>
-                            <option value="legal">Legal (8.5 × 14")</option>
-                            <option value="fit">Fit to Image</option>
-                        </select>
-                    </div>
-
-                    <!-- Orientation -->
-                    <div class="space-y-2">
-                        <label class="text-sm font-medium text-slate-500 uppercase tracking-wider" id="t-setting-orient">Orientation</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="setOrientation('p')" class="orient-btn border border-slate-200 dark:border-slate-700 rounded-lg py-2 text-sm bg-blue-600 text-white" id="orient-p">Portrait</button>
-                            <button onclick="setOrientation('l')" class="orient-btn border border-slate-200 dark:border-slate-700 rounded-lg py-2 text-sm" id="orient-l">Landscape</button>
-                            <button onclick="setOrientation('a')" class="orient-btn border border-slate-200 dark:border-slate-700 rounded-lg py-2 text-sm" id="orient-a">Auto</button>
-                        </div>
-                    </div>
-
-                    <!-- Margins -->
-                    <div class="space-y-2">
-                        <label class="text-sm font-medium text-slate-500 uppercase tracking-wider" id="t-setting-margin">Margins</label>
-                        <select id="setting-margin" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="0">None (0mm)</option>
-                            <option value="5">Small (5mm)</option>
-                            <option value="12.7">Medium (12.7mm)</option>
-                            <option value="25.4">Large (25.4mm)</option>
-                        </select>
-                    </div>
-
-                    <!-- Quality -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center">
-                            <label class="text-sm font-medium text-slate-500 uppercase tracking-wider" id="t-setting-quality">Quality</label>
-                            <span id="quality-val" class="text-xs font-mono">80%</span>
-                        </div>
-                        <input type="range" id="setting-quality" min="10" max="100" value="80" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
-                    </div>
-
-                    <div class="pt-4 space-y-3">
-                        <button id="export-combined" onclick="generatePDF(true)" disabled class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 group">
-                            <i data-lucide="combine" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
-                            <span id="t-combine-btn">Generate Combined PDF (C)</span>
-                        </button>
-                        <p class="text-[10px] text-center text-slate-400 uppercase tracking-widest leading-relaxed">
-                            <span id="t-shortcut-hint">Shortcuts: U (Upload), C (Combine), X (Clear)</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Overall Progress -->
-            <div id="overall-progress-container" class="hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 animate-pulse">
-                <div class="flex justify-between text-sm mb-2">
-                    <span class="font-medium" id="t-processing">Processing...</span>
-                    <span id="overall-percent">0%</span>
-                </div>
-                <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
-                    <div id="overall-progress-bar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
-                </div>
+    <div class="layout-wrapper">
+        <!-- Left Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <h3>Categories</h3>
+                <ul id="sidebar-categories">
+                    <li onclick="filterTools('All')" class="active">🌐 All Tools</li>
+                    <li onclick="filterTools('PDF Tools')">🔻 PDF Tools</li>
+                    <li onclick="filterTools('Utility Tools')">🧰 Utility Tools</li>
+                </ul>
             </div>
         </aside>
-    </main>
 
-    <!-- Success Toasts/Info -->
-    <footer class="max-w-6xl mx-auto px-4 py-12 border-t border-slate-200 dark:border-slate-800 mt-12 grid sm:grid-cols-3 gap-8">
-        <div>
-            <h3 class="font-bold mb-3" id="t-how-works">How it works</h3>
-            <p class="text-sm text-slate-500" id="t-how-desc">All conversions happen inside your browser using the jsPDF library. Your images are never sent to any server, making this 100% private and offline-capable.</p>
-        </div>
-        <div>
-            <h3 class="font-bold mb-3" id="t-privacy-title">Privacy Policy</h3>
-            <p class="text-sm text-slate-500" id="t-privacy-desc">Since we don't use a server, there is no 1-hour deletion policy—there's simply nothing to delete. Your data stays on your RAM until you close the tab.</p>
-        </div>
-        <div class="text-slate-500 text-sm">
-            <p>&copy; 2024 Privacy PDF</p>
-            <p class="mt-2">Built with jsPDF & SortableJS</p>
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero" id="about">
+                <h1 class="glow-text">Next-Gen Document & Utility Hub</h1>
+                <p>Process, convert, and secure your files directly in your browser with our futuristic tool suite.</p>
+                <button class="btn-glow" onclick="document.getElementById('tools-section').scrollIntoView()">Explore Tools</button>
+            </section>
+
+            <!-- Tools Grid -->
+            <section id="tools-section">
+                <h2 class="section-title">Available <span class="glow-text">Tools</span></h2>
+                <div class="tools-grid" id="tools-grid">
+                    <!-- Tools will be injected here by JavaScript -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <p>© 2026 Prompt Minds. All Rights Reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a> | 
+                <a href="#">Terms</a> | 
+                <a href="#">Contact</a>
+            </div>
+            <div class="social-icons">
+                <span>🌐</span> <span>🐦</span> <span>💼</span>
+            </div>
         </div>
     </footer>
 
+    <!-- Tool Modal (Simulated Processing UI) -->
+    <div class="modal-overlay" id="tool-modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-modal">&times;</button>
+            <h2 id="modal-title" class="glow-text">Tool Name</h2>
+            <p id="modal-desc" style="margin-top: 10px; color: var(--text-secondary);">Tool description goes here.</p>
+            
+            <div class="upload-zone" id="upload-zone">
+                <div class="upload-icon">📁</div>
+                <p>Drag & Drop your files here</p>
+                <p class="small-text">or</p>
+                <input type="file" id="file-input" hidden>
+                <button class="btn-glow small-btn" onclick="document.getElementById('file-input').click()">Browse Files</button>
+            </div>
+
+            <div class="processing-zone" id="processing-zone" style="display: none;">
+                <h3 id="status-text">Uploading...</h3>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <button class="btn-glow" id="download-btn" style="display: none;">Download Output</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- State Management ---
-        let queue = [];
-        let currentLang = 'en';
-        let orientation = 'p'; // p = portrait, l = landscape, a = auto
-        const loc = {
-            en: {
-                "brand": "Privacy PDF",
-                "drop-title": "Drop your PNGs here",
-                "drop-subtitle": "or click to browse from your device",
-                "privacy-note": "Privacy Check: Files are processed 100% locally. No uploads.",
-                "queue-count": "Queue",
-                "clear-btn": "Clear Queue (X)",
-                "empty-msg": "No images selected yet. Start by adding some PNGs.",
-                "settings-title": "PDF Settings",
-                "setting-size": "Page Size",
-                "setting-orient": "Orientation",
-                "setting-margin": "Margins",
-                "setting-quality": "Quality",
-                "combine-btn": "Export Combined PDF (C)",
-                "shortcut-hint": "Shortcuts: U (Upload), C (Combine), X (Clear)",
-                "processing": "Converting...",
-                "how-works": "How it works",
-                "how-desc": "All conversions happen locally. Your images never leave your machine.",
-                "privacy-title": "Privacy First",
-                "privacy-desc": "We don't have a server. Your files are safe in your browser memory.",
-                "status-queued": "Queued",
-                "status-converting": "Processing...",
-                "status-done": "Ready",
-                "btn-download": "Download PDF"
-            },
-            es: {
-                "brand": "PDF Privado",
-                "drop-title": "Suelta tus PNGs aquí",
-                "drop-subtitle": "o haz clic para buscar en tu dispositivo",
-                "privacy-note": "Privacidad: Los archivos se procesan 100% localmente.",
-                "queue-count": "Cola",
-                "clear-btn": "Limpiar (X)",
-                "empty-msg": "No hay imágenes seleccionadas. Empieza añadiendo PNGs.",
-                "settings-title": "Ajustes del PDF",
-                "setting-size": "Tamaño de Página",
-                "setting-orient": "Orientación",
-                "setting-margin": "Márgenes",
-                "setting-quality": "Calidad",
-                "combine-btn": "Generar PDF Combinado (C)",
-                "shortcut-hint": "Atajos: U (Subir), C (Combinar), X (Limpiar)",
-                "processing": "Convirtiendo...",
-                "how-works": "Cómo funciona",
-                "how-desc": "Todo ocurre en tu navegador. Tus imágenes nunca salen de tu equipo.",
-                "privacy-title": "Privacidad Total",
-                "privacy-desc": "No usamos servidores. Tus archivos están seguros en tu memoria RAM.",
-                "status-queued": "En cola",
-                "status-converting": "Procesando...",
-                "status-done": "Listo",
-                "btn-download": "Descargar PDF"
-            }
-        };
+        // Data for all 33 Tools
+        const toolsData = [
+            // PDF Tools
+            { id: 'merge', title: 'Merge PDF', category: 'PDF Tools', icon: '🔗', desc: 'Combine multiple PDFs into one.' },
+            { id: 'split', title: 'Split PDF', category: 'PDF Tools', icon: '✂️', desc: 'Extract pages or split a PDF.' },
+            { id: 'compress', title: 'Compress PDF', category: 'PDF Tools', icon: '🗜️', desc: 'Reduce PDF file size.' },
+            { id: 'pdf-word', title: 'PDF to Word', category: 'PDF Tools', icon: '📝', desc: 'Convert PDF to DOCX easily.' },
+            { id: 'word-pdf', title: 'Word to PDF', category: 'PDF Tools', icon: '📄', desc: 'Convert DOCX to PDF format.' },
+            { id: 'pdf-ppt', title: 'PDF to PowerPoint', category: 'PDF Tools', icon: '📊', desc: 'Convert PDF to PPTX presentation.' },
+            { id: 'ppt-pdf', title: 'PowerPoint to PDF', category: 'PDF Tools', icon: '📈', desc: 'Convert PPTX to PDF format.' },
+            { id: 'pdf-excel', title: 'PDF to Excel', category: 'PDF Tools', icon: '📉', desc: 'Convert PDF tables to XLSX.' },
+            { id: 'excel-pdf', title: 'Excel to PDF', category: 'PDF Tools', icon: '📋', desc: 'Convert XLSX spreadsheets to PDF.' },
+            { id: 'pdf-jpg', title: 'PDF to JPG', category: 'PDF Tools', icon: '🖼️', desc: 'Extract images or convert pages to JPG.' },
+            { id: 'jpg-pdf', title: 'JPG to PDF', category: 'PDF Tools', icon: '🖼️➡️', desc: 'Convert images to PDF document.' },
+            { id: 'organize', title: 'Organize PDF', category: 'PDF Tools', icon: '🗂️', desc: 'Sort, add, or delete PDF pages.' },
+            { id: 'edit', title: 'Edit PDF', category: 'PDF Tools', icon: '✍️', desc: 'Add text, shapes, and images.' },
+            { id: 'rotate', title: 'Rotate PDF', category: 'PDF Tools', icon: '🔄', desc: 'Rotate pages within the document.' },
+            { id: 'unlock', title: 'Unlock PDF', category: 'PDF Tools', icon: '🔓', desc: 'Remove PDF password security.' },
+            { id: 'protect', title: 'Protect PDF', category: 'PDF Tools', icon: '🔐', desc: 'Add password to encrypt PDF.' },
+            { id: 'page-num', title: 'Add Page Numbers', category: 'PDF Tools', icon: '🔢', desc: 'Insert page numbers to PDF.' },
+            { id: 'watermark', title: 'Add Watermark', category: 'PDF Tools', icon: '©️', desc: 'Stamp image or text over PDF.' },
 
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            initSortable();
-            setupKeyboard();
-            setLanguage('en');
-        });
+            // Utility & Image Tools
+            { id: 'img-comp', title: 'Image Compressor', category: 'Utility Tools', icon: '📉', desc: 'Reduce JPG, PNG, WEBP size.' },
+            { id: 'img-conv', title: 'Image Converter', category: 'Utility Tools', icon: '🔁', desc: 'Convert between JPG, PNG, WEBP.' },
+            { id: 'audio-conv', title: 'Audio Converter', category: 'Utility Tools', icon: '🎵', desc: 'Convert audio file formats.' },
+            { id: 'vid-comp', title: 'Video Compressor', category: 'Utility Tools', icon: '🎥', desc: 'Reduce video size instantly.' },
+            { id: 'qr-gen', title: 'QR Code Generator', category: 'Utility Tools', icon: '🔲', desc: 'Create custom QR codes.' },
+            { id: 'pass-gen', title: 'Password Generator', category: 'Utility Tools', icon: '🔑', desc: 'Generate secure passwords.' },
+            { id: 'word-count', title: 'Word/Char Counter', category: 'Utility Tools', icon: '🔠', desc: 'Count words and characters.' },
+            { id: 'age-calc', title: 'Age Calculator', category: 'Utility Tools', icon: '🎂', desc: 'Calculate exact age from DOB.' },
+            { id: 'bmi-calc', title: 'BMI Calculator', category: 'Utility Tools', icon: '⚖️', desc: 'Check your Body Mass Index.' },
+            { id: 'color-pick', title: 'Color Picker', category: 'Utility Tools', icon: '🎨', desc: 'Extract HEX/RGB color codes.' },
+            { id: 'unit-conv', title: 'Unit Converter', category: 'Utility Tools', icon: '📏', desc: 'Convert length, weight, etc.' },
+            { id: 'json-fmt', title: 'JSON Formatter', category: 'Utility Tools', icon: '💻', desc: 'Format and beautify JSON.' },
+            { id: 'tts', title: 'Text to Speech', category: 'Utility Tools', icon: '🗣️', desc: 'Read text out loud natively.' },
+            { id: 'stt', title: 'Speech to Text', category: 'Utility Tools', icon: '🎙️', desc: 'Voice dictation to text.' },
+            { id: 'timer', title: 'Timer / Stopwatch', category: 'Utility Tools', icon: '⏱️', desc: 'Track time accurately.' }
+        ];
 
-        function initSortable() {
-            const el = document.getElementById('sortable-list');
-            Sortable.create(el, {
-                animation: 150,
-                ghostClass: 'sortable-ghost',
-                handle: '.drag-handle',
-                onEnd: (evt) => {
-                    const item = queue.splice(evt.oldIndex, 1)[0];
-                    queue.splice(evt.newIndex, 0, item);
-                }
-            });
-        }
+        // Initialize Layout
+        document.addEventListener("DOMContentLoaded", () => {
+            renderTools('All');
 
-        // --- File Handling ---
-        const fileInput = document.getElementById('file-input');
-        const dropZone = document.getElementById('drop-zone');
-
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-        
-        ['dragenter', 'dragover'].forEach(name => {
-            dropZone.addEventListener(name, (e) => {
-                e.preventDefault();
-                dropZone.classList.add('active');
-            });
-        });
-        ['dragleave', 'drop'].forEach(name => {
-            dropZone.addEventListener(name, (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('active');
-            });
-        });
-        dropZone.addEventListener('drop', (e) => {
-            const files = e.dataTransfer.files;
-            handleFiles(files);
-        });
-
-        async function handleFiles(files) {
-            const pngFiles = Array.from(files).filter(f => f.type === 'image/png');
-            if (!pngFiles.length) return;
-
-            document.getElementById('empty-state').classList.add('hidden');
-            document.getElementById('queue-container').classList.remove('hidden');
-            document.getElementById('export-combined').disabled = false;
-
-            for (const file of pngFiles) {
-                const id = Math.random().toString(36).substr(2, 9);
-                const item = {
-                    id,
-                    file,
-                    name: file.name,
-                    size: formatSize(file.size),
-                    status: 'queued',
-                    preview: await getPreview(file)
-                };
-                queue.push(item);
-                renderCard(item);
-            }
-            updateFileCount();
-        }
-
-        function getPreview(file) {
-            return new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function renderCard(item) {
-            const list = document.getElementById('sortable-list');
-            const card = document.createElement('div');
-            card.id = `card-${item.id}`;
-            card.className = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex gap-4 items-center group shadow-sm hover:shadow-md transition-shadow";
-            card.innerHTML = `
-                <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500">
-                    <i data-lucide="grip-vertical"></i>
-                </div>
-                <div class="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-100 dark:border-slate-700">
-                    <img src="${item.preview}" class="w-full h-full object-cover">
-                </div>
-                <div class="flex-grow min-w-0">
-                    <h4 class="font-medium text-sm truncate">${item.name}</h4>
-                    <p class="text-xs text-slate-500">${item.size} • <span class="status-text text-blue-500">${loc[currentLang]['status-queued']}</span></p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="downloadSingle('${item.id}')" title="${loc[currentLang]['btn-download']}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg">
-                        <i data-lucide="download" class="w-4 h-4"></i>
-                    </button>
-                    <button onclick="removeItem('${item.id}')" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            `;
-            list.appendChild(card);
-            lucide.createIcons();
-        }
-
-        function removeItem(id) {
-            queue = queue.filter(i => i.id !== id);
-            document.getElementById(`card-${id}`).remove();
-            updateFileCount();
-            if (!queue.length) {
-                document.getElementById('empty-state').classList.remove('hidden');
-                document.getElementById('queue-container').classList.add('hidden');
-                document.getElementById('export-combined').disabled = true;
-            }
-        }
-
-        function clearQueue() {
-            queue = [];
-            document.getElementById('sortable-list').innerHTML = '';
-            document.getElementById('empty-state').classList.remove('hidden');
-            document.getElementById('queue-container').classList.add('hidden');
-            document.getElementById('export-combined').disabled = true;
-            updateFileCount();
-        }
-
-        // --- PDF Generation ---
-        async function generatePDF(isCombined = true) {
-            if (!queue.length) return;
-
-            const { jsPDF } = window.jspdf;
-            const pageSize = document.getElementById('setting-page-size').value;
-            const margin = parseFloat(document.getElementById('setting-margin').value);
-            const quality = parseInt(document.getElementById('setting-quality').value) / 100;
+            // Mobile Hamburger Toggle
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('nav-links');
             
-            const progressContainer = document.getElementById('overall-progress-container');
-            const progressBar = document.getElementById('overall-progress-bar');
-            const progressPercent = document.getElementById('overall-percent');
-
-            progressContainer.classList.remove('hidden');
-            document.getElementById('export-combined').disabled = true;
-
-            const doc = new jsPDF({
-                orientation: orientation === 'a' ? 'p' : orientation,
-                unit: 'mm',
-                format: pageSize === 'fit' ? 'a4' : pageSize
-            });
-
-            for (let i = 0; i < queue.length; i++) {
-                const item = queue[i];
-                const img = await loadImage(item.preview);
-                
-                // Progress update
-                const percent = Math.round(((i + 1) / queue.length) * 100);
-                progressBar.style.width = percent + '%';
-                progressPercent.innerText = percent + '%';
-
-                // Calculate Dimensions
-                let finalOrientation = orientation;
-                if (orientation === 'a') {
-                    finalOrientation = img.width > img.height ? 'l' : 'p';
-                }
-
-                let pw, ph;
-                if (pageSize === 'fit') {
-                    // 1 pixel = 0.264583 mm at 96 DPI
-                    pw = img.width * 0.264583 + (margin * 2);
-                    ph = img.height * 0.264583 + (margin * 2);
+            hamburger.addEventListener('click', () => {
+                if(navLinks.style.display === 'flex') {
+                    navLinks.style.display = 'none';
                 } else {
-                    const formats = {
-                        a4: [210, 297],
-                        letter: [215.9, 279.4],
-                        legal: [215.9, 355.6]
-                    };
-                    const base = formats[pageSize];
-                    pw = finalOrientation === 'l' ? base[1] : base[0];
-                    ph = finalOrientation === 'l' ? base[0] : base[1];
+                    navLinks.style.display = 'flex';
                 }
-
-                if (i > 0 && isCombined) doc.addPage([pw, ph], finalOrientation);
-                else if (i === 0) {
-                    // First page fix
-                    doc.deletePage(1);
-                    doc.addPage([pw, ph], finalOrientation);
-                }
-
-                const availableW = pw - (margin * 2);
-                const availableH = ph - (margin * 2);
-                
-                // Fit image maintaining aspect ratio
-                const ratio = Math.min(availableW / img.width, availableH / img.height);
-                const drawW = img.width * ratio;
-                const drawH = img.height * ratio;
-                const x = margin + (availableW - drawW) / 2;
-                const y = margin + (availableH - drawH) / 2;
-
-                doc.addImage(item.preview, 'PNG', x, y, drawW, drawH, undefined, 'FAST');
-
-                if (!isCombined) {
-                    doc.save(`${item.name.replace('.png', '')}.pdf`);
-                    // If single mode, don't accumulate
-                }
-            }
-
-            if (isCombined) {
-                doc.save(`combined_images_${new Date().getTime()}.pdf`);
-            }
-
-            setTimeout(() => {
-                progressContainer.classList.add('hidden');
-                document.getElementById('export-combined').disabled = false;
-                progressBar.style.width = '0%';
-            }, 1000);
-        }
-
-        async function downloadSingle(id) {
-            const item = queue.find(i => i.id === id);
-            const originalQueue = [...queue];
-            queue = [item];
-            await generatePDF(false);
-            queue = originalQueue;
-        }
-
-        function loadImage(src) {
-            return new Promise(resolve => {
-                const img = new Image();
-                img.onload = () => resolve(img);
-                img.src = src;
             });
-        }
-
-        // --- Helpers & UI ---
-        function formatSize(bytes) {
-            if (bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function updateFileCount() {
-            document.getElementById('file-count-badge').innerText = queue.length;
-        }
-
-        function setOrientation(o) {
-            orientation = o;
-            document.querySelectorAll('.orient-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white');
-                btn.classList.add('border-slate-200');
-            });
-            document.getElementById(`orient-${o}`).classList.add('bg-blue-600', 'text-white');
-            document.getElementById(`orient-${o}`).classList.remove('border-slate-200');
-        }
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm'));
-            document.getElementById(`btn-${lang}`).classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm');
-            
-            // Translate elements
-            Object.keys(loc[lang]).forEach(key => {
-                const el = document.getElementById(`t-${key}`);
-                if (el) el.innerText = loc[lang][key];
-            });
-
-            // Update statuses in queue
-            document.querySelectorAll('.status-text').forEach(el => {
-                el.innerText = loc[lang]['status-queued'];
-            });
-        }
-
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
-            document.getElementById('sun-icon').classList.toggle('hidden');
-            document.getElementById('moon-icon').classList.toggle('hidden');
-        }
-
-        function setupKeyboard() {
-            window.addEventListener('keydown', (e) => {
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-                const key = e.key.toLowerCase();
-                if (key === 'u') fileInput.click();
-                if (key === 'c') generatePDF(true);
-                if (key === 'x') clearQueue();
-            });
-        }
-
-        document.getElementById('setting-quality').addEventListener('input', (e) => {
-            document.getElementById('quality-val').innerText = e.target.value + '%';
         });
 
+        function closeMobileMenu() {
+            if(window.innerWidth <= 768) {
+                document.getElementById('nav-links').style.display = 'none';
+            }
+        }
+
+        // Render Tools based on category
+        function renderTools(category) {
+            const grid = document.getElementById('tools-grid');
+            grid.innerHTML = ''; 
+
+            const filteredTools = category === 'All' 
+                ? toolsData 
+                : toolsData.filter(t => t.category === category);
+
+            filteredTools.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'tool-card';
+                card.innerHTML = `
+                    <div>
+                        <div class="tool-icon">${tool.icon}</div>
+                        <h3 class="glow-text">${tool.title}</h3>
+                        <p>${tool.desc}</p>
+                    </div>
+                    <button class="btn-glow small-btn" onclick="openModal('${tool.title}', '${tool.desc}')">Open Tool</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Sidebar Filtering logic
+        function filterTools(category) {
+            renderTools(category);
+            // Update active class
+            const items = document.querySelectorAll('#sidebar-categories li');
+            items.forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('tool-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const uploadZone = document.getElementById('upload-zone');
+        const processingZone = document.getElementById('processing-zone');
+        const fileInput = document.getElementById('file-input');
+
+        function openModal(title, desc) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            
+            // Reset UI
+            uploadZone.style.display = 'block';
+            processingZone.style.display = 'none';
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('download-btn').style.display = 'none';
+            document.getElementById('status-text').innerText = 'Uploading...';
+            document.getElementById('status-text').classList.remove('glow-text');
+            fileInput.value = "";
+
+            modal.classList.add('active');
+        }
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        // Close when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        });
+
+        // Drag and Drop Logic
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                simulateProcessing();
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                simulateProcessing();
+            }
+        });
+
+        // Simulate Frontend Processing
+        function simulateProcessing() {
+            uploadZone.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+
+            let progress = 0;
+            
+            // Fake progress interval
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 5; 
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    statusText.innerText = 'Processing Complete! ✔️';
+                    statusText.classList.add('glow-text');
+                    downloadBtn.style.display = 'inline-block';
+                    
+                    // Create a fake Blob for download simulation
+                    downloadBtn.onclick = () => {
+                        const fakeBlob = new Blob(["Simulated Output Content for SG PDF Suite"], { type: 'text/plain' });
+                        const url = URL.createObjectURL(fakeBlob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'SG_PDF_Suite_Output.txt';
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    };
+                } else if (progress > 50) {
+                    statusText.innerText = 'Processing...';
+                }
+
+                progressBar.style.width = progress + '%';
+            }, 400);
+        }
     </script>
 </body>
 </html>
