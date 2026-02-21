@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sitemap · PNG to PDF Bridge</title>
+  
+  <!-- SEO & Meta -->
+  <meta name="description" content="Sitemap for PNG·PDF Bridge. Find all pages and resources available on our privacy-focused PNG to PDF converter website.">
+  <meta name="keywords" content="sitemap, site map, PNG to PDF, website pages">
+  <meta name="author" content="PNG·PDF Bridge">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Sitemap - PNG·PDF Bridge">
+  <meta property="og:description" content="Complete sitemap of PNG·PDF Bridge website.">
+  <meta property="og:type" content="website">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    
+    /* Tree structure */
+    .sitemap-tree {
+      position: relative;
+    }
+    
+    .sitemap-tree ul {
+      list-style: none;
+      padding-left: 24px;
+      position: relative;
+    }
+    
+    .sitemap-tree > li > ul {
+      padding-left: 32px;
+    }
+    
+    .sitemap-tree li {
+      position: relative;
+      padding: 6px 0;
+    }
+    
+    .sitemap-tree li::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 14px;
+      width: 16px;
+      height: 2px;
+      background: #cbd5e0;
+    }
+    
+    .sitemap-tree li:last-child::after {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 14px;
+      bottom: 0;
+      width: 2px;
+      background: #f7fafc;
+    }
+    
+    .sitemap-tree > li::before {
+      display: none;
+    }
+    
+    .sitemap-node {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #f7fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    
+    .dark .sitemap-node {
+      background: #1f2937;
+      border-color: #374151;
+      color: #e2e8f0;
+    }
+    
+    .sitemap-node:hover {
+      background: #e2e8f0;
+      transform: translateX(5px);
+      border-color: #3b82f6;
+    }
+    
+    .dark .sitemap-node:hover {
+      background: #2d3748;
+      border-color: #60a5fa;
+    }
+    
+    /* URL badges */
+    .url-badge {
+      font-family: monospace;
+      font-size: 11px;
+      background: #e2e8f0;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    
+    .dark .url-badge {
+      background: #374151;
+      color: #a0aec0;
+    }
+    
+    /* Section headers */
+    .section-header {
+      position: relative;
+      padding-left: 20px;
+    }
+    
+    .section-header::before {
+      content: '📌';
+      position: absolute;
+      left: -8px;
+      top: 0;
+    }
+    
+    /* Last updated */
+    .last-updated {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #f7fafc;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+    
+    .dark .last-updated {
+      background: #1f2937;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 antialiased">
+  
+  <!-- Navigation -->
+  <nav class="border-b dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2 text-xl font-light hover:text-blue-600 dark:hover:text-blue-400 transition">
+          <span class="text-2xl">📄</span>
+          <span>PNG·PDF <span class="font-semibold text-blue-600 dark:text-blue-400">bridge</span></span>
+        </a>
+        
+        <!-- Navigation Links -->
+        <div class="flex items-center gap-6">
+          <a href="/" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Home</a>
+          <a href="/about.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">About</a>
+          <a href="/contact.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Contact</a>
+          <a href="/privacy.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Privacy</a>
+          <a href="/terms.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Terms</a>
+          <a href="/disclaimer.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Disclaimer</a>
+          <a href="/sitemap.html" class="text-sm text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-600 dark:border-blue-400">Sitemap</a>
+          
+          <!-- Theme Toggle -->
+          <button id="themeToggle" class="p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 dark:border-gray-700 transition" aria-label="Toggle theme">
+            <span class="text-lg">🌓</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <div class="text-6xl mb-4">🗺️</div>
+        <h1 class="text-4xl md:text-5xl font-light mb-4">
+          Website <span class="font-semibold text-blue-600 dark:text-blue-400">Sitemap</span>
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 mb-6">
+          Explore all pages and resources available on PNG·PDF Bridge.
+        </p>
+        
+        <!-- Stats -->
+        <div class="flex flex-wrap justify-center gap-4 mt-4">
+          <div class="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg px-4 py-2">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Total Pages</span>
+            <p class="text-2xl font-semibold">10</p>
+          </div>
+          <div class="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg px-4 py-2">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Last Updated</span>
+            <p class="text-lg font-semibold">Feb 21, 2026</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Sitemap Content -->
+  <section class="py-12 bg-white dark:bg-gray-900">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- XML Sitemap Notice -->
+      <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-8 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">📄</span>
+          <div>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              <strong>XML Sitemap also available:</strong> For search engines
+            </p>
+          </div>
+        </div>
+        <a href="/sitemap.xml" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition">
+          View sitemap.xml →
+        </a>
+      </div>
+      
+      <!-- Main Sitemap Tree -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Left Column - Main Pages -->
+        <div>
+          <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+            <span class="text-blue-600">📑</span> Main Pages
+          </h2>
+          
+          <div class="sitemap-tree">
+            <ul class="space-y-3">
+              <!-- Home -->
+              <li>
+                <a href="/" class="sitemap-node">
+                  <span class="text-2xl">🏠</span>
+                  <div>
+                    <span class="font-medium">Home</span>
+                    <span class="url-badge ml-2">/</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  Main converter tool · Drag & drop PNG files
+                </div>
+              </li>
+              
+              <!-- About -->
+              <li>
+                <a href="/about.html" class="sitemap-node">
+                  <span class="text-2xl">ℹ️</span>
+                  <div>
+                    <span class="font-medium">About Us</span>
+                    <span class="url-badge ml-2">/about.html</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  Learn about our mission and privacy-first approach
+                </div>
+              </li>
+              
+              <!-- Contact -->
+              <li>
+                <a href="/contact.html" class="sitemap-node">
+                  <span class="text-2xl">📧</span>
+                  <div>
+                    <span class="font-medium">Contact</span>
+                    <span class="url-badge ml-2">/contact.html</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  Get in touch with our team
+                </div>
+              </li>
+              
+              <!-- Privacy -->
+              <li>
+                <a href="/privacy.html" class="sitemap-node">
+                  <span class="text-2xl">🔒</span>
+                  <div>
+                    <span class="font-medium">Privacy Policy</span>
+                    <span class="url-badge ml-2">/privacy.html</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  How we protect your data (we don't collect anything)
+                </div>
+              </li>
+              
+              <!-- Terms -->
+              <li>
+                <a href="/terms.html" class="sitemap-node">
+                  <span class="text-2xl">📜</span>
+                  <div>
+                    <span class="font-medium">Terms & Conditions</span>
+                    <span class="url-badge ml-2">/terms.html</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  Rules and guidelines for using our service
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Right Column - Legal & Resources -->
+        <div>
+          <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+            <span class="text-blue-600">⚖️</span> Legal & Resources
+          </h2>
+          
+          <div class="sitemap-tree">
+            <ul class="space-y-3">
+              <!-- Disclaimer -->
+              <li>
+                <a href="/disclaimer.html" class="sitemap-node">
+                  <span class="text-2xl">⚠️</span>
+                  <div>
+                    <span class="font-medium">Disclaimer</span>
+                    <span class="url-badge ml-2">/disclaimer.html</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  Legal disclaimers and limitations of liability
+                </div>
+              </li>
+              
+              <!-- Sitemap (current) -->
+              <li>
+                <a href="/sitemap.html" class="sitemap-node bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-700">
+                  <span class="text-2xl">🗺️</span>
+                  <div>
+                    <span class="font-medium">Sitemap (HTML)</span>
+                    <span class="url-badge ml-2">/sitemap.html</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  You are here - website navigation guide
+                </div>
+              </li>
+              
+              <!-- XML Sitemap -->
+              <li>
+                <a href="/sitemap.xml" class="sitemap-node">
+                  <span class="text-2xl">📄</span>
+                  <div>
+                    <span class="font-medium">XML Sitemap</span>
+                    <span class="url-badge ml-2">/sitemap.xml</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  For search engines (Google, Bing, etc.)
+                </div>
+              </li>
+              
+              <!-- robots.txt -->
+              <li>
+                <a href="/robots.txt" class="sitemap-node">
+                  <span class="text-2xl">🤖</span>
+                  <div>
+                    <span class="font-medium">robots.txt</span>
+                    <span class="url-badge ml-2">/robots.txt</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  Instructions for search engine crawlers
+                </div>
+              </li>
+              
+              <!-- ads.txt -->
+              <li>
+                <a href="/ads.txt" class="sitemap-node">
+                  <span class="text-2xl">💰</span>
+                  <div>
+                    <span class="font-medium">ads.txt</span>
+                    <span class="url-badge ml-2">/ads.txt</span>
+                  </div>
+                </a>
+                <div class="text-xs text-gray-500 mt-1 ml-12">
+                  Authorized Digital Sellers (AdSense)
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Links Grid -->
+      <div class="mt-12 pt-8 border-t dark:border-gray-800">
+        <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+          <span class="text-blue-600">🔗</span> Quick Access
+        </h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <a href="/" class="bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4 text-center hover:border-blue-600 transition">
+            <div class="text-3xl mb-2">🏠</div>
+            <div class="font-medium">Home</div>
+            <div class="text-xs text-gray-500">/</div>
+          </a>
+          
+          <a href="/about.html" class="bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4 text-center hover:border-blue-600 transition">
+            <div class="text-3xl mb-2">ℹ️</div>
+            <div class="font-medium">About</div>
+            <div class="text-xs text-gray-500">/about.html</div>
+          </a>
+          
+          <a href="/contact.html" class="bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4 text-center hover:border-blue-600 transition">
+            <div class="text-3xl mb-2">📧</div>
+            <div class="font-medium">Contact</div>
+            <div class="text-xs text-gray-500">/contact.html</div>
+          </a>
+          
+          <a href="/privacy.html" class="bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4 text-center hover:border-blue-600 transition">
+            <div class="text-3xl mb-2">🔒</div>
+            <div class="font-medium">Privacy</div>
+            <div class="text-xs text-gray-500">/privacy.html</div>
+          </a>
+        </div>
+      </div>
+      
+      <!-- XML Sitemap Preview -->
+      <div class="mt-12 pt-8 border-t dark:border-gray-800">
+        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+          <span class="text-blue-600">📄</span> XML Sitemap Preview
+        </h2>
+        
+        <div class="bg-gray-900 text-gray-100 rounded-xl p-6 font-mono text-sm overflow-x-auto">
+          <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://pngpdfbridge.com/&lt;/loc&gt;
+    &lt;lastmod&gt;2026-02-21&lt;/lastmod&gt;
+    &lt;changefreq&gt;daily&lt;/changefreq&gt;
+    &lt;priority&gt;1.0&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://pngpdfbridge.com/about.html&lt;/loc&gt;
+    &lt;lastmod&gt;2026-02-21&lt;/lastmod&gt;
+    &lt;changefreq&gt;monthly&lt;/changefreq&gt;
+    &lt;priority&gt;0.8&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://pngpdfbridge.com/contact.html&lt;/loc&gt;
+    &lt;lastmod&gt;2026-02-21&lt;/lastmod&gt;
+    &lt;changefreq&gt;monthly&lt;/changefreq&gt;
+    &lt;priority&gt;0.8&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://pngpdfbridge.com/privacy.html&lt;/loc&gt;
+    &lt;lastmod&gt;2026-02-21&lt;/lastmod&gt;
+    &lt;changefreq&gt;yearly&lt;/changefreq&gt;
+    &lt;priority&gt;0.5&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://pngpdfbridge.com/terms.html&lt;/loc&gt;
+    &lt;lastmod&gt;2026-02-21&lt;/lastmod&gt;
+    &lt;changefreq&gt;yearly&lt;/changefreq&gt;
+    &lt;priority&gt;0.5&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://pngpdfbridge.com/disclaimer.html&lt;/loc&gt;
+    &lt;lastmod&gt;2026-02-21&lt;/lastmod&gt;
+    &lt;changefreq&gt;yearly&lt;/changefreq&gt;
+    &lt;priority&gt;0.5&lt;/priority&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;</pre>
+        </div>
+        
+        <div class="mt-4 flex justify-end">
+          <a href="/sitemap.xml" class="text-blue-600 dark:text-blue-400 hover:underline text-sm flex items-center gap-1">
+            Download full XML sitemap
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Search Engines Info -->
+      <div class="mt-12 p-6 bg-gray-50 dark:bg-gray-800 rounded-xl">
+        <h3 class="font-semibold mb-3 flex items-center gap-2">
+          <span>🤖</span> For Search Engines
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Submit your sitemap to major search engines:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+          <div class="bg-white dark:bg-gray-700 p-3 rounded-lg">
+            <span class="font-medium">Google:</span>
+            <a href="https://search.google.com/search-console" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 hover:underline block text-xs mt-1">
+              Google Search Console
+            </a>
+          </div>
+          <div class="bg-white dark:bg-gray-700 p-3 rounded-lg">
+            <span class="font-medium">Bing:</span>
+            <a href="https://www.bing.com/webmaster" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 hover:underline block text-xs mt-1">
+              Bing Webmaster Tools
+            </a>
+          </div>
+          <div class="bg-white dark:bg-gray-700 p-3 rounded-lg">
+            <span class="font-medium">Yandex:</span>
+            <a href="https://webmaster.yandex.com/" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 hover:underline block text-xs mt-1">
+              Yandex Webmaster
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Call to Action -->
+  <section class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-12">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-2xl font-light mb-3">Ready to convert PNG to PDF?</h2>
+      <p class="mb-6">Free, private, and no signup required.</p>
+      <a href="/" class="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 transition shadow-lg">
+        <span>📄</span> Go to Converter
+        <span>→</span>
+      </a>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+        <div class="flex gap-6">
+          <a href="/" class="hover:text-blue-600 dark:hover:text-blue-400">Home</a>
+          <a href="/about.html" class="hover:text-blue-600 dark:hover:text-blue-400">About</a>
+          <a href="/contact.html" class="hover:text-blue-600 dark:hover:text-blue-400">Contact</a>
+          <a href="/privacy.html" class="hover:text-blue-600 dark:hover:text-blue-400">Privacy</a>
+          <a href="/terms.html" class="hover:text-blue-600 dark:hover:text-blue-400">Terms</a>
+          <a href="/disclaimer.html" class="hover:text-blue-600 dark:hover:text-blue-400">Disclaimer</a>
+          <a href="/sitemap.html" class="hover:text-blue-600 dark:hover:text-blue-400">Sitemap</a>
+        </div>
+        <div>
+          © 2026 PNG·PDF Bridge — Find your way
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    
+    // Check for saved theme
+    if (localStorage.getItem('theme') === 'dark' || 
+        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>
