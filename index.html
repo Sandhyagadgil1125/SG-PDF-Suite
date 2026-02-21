@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PNG to PDF · Simple & Private</title>
+  <title>PNG to PDF Converter · Free & Private</title>
+  
+  <!-- SEO & Meta -->
+  <meta name="description" content="Free, private PNG to PDF converter. No uploads, no watermarks, 100% client-side. Convert single or multiple PNGs to PDF in your browser.">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,6 +21,7 @@
     .dropzone-active {
       background-color: #eff6ff;
       border-color: #3b82f6;
+      border-width: 3px;
     }
     
     .dark .dropzone-active {
@@ -25,11 +29,10 @@
       border-color: #60a5fa;
     }
     
-    /* Simple file tile */
+    /* File item styles */
     .file-item {
       display: flex;
       align-items: center;
-      gap: 12px;
       padding: 12px;
       border: 1px solid #e5e7eb;
       border-radius: 12px;
@@ -50,6 +53,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-right: 12px;
       overflow: hidden;
     }
     
@@ -57,53 +61,13 @@
       background: #374151;
     }
     
-    .file-info {
-      flex: 1;
-    }
-    
-    .file-name {
-      font-weight: 500;
-      margin-bottom: 4px;
-    }
-    
-    .file-status {
-      font-size: 12px;
-      color: #6b7280;
-    }
-    
-    .progress-bar {
-      height: 4px;
-      background: #e5e7eb;
-      border-radius: 2px;
-      margin-top: 6px;
-      width: 100%;
-    }
-    
-    .progress-fill {
-      height: 100%;
-      background: #3b82f6;
-      border-radius: 2px;
-      transition: width 0.3s;
-    }
-    
     .btn {
-      padding: 6px 12px;
+      padding: 8px 16px;
       border-radius: 8px;
-      font-size: 13px;
-      border: 1px solid #e5e7eb;
-      background: white;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
-    }
-    
-    .dark .btn {
-      background: #374151;
-      border-color: #4b5563;
-      color: white;
-    }
-    
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
+      transition: all 0.2s;
     }
     
     .btn-primary {
@@ -116,462 +80,377 @@
       background: #2563eb;
     }
     
-    .drag-handle {
-      cursor: grab;
-      color: #9ca3af;
-      font-size: 20px;
-      user-select: none;
+    .btn-secondary {
+      background: white;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .dark .btn-secondary {
+      background: #374151;
+      border-color: #4b5563;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #f3f4f6;
+    }
+    
+    .dark .btn-secondary:hover {
+      background: #4b5563;
+    }
+    
+    /* Footer link hover */
+    .footer-link {
+      transition: color 0.2s;
+    }
+    
+    .footer-link:hover {
+      color: #3b82f6;
+    }
+    
+    .dark .footer-link:hover {
+      color: #60a5fa;
     }
   </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 p-6">
-  <div class="max-w-6xl mx-auto">
-    
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-light">📄 PNG·PDF <span class="text-blue-600">bridge</span></h1>
-      <button id="themeToggle" class="px-3 py-2 border rounded-lg dark:border-gray-700">🌓 Theme</button>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+  
+  <!-- Navigation -->
+  <nav class="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <!-- Logo -->
+        <a href="/" class="text-2xl font-light hover:text-blue-600 dark:hover:text-blue-400 transition">
+          <span class="text-blue-600">📄</span> PNG·PDF <span class="font-semibold">Bridge</span>
+        </a>
+        
+        <!-- Navigation Links -->
+        <div class="flex gap-6">
+          <a href="/" class="text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-600 dark:border-blue-400">Home</a>
+          <a href="/about.html" class="hover:text-blue-600 dark:hover:text-blue-400 transition">About</a>
+          <a href="/contact.html" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Contact</a>
+        </div>
+      </div>
     </div>
+  </nav>
+  
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
     
-    <!-- Privacy Notice -->
+    <!-- Privacy Banner -->
     <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
-      <p class="text-sm text-blue-700 dark:text-blue-300">🔒 <strong>100% Private</strong> — Files never leave your device</p>
+      <p class="text-blue-700 dark:text-blue-300">
+        🔒 <strong>100% Private</strong> — Your files never leave your device. No uploads, no tracking.
+      </p>
     </div>
     
-    <!-- Main Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Converter Card -->
+    <div class="bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-2xl shadow-lg overflow-hidden">
       
-      <!-- Settings Panel -->
-      <div class="lg:col-span-1 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4 h-fit">
-        <h2 class="font-semibold mb-4">⚙️ PDF Settings</h2>
-        <div class="space-y-3">
-          <div>
-            <label class="block text-sm mb-1">Page Size</label>
-            <select id="pageSize" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-              <option value="A4">A4</option>
-              <option value="Letter">Letter</option>
-              <option value="Legal">Legal</option>
-              <option value="fit" selected>Fit to Image</option>
-            </select>
-          </div>
-          
-          <div>
-            <label class="block text-sm mb-1">Orientation</label>
-            <select id="orientation" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-              <option value="auto">Auto</option>
-            </select>
-          </div>
-          
-          <div>
-            <label class="block text-sm mb-1">Quality</label>
-            <input type="range" id="quality" min="10" max="100" value="85" class="w-full">
-          </div>
-        </div>
+      <!-- Header -->
+      <div class="p-6 border-b dark:border-gray-800">
+        <h1 class="text-2xl font-light">PNG to PDF Converter</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Convert images to PDF instantly · Client-side only</p>
       </div>
       
-      <!-- Main Area -->
-      <div class="lg:col-span-3">
-        
-        <!-- Drop Zone -->
-        <div id="dropzone" class="border-3 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition mb-4">
+      <!-- Drop Zone -->
+      <div class="p-6">
+        <div id="dropzone" class="border-3 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition">
           <input type="file" id="fileInput" multiple accept=".png,image/png" class="hidden">
-          <div class="text-5xl mb-2">📤</div>
-          <h3 class="text-lg font-medium">Drop PNG files here</h3>
-          <p class="text-sm text-gray-500">or click to browse</p>
-          <p class="text-xs text-gray-400 mt-2">✓ PNG only · No size limit</p>
-        </div>
-        
-        <!-- Toolbar -->
-        <div class="flex justify-between items-center mb-4">
-          <div class="flex gap-2">
-            <button id="combineBtn" class="btn btn-primary">📑 Combine PDF (C)</button>
-            <button id="clearBtn" class="btn">🗑️ Clear (X)</button>
-          </div>
-          <div class="text-sm bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg">
-            <span id="fileCount">0 images</span> · <span id="totalSize">0 KB</span>
-          </div>
-        </div>
-        
-        <!-- File List Container -->
-        <div id="fileListContainer">
-          <!-- Empty State -->
-          <div id="emptyState" class="text-center py-16 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl">
-            <div class="text-5xl mb-3">🖼️</div>
-            <p class="text-gray-500">No images added yet</p>
-            <p class="text-sm text-gray-400 mt-1">Drop PNG files to get started</p>
-          </div>
-          
-          <!-- File List (will be populated by JavaScript) -->
-          <div id="fileList" class="space-y-2"></div>
-        </div>
-        
-        <!-- Bottom Combine Button -->
-        <div class="mt-4 text-right">
-          <button id="combineBottomBtn" class="btn btn-primary">📥 Download Combined PDF</button>
+          <div class="text-5xl mb-3">📤</div>
+          <h3 class="text-lg font-medium mb-1">Drop PNG files here</h3>
+          <p class="text-gray-500 dark:text-gray-400 mb-2">or click to browse</p>
+          <p class="text-xs text-gray-400">✓ PNG only · No size limit</p>
         </div>
       </div>
+      
+      <!-- Toolbar -->
+      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-b dark:border-gray-800 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex gap-2">
+          <button id="combineBtn" class="btn btn-primary">📑 Combine to PDF</button>
+          <button id="clearBtn" class="btn btn-secondary">🗑️ Clear All</button>
+        </div>
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+          <span id="fileCount">0 files</span> · <span id="totalSize">0 KB</span>
+        </div>
+      </div>
+      
+      <!-- File List Container -->
+      <div class="p-6 min-h-[200px]" id="fileListContainer"></div>
+      
+      <!-- Empty State -->
+      <div id="emptyState" class="p-12 text-center">
+        <div class="text-6xl mb-3">🖼️</div>
+        <p class="text-gray-500 dark:text-gray-400">No images added yet</p>
+        <p class="text-sm text-gray-400 mt-1">Drop PNG files above to get started</p>
+      </div>
+      
     </div>
   </div>
   
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 mt-12">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      
+      <!-- Footer Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        
+        <!-- About Column -->
+        <div>
+          <h3 class="font-semibold text-lg mb-4 flex items-center gap-2">
+            <span class="text-blue-600">📄</span> PNG·PDF Bridge
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            Free, private PNG to PDF converter. 100% client-side, no uploads, no tracking.
+          </p>
+        </div>
+        
+        <!-- Quick Links -->
+        <div>
+          <h4 class="font-medium mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="/" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Home</a></li>
+            <li><a href="/about.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">About Us</a></li>
+            <li><a href="/contact.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Contact</a></li>
+          </ul>
+        </div>
+        
+        <!-- Legal Pages -->
+        <div>
+          <h4 class="font-medium mb-4">Legal</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="/privacy.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Privacy Policy</a></li>
+            <li><a href="/terms.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Terms & Conditions</a></li>
+            <li><a href="/disclaimer.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Disclaimer</a></li>
+          </ul>
+        </div>
+        
+        <!-- Resources -->
+        <div>
+          <h4 class="font-medium mb-4">Resources</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="/sitemap.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Sitemap (HTML)</a></li>
+            <li><a href="/sitemap.xml" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Sitemap (XML)</a></li>
+            <li><a href="/ads.txt" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">ads.txt</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Bottom Bar -->
+      <div class="pt-6 border-t dark:border-gray-800 flex flex-wrap justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+        <div>
+          © 2026 PNG·PDF Bridge. All rights reserved.
+        </div>
+        <div class="flex gap-4 mt-2 sm:mt-0">
+          <a href="/privacy.html" class="footer-link hover:text-blue-600">Privacy</a>
+          <a href="/terms.html" class="footer-link hover:text-blue-600">Terms</a>
+          <a href="/disclaimer.html" class="footer-link hover:text-blue-600">Disclaimer</a>
+          <a href="/sitemap.html" class="footer-link hover:text-blue-600">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
   <script>
-    (function() {
-      // Simple theme toggle
-      document.getElementById('themeToggle').addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-      });
+    // Simple JavaScript to handle file uploads
+    let files = [];
+    let nextId = 1;
+    
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const fileListContainer = document.getElementById('fileListContainer');
+    const emptyState = document.getElementById('emptyState');
+    const fileCount = document.getElementById('fileCount');
+    const totalSize = document.getElementById('totalSize');
+    const combineBtn = document.getElementById('combineBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+    
+    function updateStats() {
+      fileCount.textContent = files.length + ' file' + (files.length !== 1 ? 's' : '');
+      const total = files.reduce((sum, f) => sum + f.size, 0);
+      totalSize.textContent = formatBytes(total);
+    }
+    
+    function renderFiles() {
+      if (files.length === 0) {
+        emptyState.style.display = 'block';
+        fileListContainer.innerHTML = '';
+      } else {
+        emptyState.style.display = 'none';
+        
+        let html = '<div class="space-y-2">';
+        files.forEach((file, index) => {
+          html += `
+            <div class="file-item">
+              <div class="file-thumb">
+                ${file.thumbnail ? `<img src="${file.thumbnail}" class="w-full h-full object-cover rounded">` : '📷'}
+              </div>
+              <div class="flex-1">
+                <div class="font-medium">${file.name}</div>
+                <div class="text-sm text-gray-500">${formatBytes(file.size)}</div>
+              </div>
+              <div>
+                <button class="btn btn-secondary text-sm py-1 px-3 download-btn" data-id="${file.id}">
+                  ⬇ PDF
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+        
+        fileListContainer.innerHTML = html;
+        
+        // Add download button handlers
+        document.querySelectorAll('.download-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = Number(btn.dataset.id);
+            downloadPDF(id);
+          });
+        });
+      }
+      updateStats();
+    }
+    
+    async function downloadPDF(id) {
+      const file = files.find(f => f.id === id);
+      if (!file) return;
       
-      // ===== APP STATE =====
-      let files = [];
-      let nextId = 1;
-      
-      // DOM elements
-      const dropzone = document.getElementById('dropzone');
-      const fileInput = document.getElementById('fileInput');
-      const fileList = document.getElementById('fileList');
-      const emptyState = document.getElementById('emptyState');
-      const fileCount = document.getElementById('fileCount');
-      const totalSize = document.getElementById('totalSize');
-      const combineBtn = document.getElementById('combineBtn');
-      const combineBottomBtn = document.getElementById('combineBottomBtn');
-      const clearBtn = document.getElementById('clearBtn');
-      
-      // Helper: format bytes
-      function formatBytes(bytes) {
-        if (bytes === 0) return '0 B';
-        const k = 1024;
-        const sizes = ['B', 'KB', 'MB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+      try {
+        const pdfDoc = await PDFLib.PDFDocument.create();
+        const arrayBuffer = await file.file.arrayBuffer();
+        const image = await pdfDoc.embedPng(arrayBuffer);
+        const page = pdfDoc.addPage([image.width, image.height]);
+        page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+        
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name.replace(/\.png$/i, '.pdf');
+        a.click();
+        
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        alert('Error creating PDF: ' + err.message);
+      }
+    }
+    
+    async function combineAllPDFs() {
+      if (files.length === 0) {
+        alert('No files to combine');
+        return;
       }
       
-      // Update counters
-      function updateStats() {
-        fileCount.textContent = files.length + ' image' + (files.length !== 1 ? 's' : '');
-        const total = files.reduce((sum, f) => sum + f.size, 0);
-        totalSize.textContent = formatBytes(total);
-      }
-      
-      // Move file up/down
-      function moveFile(id, direction) {
-        const index = files.findIndex(f => f.id === id);
-        if (index === -1) return;
+      try {
+        const pdfDoc = await PDFLib.PDFDocument.create();
         
-        const newIndex = index + direction;
-        if (newIndex < 0 || newIndex >= files.length) return;
-        
-        [files[index], files[newIndex]] = [files[newIndex], files[index]];
-        renderFileList();
-      }
-      
-      // Download single PDF
-      async function downloadSinglePDF(id) {
-        const file = files.find(f => f.id === id);
-        if (!file || file.status !== 'done') return;
-        
-        try {
-          file.status = 'converting';
-          renderFileList();
-          
-          const pdfDoc = await PDFLib.PDFDocument.create();
+        for (const file of files) {
           const arrayBuffer = await file.file.arrayBuffer();
           const image = await pdfDoc.embedPng(arrayBuffer);
-          
           const page = pdfDoc.addPage([image.width, image.height]);
           page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
-          
-          const pdfBytes = await pdfDoc.save();
-          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = file.name.replace(/\.png$/i, '.pdf');
-          a.click();
-          
-          URL.revokeObjectURL(url);
-          
-          file.status = 'done';
-        } catch (err) {
-          file.status = 'error';
-          file.error = 'Conversion failed';
         }
         
-        renderFileList();
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'combined.pdf';
+        a.click();
+        
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        alert('Error combining PDFs: ' + err.message);
+      }
+    }
+    
+    function handleFiles(selectedFiles) {
+      const pngFiles = Array.from(selectedFiles).filter(f => 
+        f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
+      );
+      
+      if (pngFiles.length === 0) {
+        alert('Please select PNG files only');
+        return;
       }
       
-      // Combine all PDFs
-      async function combineAllPDFs() {
-        const readyFiles = files.filter(f => f.status === 'done');
-        if (readyFiles.length !== files.length || files.length === 0) {
-          alert('Please wait for all files to be ready');
-          return;
-        }
+      pngFiles.forEach(file => {
+        const id = nextId++;
+        const fileObj = {
+          id,
+          name: file.name,
+          size: file.size,
+          file: file,
+          thumbnail: null
+        };
+        files.push(fileObj);
         
-        try {
-          const pdfDoc = await PDFLib.PDFDocument.create();
-          
-          for (const file of files) {
-            const arrayBuffer = await file.file.arrayBuffer();
-            const image = await pdfDoc.embedPng(arrayBuffer);
-            const page = pdfDoc.addPage([image.width, image.height]);
-            page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
-          }
-          
-          const pdfBytes = await pdfDoc.save();
-          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'combined.pdf';
-          a.click();
-          
-          URL.revokeObjectURL(url);
-        } catch (err) {
-          alert('Error: ' + err.message);
-        }
-      }
-      
-      // Render file list
-      function renderFileList() {
-        if (files.length === 0) {
-          emptyState.style.display = 'block';
-          fileList.innerHTML = '';
-        } else {
-          emptyState.style.display = 'none';
-          
-          let html = '';
-          files.forEach((f, index) => {
-            const statusColor = {
-              'queued': 'text-yellow-600',
-              'converting': 'text-blue-600',
-              'done': 'text-green-600',
-              'error': 'text-red-600'
-            }[f.status] || '';
-            
-            const statusIcon = {
-              'queued': '⏳',
-              'converting': '⚙️',
-              'done': '✅',
-              'error': '❌'
-            }[f.status] || '📄';
-            
-            html += `
-              <div class="file-item" data-id="${f.id}" draggable="true">
-                <span class="drag-handle" draggable="false">⋮⋮</span>
-                
-                <div class="file-thumb">
-                  ${f.thumbnail ? 
-                    `<img src="${f.thumbnail}" class="w-full h-full object-cover">` : 
-                    `<span class="text-2xl">📷</span>`
-                  }
-                </div>
-                
-                <div class="file-info">
-                  <div class="file-name">${f.name}</div>
-                  <div class="file-status ${statusColor}">
-                    ${statusIcon} ${f.status} · ${formatBytes(f.size)}
-                  </div>
-                  
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${f.progress}%"></div>
-                  </div>
-                  
-                  ${f.error ? `<div class="text-xs text-red-500 mt-1">${f.error}</div>` : ''}
-                </div>
-                
-                <div>
-                  <button class="btn download-btn" data-id="${f.id}" ${f.status !== 'done' ? 'disabled' : ''}>
-                    ⬇ PDF
-                  </button>
-                  <button class="btn up-btn" data-id="${f.id}" ${index === 0 ? 'disabled' : ''}>↑</button>
-                  <button class="btn down-btn" data-id="${f.id}" ${index === files.length-1 ? 'disabled' : ''}>↓</button>
-                </div>
-              </div>
-            `;
-          });
-          
-          fileList.innerHTML = html;
-          
-          // Add event listeners
-          document.querySelectorAll('.download-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              downloadSinglePDF(Number(btn.dataset.id));
-            });
-          });
-          
-          document.querySelectorAll('.up-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              moveFile(Number(btn.dataset.id), -1);
-            });
-          });
-          
-          document.querySelectorAll('.down-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              moveFile(Number(btn.dataset.id), 1);
-            });
-          });
-          
-          // Drag and drop reordering
-          let draggedIndex = null;
-          const items = document.querySelectorAll('.file-item');
-          
-          items.forEach(item => {
-            item.addEventListener('dragstart', (e) => {
-              draggedIndex = Array.from(fileList.children).indexOf(item);
-              e.dataTransfer.setData('text/plain', item.dataset.id);
-            });
-            
-            item.addEventListener('dragover', (e) => e.preventDefault());
-            
-            item.addEventListener('drop', (e) => {
-              e.preventDefault();
-              const target = e.target.closest('.file-item');
-              if (!target) return;
-              
-              const targetIndex = Array.from(fileList.children).indexOf(target);
-              if (draggedIndex === null || draggedIndex === targetIndex) return;
-              
-              const [moved] = files.splice(draggedIndex, 1);
-              files.splice(targetIndex, 0, moved);
-              renderFileList();
-            });
-          });
-        }
-        
-        updateStats();
-      }
-      
-      // Process uploaded files
-      function handleFiles(selectedFiles) {
-        const pngFiles = Array.from(selectedFiles).filter(f => 
-          f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
-        );
-        
-        if (pngFiles.length === 0) {
-          alert('Please select PNG files');
-          return;
-        }
-        
-        // Add files to array
-        pngFiles.forEach(file => {
-          const id = nextId++;
-          const fileObj = {
-            id,
-            file,
-            name: file.name,
-            size: file.size,
-            status: 'queued',
-            thumbnail: null,
-            progress: 10,
-            error: null
+        // Generate thumbnail
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 48;
+            canvas.height = 48;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, 48, 48);
+            fileObj.thumbnail = canvas.toDataURL('image/png');
+            renderFiles();
           };
-          files.push(fileObj);
-        });
-        
-        renderFileList();
-        
-        // Generate thumbnails
-        pngFiles.forEach((file, idx) => {
-          const fileObj = files[files.length - pngFiles.length + idx];
-          
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-              const canvas = document.createElement('canvas');
-              canvas.width = 48;
-              canvas.height = 48;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0, 48, 48);
-              
-              fileObj.thumbnail = canvas.toDataURL('image/png');
-              fileObj.status = 'done';
-              fileObj.progress = 100;
-              renderFileList();
-            };
-            img.src = e.target.result;
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-      
-      // Event listeners
-      dropzone.addEventListener('click', () => fileInput.click());
-      
-      dropzone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropzone.classList.add('dropzone-active');
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
       });
       
-      dropzone.addEventListener('dragleave', () => {
-        dropzone.classList.remove('dropzone-active');
-      });
-      
-      dropzone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropzone.classList.remove('dropzone-active');
-        handleFiles(e.dataTransfer.files);
-      });
-      
-      fileInput.addEventListener('change', (e) => {
-        handleFiles(e.target.files);
-        fileInput.value = '';
-      });
-      
-      combineBtn.addEventListener('click', combineAllPDFs);
-      combineBottomBtn.addEventListener('click', combineAllPDFs);
-      
-      clearBtn.addEventListener('click', () => {
-        files = [];
-        renderFileList();
-      });
-      
-      // Keyboard shortcuts
-      document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey || e.metaKey) return;
-        const key = e.key.toLowerCase();
-        if (key === 'u') {
-          e.preventDefault();
-          fileInput.click();
-        } else if (key === 'c') {
-          e.preventDefault();
-          combineAllPDFs();
-        } else if (key === 'x') {
-          e.preventDefault();
-          files = [];
-          renderFileList();
-        }
-      });
-      
-      // Initial render
-      renderFileList();
-      
-      // Add test files for debugging (remove in production)
-      // This helps verify the UI works
-      window.testAddFiles = function() {
-        // Create mock file objects
-        for (let i = 1; i <= 3; i++) {
-          const id = nextId++;
-          files.push({
-            id,
-            file: null,
-            name: `test-image-${i}.png`,
-            size: 1024 * 50,
-            status: 'done',
-            thumbnail: null,
-            progress: 100,
-            error: null
-          });
-        }
-        renderFileList();
-      };
-      
-      console.log('App ready - Call window.testAddFiles() to test UI');
-    })();
+      renderFiles();
+    }
+    
+    // Event listeners
+    dropzone.addEventListener('click', () => fileInput.click());
+    
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dropzone-active');
+    });
+    
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('dropzone-active');
+    });
+    
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dropzone-active');
+      handleFiles(e.dataTransfer.files);
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+      fileInput.value = '';
+    });
+    
+    clearBtn.addEventListener('click', () => {
+      files = [];
+      renderFiles();
+    });
+    
+    combineBtn.addEventListener('click', combineAllPDFs);
+    
+    // Initial render
+    renderFiles();
   </script>
 </body>
 </html>
