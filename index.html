@@ -16,17 +16,26 @@
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   
   <style>
-    * { font-family: 'Inter', sans-serif; }
+    * { 
+      font-family: 'Inter', sans-serif; 
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
     
     .dropzone-active {
-      background-color: #eff6ff;
-      border-color: #3b82f6;
-      border-width: 3px;
+      background-color: #eff6ff !important;
+      border-color: #3b82f6 !important;
+      border-width: 3px !important;
     }
     
     .dark .dropzone-active {
-      background-color: #1e3a8a20;
-      border-color: #60a5fa;
+      background-color: #1e3a8a20 !important;
+      border-color: #60a5fa !important;
     }
     
     /* File item styles */
@@ -38,6 +47,7 @@
       border-radius: 12px;
       margin-bottom: 8px;
       background: white;
+      width: 100%;
     }
     
     .dark .file-item {
@@ -55,6 +65,7 @@
       justify-content: center;
       margin-right: 12px;
       overflow: hidden;
+      flex-shrink: 0;
     }
     
     .dark .file-thumb {
@@ -68,6 +79,9 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
     
     .btn-primary {
@@ -78,6 +92,11 @@
     
     .btn-primary:hover {
       background: #2563eb;
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
     
     .btn-secondary {
@@ -99,17 +118,29 @@
       background: #4b5563;
     }
     
-    /* Footer link hover */
     .footer-link {
       transition: color 0.2s;
+      text-decoration: none;
     }
     
     .footer-link:hover {
       color: #3b82f6;
+      text-decoration: underline;
     }
     
     .dark .footer-link:hover {
       color: #60a5fa;
+    }
+    
+    /* Make sure containers are visible */
+    #fileListContainer {
+      min-height: 200px;
+      width: 100%;
+    }
+    
+    #emptyState {
+      display: block;
+      width: 100%;
     }
   </style>
 </head>
@@ -120,15 +151,16 @@
     <div class="max-w-7xl mx-auto px-4 py-4">
       <div class="flex justify-between items-center">
         <!-- Logo -->
-        <a href="/" class="text-2xl font-light hover:text-blue-600 dark:hover:text-blue-400 transition">
-          <span class="text-blue-600">📄</span> PNG·PDF <span class="font-semibold">Bridge</span>
+        <a href="/" class="text-2xl font-light hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center gap-2">
+          <span class="text-blue-600 text-3xl">📄</span> 
+          <span>PNG·PDF <span class="font-semibold">Bridge</span></span>
         </a>
         
         <!-- Navigation Links -->
         <div class="flex gap-6">
-          <a href="/" class="text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-600 dark:border-blue-400">Home</a>
-          <a href="/about.html" class="hover:text-blue-600 dark:hover:text-blue-400 transition">About</a>
-          <a href="/contact.html" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Contact</a>
+          <a href="/" class="text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-600 dark:border-blue-400 pb-1">Home</a>
+          <a href="/about.html" class="hover:text-blue-600 dark:hover:text-blue-400 transition pb-1">About</a>
+          <a href="/contact.html" class="hover:text-blue-600 dark:hover:text-blue-400 transition pb-1">Contact</a>
         </div>
       </div>
     </div>
@@ -139,8 +171,9 @@
     
     <!-- Privacy Banner -->
     <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
-      <p class="text-blue-700 dark:text-blue-300">
-        🔒 <strong>100% Private</strong> — Your files never leave your device. No uploads, no tracking.
+      <p class="text-blue-700 dark:text-blue-300 flex items-center gap-2">
+        <span class="text-xl">🔒</span> 
+        <span><strong>100% Private</strong> — Your files never leave your device. No uploads, no tracking.</span>
       </p>
     </div>
     
@@ -155,11 +188,11 @@
       
       <!-- Drop Zone -->
       <div class="p-6">
-        <div id="dropzone" class="border-3 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+        <div id="dropzone" class="border-3 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition bg-white dark:bg-gray-900">
           <input type="file" id="fileInput" multiple accept=".png,image/png" class="hidden">
           <div class="text-5xl mb-3">📤</div>
           <h3 class="text-lg font-medium mb-1">Drop PNG files here</h3>
-          <p class="text-gray-500 dark:text-gray-400 mb-2">or click to browse</p>
+          <p class="text-gray-500 dark:text-gray-400 mb-2">or <span class="text-blue-600 font-semibold">click to browse</span></p>
           <p class="text-xs text-gray-400">✓ PNG only · No size limit</p>
         </div>
       </div>
@@ -170,18 +203,18 @@
           <button id="combineBtn" class="btn btn-primary">📑 Combine to PDF</button>
           <button id="clearBtn" class="btn btn-secondary">🗑️ Clear All</button>
         </div>
-        <div class="text-sm text-gray-500 dark:text-gray-400">
+        <div class="text-sm text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-3 py-1 rounded-full">
           <span id="fileCount">0 files</span> · <span id="totalSize">0 KB</span>
         </div>
       </div>
       
       <!-- File List Container -->
-      <div class="p-6 min-h-[200px]" id="fileListContainer"></div>
+      <div id="fileListContainer" class="p-6"></div>
       
       <!-- Empty State -->
       <div id="emptyState" class="p-12 text-center">
         <div class="text-6xl mb-3">🖼️</div>
-        <p class="text-gray-500 dark:text-gray-400">No images added yet</p>
+        <p class="text-gray-500 dark:text-gray-400 text-lg">No images added yet</p>
         <p class="text-sm text-gray-400 mt-1">Drop PNG files above to get started</p>
       </div>
       
@@ -198,40 +231,40 @@
         <!-- About Column -->
         <div>
           <h3 class="font-semibold text-lg mb-4 flex items-center gap-2">
-            <span class="text-blue-600">📄</span> PNG·PDF Bridge
+            <span class="text-blue-600 text-2xl">📄</span> PNG·PDF Bridge
           </h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            Free, private PNG to PDF converter. 100% client-side, no uploads, no tracking.
+          <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+            Free, private PNG to PDF converter. 100% client-side, no uploads, no tracking. Your privacy is our priority.
           </p>
         </div>
         
         <!-- Quick Links -->
         <div>
-          <h4 class="font-medium mb-4">Quick Links</h4>
+          <h4 class="font-medium mb-4 text-gray-700 dark:text-gray-300">Quick Links</h4>
           <ul class="space-y-2 text-sm">
-            <li><a href="/" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Home</a></li>
-            <li><a href="/about.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">About Us</a></li>
-            <li><a href="/contact.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Contact</a></li>
+            <li><a href="/" class="footer-link text-gray-500 dark:text-gray-400">🏠 Home</a></li>
+            <li><a href="/about.html" class="footer-link text-gray-500 dark:text-gray-400">ℹ️ About Us</a></li>
+            <li><a href="/contact.html" class="footer-link text-gray-500 dark:text-gray-400">📧 Contact</a></li>
           </ul>
         </div>
         
         <!-- Legal Pages -->
         <div>
-          <h4 class="font-medium mb-4">Legal</h4>
+          <h4 class="font-medium mb-4 text-gray-700 dark:text-gray-300">Legal</h4>
           <ul class="space-y-2 text-sm">
-            <li><a href="/privacy.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Privacy Policy</a></li>
-            <li><a href="/terms.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Terms & Conditions</a></li>
-            <li><a href="/disclaimer.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Disclaimer</a></li>
+            <li><a href="/privacy.html" class="footer-link text-gray-500 dark:text-gray-400">🔒 Privacy Policy</a></li>
+            <li><a href="/terms.html" class="footer-link text-gray-500 dark:text-gray-400">📜 Terms & Conditions</a></li>
+            <li><a href="/disclaimer.html" class="footer-link text-gray-500 dark:text-gray-400">⚠️ Disclaimer</a></li>
           </ul>
         </div>
         
         <!-- Resources -->
         <div>
-          <h4 class="font-medium mb-4">Resources</h4>
+          <h4 class="font-medium mb-4 text-gray-700 dark:text-gray-300">Resources</h4>
           <ul class="space-y-2 text-sm">
-            <li><a href="/sitemap.html" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Sitemap (HTML)</a></li>
-            <li><a href="/sitemap.xml" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">Sitemap (XML)</a></li>
-            <li><a href="/ads.txt" class="footer-link text-gray-500 dark:text-gray-400 hover:text-blue-600">ads.txt</a></li>
+            <li><a href="/sitemap.html" class="footer-link text-gray-500 dark:text-gray-400">🗺️ Sitemap (HTML)</a></li>
+            <li><a href="/sitemap.xml" class="footer-link text-gray-500 dark:text-gray-400">📄 Sitemap (XML)</a></li>
+            <li><a href="/ads.txt" class="footer-link text-gray-500 dark:text-gray-400">💰 ads.txt</a></li>
           </ul>
         </div>
       </div>
@@ -241,7 +274,7 @@
         <div>
           © 2026 PNG·PDF Bridge. All rights reserved.
         </div>
-        <div class="flex gap-4 mt-2 sm:mt-0">
+        <div class="flex gap-6 mt-2 sm:mt-0">
           <a href="/privacy.html" class="footer-link hover:text-blue-600">Privacy</a>
           <a href="/terms.html" class="footer-link hover:text-blue-600">Terms</a>
           <a href="/disclaimer.html" class="footer-link hover:text-blue-600">Disclaimer</a>
@@ -252,205 +285,247 @@
   </footer>
   
   <script>
-    // Simple JavaScript to handle file uploads
-    let files = [];
-    let nextId = 1;
-    
-    const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('fileInput');
-    const fileListContainer = document.getElementById('fileListContainer');
-    const emptyState = document.getElementById('emptyState');
-    const fileCount = document.getElementById('fileCount');
-    const totalSize = document.getElementById('totalSize');
-    const combineBtn = document.getElementById('combineBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    
-    function formatBytes(bytes) {
-      if (bytes === 0) return '0 B';
-      const k = 1024;
-      const sizes = ['B', 'KB', 'MB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-    }
-    
-    function updateStats() {
-      fileCount.textContent = files.length + ' file' + (files.length !== 1 ? 's' : '');
-      const total = files.reduce((sum, f) => sum + f.size, 0);
-      totalSize.textContent = formatBytes(total);
-    }
-    
-    function renderFiles() {
-      if (files.length === 0) {
-        emptyState.style.display = 'block';
-        fileListContainer.innerHTML = '';
-      } else {
-        emptyState.style.display = 'none';
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded - starting app');
+      
+      // Simple JavaScript to handle file uploads
+      let files = [];
+      let nextId = 1;
+      
+      // Get DOM elements
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('fileInput');
+      const fileListContainer = document.getElementById('fileListContainer');
+      const emptyState = document.getElementById('emptyState');
+      const fileCount = document.getElementById('fileCount');
+      const totalSize = document.getElementById('totalSize');
+      const combineBtn = document.getElementById('combineBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      
+      console.log('Elements found:', { 
+        dropzone: !!dropzone, 
+        fileInput: !!fileInput, 
+        fileListContainer: !!fileListContainer,
+        emptyState: !!emptyState 
+      });
+      
+      function formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+      }
+      
+      function updateStats() {
+        fileCount.textContent = files.length + ' file' + (files.length !== 1 ? 's' : '');
+        const total = files.reduce((sum, f) => sum + f.size, 0);
+        totalSize.textContent = formatBytes(total);
+      }
+      
+      function renderFiles() {
+        console.log('Rendering files, count:', files.length);
         
-        let html = '<div class="space-y-2">';
-        files.forEach((file, index) => {
-          html += `
-            <div class="file-item">
-              <div class="file-thumb">
-                ${file.thumbnail ? `<img src="${file.thumbnail}" class="w-full h-full object-cover rounded">` : '📷'}
+        if (files.length === 0) {
+          emptyState.style.display = 'block';
+          fileListContainer.innerHTML = '';
+          console.log('Showing empty state');
+        } else {
+          emptyState.style.display = 'none';
+          
+          let html = '<div class="space-y-2">';
+          files.forEach((file) => {
+            html += `
+              <div class="file-item">
+                <div class="file-thumb">
+                  ${file.thumbnail ? `<img src="${file.thumbnail}" class="w-full h-full object-cover rounded" alt="thumbnail">` : '<span class="text-2xl">📷</span>'}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium truncate">${file.name}</div>
+                  <div class="text-sm text-gray-500">${formatBytes(file.size)}</div>
+                </div>
+                <div>
+                  <button class="btn btn-secondary text-sm py-1 px-3 download-btn" data-id="${file.id}">
+                    ⬇ PDF
+                  </button>
+                </div>
               </div>
-              <div class="flex-1">
-                <div class="font-medium">${file.name}</div>
-                <div class="text-sm text-gray-500">${formatBytes(file.size)}</div>
-              </div>
-              <div>
-                <button class="btn btn-secondary text-sm py-1 px-3 download-btn" data-id="${file.id}">
-                  ⬇ PDF
-                </button>
-              </div>
-            </div>
-          `;
-        });
-        html += '</div>';
-        
-        fileListContainer.innerHTML = html;
-        
-        // Add download button handlers
-        document.querySelectorAll('.download-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const id = Number(btn.dataset.id);
-            downloadPDF(id);
+            `;
           });
-        });
-      }
-      updateStats();
-    }
-    
-    async function downloadPDF(id) {
-      const file = files.find(f => f.id === id);
-      if (!file) return;
-      
-      try {
-        const pdfDoc = await PDFLib.PDFDocument.create();
-        const arrayBuffer = await file.file.arrayBuffer();
-        const image = await pdfDoc.embedPng(arrayBuffer);
-        const page = pdfDoc.addPage([image.width, image.height]);
-        page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
-        
-        const pdfBytes = await pdfDoc.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = file.name.replace(/\.png$/i, '.pdf');
-        a.click();
-        
-        URL.revokeObjectURL(url);
-      } catch (err) {
-        alert('Error creating PDF: ' + err.message);
-      }
-    }
-    
-    async function combineAllPDFs() {
-      if (files.length === 0) {
-        alert('No files to combine');
-        return;
+          html += '</div>';
+          
+          fileListContainer.innerHTML = html;
+          console.log('File list updated');
+          
+          // Add download button handlers
+          document.querySelectorAll('.download-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              const id = Number(btn.dataset.id);
+              downloadPDF(id);
+            });
+          });
+        }
+        updateStats();
       }
       
-      try {
-        const pdfDoc = await PDFLib.PDFDocument.create();
+      async function downloadPDF(id) {
+        const file = files.find(f => f.id === id);
+        if (!file || !file.file) {
+          alert('File not found');
+          return;
+        }
         
-        for (const file of files) {
+        try {
+          const pdfDoc = await PDFLib.PDFDocument.create();
           const arrayBuffer = await file.file.arrayBuffer();
           const image = await pdfDoc.embedPng(arrayBuffer);
           const page = pdfDoc.addPage([image.width, image.height]);
           page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+          
+          const pdfBytes = await pdfDoc.save();
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = file.name.replace(/\.png$/i, '.pdf');
+          a.click();
+          
+          URL.revokeObjectURL(url);
+        } catch (err) {
+          console.error('PDF error:', err);
+          alert('Error creating PDF: ' + err.message);
+        }
+      }
+      
+      async function combineAllPDFs() {
+        if (files.length === 0) {
+          alert('No files to combine');
+          return;
         }
         
-        const pdfBytes = await pdfDoc.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'combined.pdf';
-        a.click();
-        
-        URL.revokeObjectURL(url);
-      } catch (err) {
-        alert('Error combining PDFs: ' + err.message);
+        try {
+          const pdfDoc = await PDFLib.PDFDocument.create();
+          
+          for (const file of files) {
+            if (!file.file) continue;
+            const arrayBuffer = await file.file.arrayBuffer();
+            const image = await pdfDoc.embedPng(arrayBuffer);
+            const page = pdfDoc.addPage([image.width, image.height]);
+            page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+          }
+          
+          const pdfBytes = await pdfDoc.save();
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'combined.pdf';
+          a.click();
+          
+          URL.revokeObjectURL(url);
+        } catch (err) {
+          console.error('Combine error:', err);
+          alert('Error combining PDFs: ' + err.message);
+        }
       }
-    }
-    
-    function handleFiles(selectedFiles) {
-      const pngFiles = Array.from(selectedFiles).filter(f => 
-        f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
-      );
       
-      if (pngFiles.length === 0) {
-        alert('Please select PNG files only');
-        return;
-      }
-      
-      pngFiles.forEach(file => {
-        const id = nextId++;
-        const fileObj = {
-          id,
-          name: file.name,
-          size: file.size,
-          file: file,
-          thumbnail: null
-        };
-        files.push(fileObj);
+      function handleFiles(selectedFiles) {
+        console.log('Files selected:', selectedFiles.length);
         
-        // Generate thumbnail
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = 48;
-            canvas.height = 48;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, 48, 48);
-            fileObj.thumbnail = canvas.toDataURL('image/png');
-            renderFiles();
+        const pngFiles = Array.from(selectedFiles).filter(f => 
+          f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
+        );
+        
+        console.log('PNG files:', pngFiles.length);
+        
+        if (pngFiles.length === 0) {
+          alert('Please select PNG files only');
+          return;
+        }
+        
+        pngFiles.forEach(file => {
+          const id = nextId++;
+          const fileObj = {
+            id,
+            name: file.name,
+            size: file.size,
+            file: file,
+            thumbnail: null
           };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
+          files.push(fileObj);
+          
+          // Generate thumbnail
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = 48;
+              canvas.height = 48;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, 48, 48);
+              fileObj.thumbnail = canvas.toDataURL('image/png');
+              renderFiles();
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+        
+        renderFiles();
+      }
       
+      // Event listeners
+      if (dropzone) {
+        dropzone.addEventListener('click', () => {
+          console.log('Dropzone clicked');
+          fileInput.click();
+        });
+        
+        dropzone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropzone.classList.add('dropzone-active');
+        });
+        
+        dropzone.addEventListener('dragleave', () => {
+          dropzone.classList.remove('dropzone-active');
+        });
+        
+        dropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('dropzone-active');
+          console.log('Files dropped:', e.dataTransfer.files.length);
+          handleFiles(e.dataTransfer.files);
+        });
+      }
+      
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          console.log('File input changed:', e.target.files.length);
+          handleFiles(e.target.files);
+          fileInput.value = '';
+        });
+      }
+      
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          files = [];
+          renderFiles();
+        });
+      }
+      
+      if (combineBtn) {
+        combineBtn.addEventListener('click', combineAllPDFs);
+      }
+      
+      // Initial render
       renderFiles();
-    }
-    
-    // Event listeners
-    dropzone.addEventListener('click', () => fileInput.click());
-    
-    dropzone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropzone.classList.add('dropzone-active');
+      console.log('App initialized');
     });
-    
-    dropzone.addEventListener('dragleave', () => {
-      dropzone.classList.remove('dropzone-active');
-    });
-    
-    dropzone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropzone.classList.remove('dropzone-active');
-      handleFiles(e.dataTransfer.files);
-    });
-    
-    fileInput.addEventListener('change', (e) => {
-      handleFiles(e.target.files);
-      fileInput.value = '';
-    });
-    
-    clearBtn.addEventListener('click', () => {
-      files = [];
-      renderFiles();
-    });
-    
-    combineBtn.addEventListener('click', combineAllPDFs);
-    
-    // Initial render
-    renderFiles();
   </script>
 </body>
 </html>
