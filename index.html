@@ -1,781 +1,538 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SG PDF Suite · PNG to PDF Converter</title>
-  
-  <style>
-    /* RESET & BASE */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: #f3f4f6;
-      color: #111827;
-      line-height: 1.5;
-    }
-    
-    /* NAVIGATION */
-    .navbar {
-      background: white;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: #111827;
-    }
-    
-    .logo-icon {
-      background: #1f2937;
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: bold;
-    }
-    
-    .logo-text {
-      font-size: 1.5rem;
-      font-weight: 300;
-    }
-    
-    .logo-text span {
-      font-weight: 600;
-      color: #2563eb;
-    }
-    
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-    }
-    
-    .nav-links a {
-      text-decoration: none;
-      color: #4b5563;
-      font-size: 1rem;
-      padding: 0.5rem 0;
-      transition: color 0.2s;
-    }
-    
-    .nav-links a:hover {
-      color: #2563eb;
-    }
-    
-    .nav-links a.active {
-      color: #2563eb;
-      border-bottom: 2px solid #2563eb;
-    }
-    
-    /* MAIN CONTAINER */
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 2rem;
-    }
-    
-    /* PRIVACY BANNER */
-    .privacy-banner {
-      background: #dbeafe;
-      border: 1px solid #93c5fd;
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
-      margin-bottom: 2rem;
-      color: #1e40af;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.95rem;
-    }
-    
-    .privacy-banner strong {
-      font-weight: 600;
-    }
-    
-    /* CARD */
-    .card {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-    
-    .card-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    
-    .card-header h1 {
-      font-size: 1.8rem;
-      font-weight: 300;
-      margin-bottom: 0.25rem;
-    }
-    
-    .card-header p {
-      color: #6b7280;
-      font-size: 0.95rem;
-    }
-    
-    /* DROP ZONE */
-    .dropzone {
-      margin: 1.5rem;
-      border: 3px dashed #d1d5db;
-      border-radius: 12px;
-      padding: 3rem 2rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: #fafafa;
-    }
-    
-    .dropzone:hover {
-      border-color: #2563eb;
-      background: #eff6ff;
-    }
-    
-    .dropzone.dragover {
-      border-color: #2563eb;
-      background: #eff6ff;
-    }
-    
-    .dropzone-icon {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    .dropzone-title {
-      font-size: 1.2rem;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-    }
-    
-    .dropzone-text {
-      color: #6b7280;
-      margin-bottom: 0.5rem;
-    }
-    
-    .dropzone-text span {
-      color: #2563eb;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    
-    .dropzone-hint {
-      color: #9ca3af;
-      font-size: 0.85rem;
-    }
-    
-    /* TOOLBAR */
-    .toolbar {
-      background: #f9fafb;
-      padding: 1rem 1.5rem;
-      border-top: 1px solid #e5e7eb;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    
-    .btn-group {
-      display: flex;
-      gap: 0.5rem;
-    }
-    
-    .btn {
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.2s;
-    }
-    
-    .btn-primary {
-      background: #2563eb;
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background: #1d4ed8;
-    }
-    
-    .btn-primary:disabled {
-      background: #93c5fd;
-      cursor: not-allowed;
-    }
-    
-    .btn-secondary {
-      background: white;
-      border-color: #d1d5db;
-    }
-    
-    .btn-secondary:hover {
-      background: #f3f4f6;
-    }
-    
-    .stats {
-      background: white;
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      color: #4b5563;
-      border: 1px solid #e5e7eb;
-    }
-    
-    /* FILE LIST */
-    .file-list {
-      padding: 1.5rem;
-      min-height: 200px;
-    }
-    
-    .file-item {
-      display: flex;
-      align-items: center;
-      padding: 1rem;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      margin-bottom: 0.75rem;
-      background: white;
-      transition: all 0.2s;
-    }
-    
-    .file-item:hover {
-      border-color: #2563eb;
-      box-shadow: 0 2px 4px rgba(37,99,235,0.1);
-    }
-    
-    .file-thumb {
-      width: 48px;
-      height: 48px;
-      background: #f3f4f6;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 1rem;
-      font-size: 1.5rem;
-      overflow: hidden;
-    }
-    
-    .file-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .file-info {
-      flex: 1;
-    }
-    
-    .file-name {
-      font-weight: 500;
-      margin-bottom: 0.25rem;
-    }
-    
-    .file-meta {
-      font-size: 0.8rem;
-      color: #6b7280;
-    }
-    
-    .file-status {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 12px;
-      font-size: 0.7rem;
-      margin-left: 0.5rem;
-      background: #e5e7eb;
-      color: #4b5563;
-    }
-    
-    .file-status.done {
-      background: #dcfce7;
-      color: #166534;
-    }
-    
-    .file-actions button {
-      padding: 0.4rem 1rem;
-      font-size: 0.8rem;
-      margin-left: 0.5rem;
-    }
-    
-    /* EMPTY STATE */
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-    }
-    
-    .empty-state-icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      opacity: 0.5;
-    }
-    
-    .empty-state-title {
-      font-size: 1.2rem;
-      color: #6b7280;
-      margin-bottom: 0.5rem;
-    }
-    
-    .empty-state-text {
-      color: #9ca3af;
-      font-size: 0.9rem;
-    }
-    
-    /* FOOTER */
-    .footer {
-      background: white;
-      border-top: 1px solid #e5e7eb;
-      margin-top: 3rem;
-      padding: 3rem 2rem 1.5rem;
-    }
-    
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    .footer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
-      margin-bottom: 2rem;
-    }
-    
-    .footer-col h3 {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .footer-col h4 {
-      font-size: 1rem;
-      margin-bottom: 1rem;
-      color: #4b5563;
-    }
-    
-    .footer-col ul {
-      list-style: none;
-    }
-    
-    .footer-col li {
-      margin-bottom: 0.5rem;
-    }
-    
-    .footer-col a {
-      color: #6b7280;
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
-    }
-    
-    .footer-col a:hover {
-      color: #2563eb;
-    }
-    
-    .footer-bottom {
-      border-top: 1px solid #e5e7eb;
-      padding-top: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      color: #6b7280;
-      font-size: 0.9rem;
-    }
-    
-    .footer-links {
-      display: flex;
-      gap: 1.5rem;
-    }
-    
-    .footer-links a {
-      color: #6b7280;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    
-    .footer-links a:hover {
-      color: #2563eb;
-    }
-    
-    /* UTILITY */
-    .hidden {
-      display: none !important;
-    }
-    
-    /* RESPONSIVE */
-    @media (max-width: 640px) {
-      .navbar {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-      }
-      
-      .nav-links {
-        width: 100%;
-        justify-content: center;
-      }
-      
-      .toolbar {
-        flex-direction: column;
-      }
-      
-      .btn-group {
-        width: 100%;
-      }
-      
-      .btn-group .btn {
-        flex: 1;
-      }
-      
-      .footer-bottom {
-        flex-direction: column;
-        text-align: center;
-      }
-      
-      .footer-links {
-        justify-content: center;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy PDF - Convert PNG to PDF Client-Side</title>
+    <meta name="description" content="Lightweight, privacy-first tool to convert PNG images to individual or combined PDFs. No uploads, 100% browser-based.">
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; }
+        .drop-zone.active { border-color: #3b82f6; background-color: #eff6ff; }
+        .dark .drop-zone.active { border-color: #60a5fa; background-color: #1e293b; }
+        .sortable-ghost { opacity: 0.4; background-color: #dbeafe; }
+        progress::-webkit-progress-value { background-color: #3b82f6; transition: width 0.3s ease; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
 </head>
-<body>
-  <!-- NAVIGATION -->
-  <nav class="navbar">
-    <a href="/" class="logo">
-      <div class="logo-icon">SG</div>
-      <div class="logo-text">PDF <span>Suite</span></div>
-    </a>
-    <div class="nav-links">
-      <a href="/" class="active">Home</a>
-      <a href="/about.html">About</a>
-      <a href="/contact.html">Contact</a>
-      <a href="/privacy.html">Privacy</a>
-      <a href="/terms.html">Terms</a>
-    </div>
-  </nav>
-  
-  <!-- MAIN CONTENT -->
-  <div class="container">
-    
-    <!-- Privacy Banner -->
-    <div class="privacy-banner">
-      <span style="font-size: 1.2rem;">🔒</span>
-      <div><strong>100% Private</strong> — Your files never leave your device. No uploads, no tracking.</div>
-    </div>
-    
-    <!-- Converter Card -->
-    <div class="card">
-      
-      <!-- Header -->
-      <div class="card-header">
-        <h1>PNG to PDF Converter</h1>
-        <p>Convert images to PDF instantly · Client-side only</p>
-      </div>
-      
-      <!-- Drop Zone -->
-      <div id="dropzone" class="dropzone">
-        <input type="file" id="fileInput" multiple accept=".png,image/png" style="display: none;">
-        <div class="dropzone-icon">📤</div>
-        <div class="dropzone-title">Drop PNG files here</div>
-        <div class="dropzone-text">or <span id="browseLink">click to browse</span></div>
-        <div class="dropzone-hint">✓ PNG only · No size limit</div>
-      </div>
-      
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <div class="btn-group">
-          <button id="combineBtn" class="btn btn-primary">📑 Combine to PDF</button>
-          <button id="clearBtn" class="btn btn-secondary">🗑️ Clear All</button>
-        </div>
-        <div class="stats">
-          <span id="fileCount">0 files</span> · <span id="totalSize">0 KB</span>
-        </div>
-      </div>
-      
-      <!-- File List -->
-      <div id="fileList" class="file-list"></div>
-      
-      <!-- Empty State -->
-      <div id="emptyState" class="empty-state">
-        <div class="empty-state-icon">🖼️</div>
-        <div class="empty-state-title">No images added yet</div>
-        <div class="empty-state-text">Drop PNG files above to get started</div>
-      </div>
-      
-    </div>
-  </div>
-  
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-grid">
-        
-        <!-- About -->
-        <div class="footer-col">
-          <h3>
-            <span style="background: #1f2937; color: white; width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold;">SG</span>
-            PDF Suite
-          </h3>
-          <p style="color: #6b7280; font-size: 0.9rem; line-height: 1.6;">
-            Free, private PNG to PDF converter. 100% client-side, no uploads, no tracking.
-          </p>
-        </div>
-        
-        <!-- Quick Links -->
-        <div class="footer-col">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="/">🏠 Home</a></li>
-            <li><a href="/about.html">ℹ️ About Us</a></li>
-            <li><a href="/contact.html">📧 Contact</a></li>
-          </ul>
-        </div>
-        
-        <!-- Legal -->
-        <div class="footer-col">
-          <h4>Legal</h4>
-          <ul>
-            <li><a href="/privacy.html">🔒 Privacy Policy</a></li>
-            <li><a href="/terms.html">📜 Terms & Conditions</a></li>
-            <li><a href="/disclaimer.html">⚠️ Disclaimer</a></li>
-          </ul>
-        </div>
-        
-        <!-- Resources -->
-        <div class="footer-col">
-          <h4>Resources</h4>
-          <ul>
-            <li><a href="/sitemap.html">🗺️ Sitemap</a></li>
-            <li><a href="/sitemap.xml">📄 Sitemap XML</a></li>
-            <li><a href="/ads.txt">💰 ads.txt</a></li>
-          </ul>
-        </div>
-      </div>
-      
-      <!-- Bottom Bar -->
-      <div class="footer-bottom">
-        <div>© 2026 SG PDF Suite. All rights reserved.</div>
-        <div class="footer-links">
-          <a href="/privacy.html">Privacy</a>
-          <a href="/terms.html">Terms</a>
-          <a href="/disclaimer.html">Disclaimer</a>
-          <a href="/sitemap.html">Sitemap</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-  
-  <!-- JAVASCRIPT -->
-  <script>
-    (function() {
-      console.log('🚀 App starting...');
-      
-      // State
-      let files = [];
-      let nextId = 1;
-      
-      // DOM Elements
-      const dropzone = document.getElementById('dropzone');
-      const fileInput = document.getElementById('fileInput');
-      const browseLink = document.getElementById('browseLink');
-      const fileList = document.getElementById('fileList');
-      const emptyState = document.getElementById('emptyState');
-      const fileCount = document.getElementById('fileCount');
-      const totalSize = document.getElementById('totalSize');
-      const combineBtn = document.getElementById('combineBtn');
-      const clearBtn = document.getElementById('clearBtn');
-      
-      console.log('✅ Elements loaded');
-      
-      // Format bytes
-      function formatBytes(bytes) {
-        if (bytes === 0) return '0 B';
-        const k = 1024;
-        const sizes = ['B', 'KB', 'MB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-      }
-      
-      // Update stats
-      function updateStats() {
-        fileCount.textContent = files.length + ' file' + (files.length !== 1 ? 's' : '');
-        const total = files.reduce((sum, f) => sum + f.size, 0);
-        totalSize.textContent = formatBytes(total);
-      }
-      
-      // Render files
-      function renderFiles() {
-        console.log('📝 Rendering files:', files.length);
-        
-        if (files.length === 0) {
-          emptyState.classList.remove('hidden');
-          fileList.innerHTML = '';
-        } else {
-          emptyState.classList.add('hidden');
-          
-          let html = '';
-          files.forEach(file => {
-            html += `
-              <div class="file-item">
-                <div class="file-thumb">
-                  ${file.thumbnail ? `<img src="${file.thumbnail}" alt="thumb">` : '📷'}
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen">
+
+    <!-- Header -->
+    <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i data-lucide="file-type-2" class="text-blue-600 w-8 h-8"></i>
+                <h1 class="font-bold text-xl tracking-tight hidden sm:block" id="t-brand">Privacy PDF</h1>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+                    <button onclick="setLanguage('en')" class="px-3 py-1 text-xs font-medium rounded-md lang-btn bg-white dark:bg-slate-700 shadow-sm" id="btn-en">EN</button>
+                    <button onclick="setLanguage('es')" class="px-3 py-1 text-xs font-medium rounded-md lang-btn" id="btn-es">ES</button>
                 </div>
-                <div class="file-info">
-                  <div class="file-name">${file.name}</div>
-                  <div class="file-meta">
-                    ${formatBytes(file.size)}
-                    <span class="file-status done">✅ Ready</span>
-                  </div>
+                <button onclick="toggleDarkMode()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+                    <i data-lucide="sun" id="sun-icon"></i>
+                    <i data-lucide="moon" id="moon-icon" class="hidden"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 lg:p-8 grid lg:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Upload & Queue -->
+        <div class="lg:col-span-8 space-y-6">
+            
+            <!-- Drop Zone -->
+            <div id="drop-zone" class="drop-zone border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-12 text-center transition-all cursor-pointer hover:border-blue-400 group relative">
+                <input type="file" id="file-input" multiple accept="image/png" class="absolute inset-0 opacity-0 cursor-pointer">
+                <div class="space-y-4 pointer-events-none">
+                    <div class="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 text-blue-600 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                        <i data-lucide="upload-cloud" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <p class="text-lg font-semibold" id="t-drop-title">Drop your PNGs here</p>
+                        <p class="text-slate-500 text-sm" id="t-drop-subtitle">or click to browse from your device</p>
+                    </div>
+                    <p class="text-xs text-slate-400" id="t-privacy-note">Privacy Check: Files are processed 100% locally. No uploads to servers.</p>
                 </div>
-                <div class="file-actions">
-                  <button class="btn btn-secondary download-btn" data-id="${file.id}" style="padding: 0.4rem 1rem;">⬇ PDF</button>
+            </div>
+
+            <!-- Queue Header -->
+            <div id="queue-container" class="hidden space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-bold text-lg flex items-center gap-2">
+                        <span id="t-queue-count">Files</span>
+                        <span id="file-count-badge" class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="clearQueue()" class="text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <span id="t-clear-btn">Clear (X)</span>
+                        </button>
+                    </div>
                 </div>
-              </div>
-            `;
-          });
-          
-          fileList.innerHTML = html;
-          
-          // Add download handlers
-          document.querySelectorAll('.download-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              const id = Number(btn.dataset.id);
-              const file = files.find(f => f.id === id);
-              alert(`✨ PDF generation for: ${file.name}\n(This is a demo - PDF generation will be added soon!)`);
+
+                <!-- Sortable List -->
+                <div id="sortable-list" class="grid gap-3 sm:grid-cols-2">
+                    <!-- Cards will be injected here -->
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="py-20 text-center opacity-50">
+                <i data-lucide="images" class="w-12 h-12 mx-auto mb-4"></i>
+                <p id="t-empty-msg">No images selected yet. Start by adding some PNGs.</p>
+            </div>
+        </div>
+
+        <!-- Right Column: Settings & Actions -->
+        <aside class="lg:col-span-4 space-y-6">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sticky top-24 shadow-sm">
+                <h2 class="font-bold text-lg mb-6 flex items-center gap-2">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span id="t-settings-title">PDF Settings</span>
+                </h2>
+
+                <div class="space-y-5">
+                    <!-- Page Size -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-slate-500 uppercase tracking-wider" id="t-setting-size">Page Size</label>
+                        <select id="setting-page-size" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="a4">A4 (210 × 297mm)</option>
+                            <option value="letter">Letter (8.5 × 11")</option>
+                            <option value="legal">Legal (8.5 × 14")</option>
+                            <option value="fit">Fit to Image</option>
+                        </select>
+                    </div>
+
+                    <!-- Orientation -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-slate-500 uppercase tracking-wider" id="t-setting-orient">Orientation</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setOrientation('p')" class="orient-btn border border-slate-200 dark:border-slate-700 rounded-lg py-2 text-sm bg-blue-600 text-white" id="orient-p">Portrait</button>
+                            <button onclick="setOrientation('l')" class="orient-btn border border-slate-200 dark:border-slate-700 rounded-lg py-2 text-sm" id="orient-l">Landscape</button>
+                            <button onclick="setOrientation('a')" class="orient-btn border border-slate-200 dark:border-slate-700 rounded-lg py-2 text-sm" id="orient-a">Auto</button>
+                        </div>
+                    </div>
+
+                    <!-- Margins -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-slate-500 uppercase tracking-wider" id="t-setting-margin">Margins</label>
+                        <select id="setting-margin" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="0">None (0mm)</option>
+                            <option value="5">Small (5mm)</option>
+                            <option value="12.7">Medium (12.7mm)</option>
+                            <option value="25.4">Large (25.4mm)</option>
+                        </select>
+                    </div>
+
+                    <!-- Quality -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label class="text-sm font-medium text-slate-500 uppercase tracking-wider" id="t-setting-quality">Quality</label>
+                            <span id="quality-val" class="text-xs font-mono">80%</span>
+                        </div>
+                        <input type="range" id="setting-quality" min="10" max="100" value="80" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                    </div>
+
+                    <div class="pt-4 space-y-3">
+                        <button id="export-combined" onclick="generatePDF(true)" disabled class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 group">
+                            <i data-lucide="combine" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
+                            <span id="t-combine-btn">Generate Combined PDF (C)</span>
+                        </button>
+                        <p class="text-[10px] text-center text-slate-400 uppercase tracking-widest leading-relaxed">
+                            <span id="t-shortcut-hint">Shortcuts: U (Upload), C (Combine), X (Clear)</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Overall Progress -->
+            <div id="overall-progress-container" class="hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 animate-pulse">
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="font-medium" id="t-processing">Processing...</span>
+                    <span id="overall-percent">0%</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                    <div id="overall-progress-bar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Success Toasts/Info -->
+    <footer class="max-w-6xl mx-auto px-4 py-12 border-t border-slate-200 dark:border-slate-800 mt-12 grid sm:grid-cols-3 gap-8">
+        <div>
+            <h3 class="font-bold mb-3" id="t-how-works">How it works</h3>
+            <p class="text-sm text-slate-500" id="t-how-desc">All conversions happen inside your browser using the jsPDF library. Your images are never sent to any server, making this 100% private and offline-capable.</p>
+        </div>
+        <div>
+            <h3 class="font-bold mb-3" id="t-privacy-title">Privacy Policy</h3>
+            <p class="text-sm text-slate-500" id="t-privacy-desc">Since we don't use a server, there is no 1-hour deletion policy—there's simply nothing to delete. Your data stays on your RAM until you close the tab.</p>
+        </div>
+        <div class="text-slate-500 text-sm">
+            <p>&copy; 2024 Privacy PDF</p>
+            <p class="mt-2">Built with jsPDF & SortableJS</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- State Management ---
+        let queue = [];
+        let currentLang = 'en';
+        let orientation = 'p'; // p = portrait, l = landscape, a = auto
+        const loc = {
+            en: {
+                "brand": "Privacy PDF",
+                "drop-title": "Drop your PNGs here",
+                "drop-subtitle": "or click to browse from your device",
+                "privacy-note": "Privacy Check: Files are processed 100% locally. No uploads.",
+                "queue-count": "Queue",
+                "clear-btn": "Clear Queue (X)",
+                "empty-msg": "No images selected yet. Start by adding some PNGs.",
+                "settings-title": "PDF Settings",
+                "setting-size": "Page Size",
+                "setting-orient": "Orientation",
+                "setting-margin": "Margins",
+                "setting-quality": "Quality",
+                "combine-btn": "Export Combined PDF (C)",
+                "shortcut-hint": "Shortcuts: U (Upload), C (Combine), X (Clear)",
+                "processing": "Converting...",
+                "how-works": "How it works",
+                "how-desc": "All conversions happen locally. Your images never leave your machine.",
+                "privacy-title": "Privacy First",
+                "privacy-desc": "We don't have a server. Your files are safe in your browser memory.",
+                "status-queued": "Queued",
+                "status-converting": "Processing...",
+                "status-done": "Ready",
+                "btn-download": "Download PDF"
+            },
+            es: {
+                "brand": "PDF Privado",
+                "drop-title": "Suelta tus PNGs aquí",
+                "drop-subtitle": "o haz clic para buscar en tu dispositivo",
+                "privacy-note": "Privacidad: Los archivos se procesan 100% localmente.",
+                "queue-count": "Cola",
+                "clear-btn": "Limpiar (X)",
+                "empty-msg": "No hay imágenes seleccionadas. Empieza añadiendo PNGs.",
+                "settings-title": "Ajustes del PDF",
+                "setting-size": "Tamaño de Página",
+                "setting-orient": "Orientación",
+                "setting-margin": "Márgenes",
+                "setting-quality": "Calidad",
+                "combine-btn": "Generar PDF Combinado (C)",
+                "shortcut-hint": "Atajos: U (Subir), C (Combinar), X (Limpiar)",
+                "processing": "Convirtiendo...",
+                "how-works": "Cómo funciona",
+                "how-desc": "Todo ocurre en tu navegador. Tus imágenes nunca salen de tu equipo.",
+                "privacy-title": "Privacidad Total",
+                "privacy-desc": "No usamos servidores. Tus archivos están seguros en tu memoria RAM.",
+                "status-queued": "En cola",
+                "status-converting": "Procesando...",
+                "status-done": "Listo",
+                "btn-download": "Descargar PDF"
+            }
+        };
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initSortable();
+            setupKeyboard();
+            setLanguage('en');
+        });
+
+        function initSortable() {
+            const el = document.getElementById('sortable-list');
+            Sortable.create(el, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                handle: '.drag-handle',
+                onEnd: (evt) => {
+                    const item = queue.splice(evt.oldIndex, 1)[0];
+                    queue.splice(evt.newIndex, 0, item);
+                }
             });
-          });
         }
+
+        // --- File Handling ---
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
         
-        updateStats();
-      }
-      
-      // Handle files
-      function handleFiles(selectedFiles) {
-        console.log('📁 Files selected:', selectedFiles.length);
-        
-        const pngFiles = Array.from(selectedFiles).filter(f => 
-          f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
-        );
-        
-        if (pngFiles.length === 0) {
-          alert('Please select PNG files only');
-          return;
+        ['dragenter', 'dragover'].forEach(name => {
+            dropZone.addEventListener(name, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('active');
+            });
+        });
+        ['dragleave', 'drop'].forEach(name => {
+            dropZone.addEventListener(name, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('active');
+            });
+        });
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        });
+
+        async function handleFiles(files) {
+            const pngFiles = Array.from(files).filter(f => f.type === 'image/png');
+            if (!pngFiles.length) return;
+
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('queue-container').classList.remove('hidden');
+            document.getElementById('export-combined').disabled = false;
+
+            for (const file of pngFiles) {
+                const id = Math.random().toString(36).substr(2, 9);
+                const item = {
+                    id,
+                    file,
+                    name: file.name,
+                    size: formatSize(file.size),
+                    status: 'queued',
+                    preview: await getPreview(file)
+                };
+                queue.push(item);
+                renderCard(item);
+            }
+            updateFileCount();
         }
-        
-        pngFiles.forEach(file => {
-          const id = nextId++;
-          const fileObj = {
-            id,
-            name: file.name,
-            size: file.size,
-            file: file,
-            thumbnail: null
-          };
-          files.push(fileObj);
-          
-          // Generate thumbnail
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-              const canvas = document.createElement('canvas');
-              canvas.width = 48;
-              canvas.height = 48;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0, 48, 48);
-              fileObj.thumbnail = canvas.toDataURL('image/png');
-              renderFiles();
-            };
-            img.src = e.target.result;
-          };
-          reader.readAsDataURL(file);
+
+        function getPreview(file) {
+            return new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderCard(item) {
+            const list = document.getElementById('sortable-list');
+            const card = document.createElement('div');
+            card.id = `card-${item.id}`;
+            card.className = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex gap-4 items-center group shadow-sm hover:shadow-md transition-shadow";
+            card.innerHTML = `
+                <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500">
+                    <i data-lucide="grip-vertical"></i>
+                </div>
+                <div class="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-100 dark:border-slate-700">
+                    <img src="${item.preview}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-grow min-w-0">
+                    <h4 class="font-medium text-sm truncate">${item.name}</h4>
+                    <p class="text-xs text-slate-500">${item.size} • <span class="status-text text-blue-500">${loc[currentLang]['status-queued']}</span></p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="downloadSingle('${item.id}')" title="${loc[currentLang]['btn-download']}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="removeItem('${item.id}')" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `;
+            list.appendChild(card);
+            lucide.createIcons();
+        }
+
+        function removeItem(id) {
+            queue = queue.filter(i => i.id !== id);
+            document.getElementById(`card-${id}`).remove();
+            updateFileCount();
+            if (!queue.length) {
+                document.getElementById('empty-state').classList.remove('hidden');
+                document.getElementById('queue-container').classList.add('hidden');
+                document.getElementById('export-combined').disabled = true;
+            }
+        }
+
+        function clearQueue() {
+            queue = [];
+            document.getElementById('sortable-list').innerHTML = '';
+            document.getElementById('empty-state').classList.remove('hidden');
+            document.getElementById('queue-container').classList.add('hidden');
+            document.getElementById('export-combined').disabled = true;
+            updateFileCount();
+        }
+
+        // --- PDF Generation ---
+        async function generatePDF(isCombined = true) {
+            if (!queue.length) return;
+
+            const { jsPDF } = window.jspdf;
+            const pageSize = document.getElementById('setting-page-size').value;
+            const margin = parseFloat(document.getElementById('setting-margin').value);
+            const quality = parseInt(document.getElementById('setting-quality').value) / 100;
+            
+            const progressContainer = document.getElementById('overall-progress-container');
+            const progressBar = document.getElementById('overall-progress-bar');
+            const progressPercent = document.getElementById('overall-percent');
+
+            progressContainer.classList.remove('hidden');
+            document.getElementById('export-combined').disabled = true;
+
+            const doc = new jsPDF({
+                orientation: orientation === 'a' ? 'p' : orientation,
+                unit: 'mm',
+                format: pageSize === 'fit' ? 'a4' : pageSize
+            });
+
+            for (let i = 0; i < queue.length; i++) {
+                const item = queue[i];
+                const img = await loadImage(item.preview);
+                
+                // Progress update
+                const percent = Math.round(((i + 1) / queue.length) * 100);
+                progressBar.style.width = percent + '%';
+                progressPercent.innerText = percent + '%';
+
+                // Calculate Dimensions
+                let finalOrientation = orientation;
+                if (orientation === 'a') {
+                    finalOrientation = img.width > img.height ? 'l' : 'p';
+                }
+
+                let pw, ph;
+                if (pageSize === 'fit') {
+                    // 1 pixel = 0.264583 mm at 96 DPI
+                    pw = img.width * 0.264583 + (margin * 2);
+                    ph = img.height * 0.264583 + (margin * 2);
+                } else {
+                    const formats = {
+                        a4: [210, 297],
+                        letter: [215.9, 279.4],
+                        legal: [215.9, 355.6]
+                    };
+                    const base = formats[pageSize];
+                    pw = finalOrientation === 'l' ? base[1] : base[0];
+                    ph = finalOrientation === 'l' ? base[0] : base[1];
+                }
+
+                if (i > 0 && isCombined) doc.addPage([pw, ph], finalOrientation);
+                else if (i === 0) {
+                    // First page fix
+                    doc.deletePage(1);
+                    doc.addPage([pw, ph], finalOrientation);
+                }
+
+                const availableW = pw - (margin * 2);
+                const availableH = ph - (margin * 2);
+                
+                // Fit image maintaining aspect ratio
+                const ratio = Math.min(availableW / img.width, availableH / img.height);
+                const drawW = img.width * ratio;
+                const drawH = img.height * ratio;
+                const x = margin + (availableW - drawW) / 2;
+                const y = margin + (availableH - drawH) / 2;
+
+                doc.addImage(item.preview, 'PNG', x, y, drawW, drawH, undefined, 'FAST');
+
+                if (!isCombined) {
+                    doc.save(`${item.name.replace('.png', '')}.pdf`);
+                    // If single mode, don't accumulate
+                }
+            }
+
+            if (isCombined) {
+                doc.save(`combined_images_${new Date().getTime()}.pdf`);
+            }
+
+            setTimeout(() => {
+                progressContainer.classList.add('hidden');
+                document.getElementById('export-combined').disabled = false;
+                progressBar.style.width = '0%';
+            }, 1000);
+        }
+
+        async function downloadSingle(id) {
+            const item = queue.find(i => i.id === id);
+            const originalQueue = [...queue];
+            queue = [item];
+            await generatePDF(false);
+            queue = originalQueue;
+        }
+
+        function loadImage(src) {
+            return new Promise(resolve => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.src = src;
+            });
+        }
+
+        // --- Helpers & UI ---
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function updateFileCount() {
+            document.getElementById('file-count-badge').innerText = queue.length;
+        }
+
+        function setOrientation(o) {
+            orientation = o;
+            document.querySelectorAll('.orient-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('border-slate-200');
+            });
+            document.getElementById(`orient-${o}`).classList.add('bg-blue-600', 'text-white');
+            document.getElementById(`orient-${o}`).classList.remove('border-slate-200');
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm'));
+            document.getElementById(`btn-${lang}`).classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm');
+            
+            // Translate elements
+            Object.keys(loc[lang]).forEach(key => {
+                const el = document.getElementById(`t-${key}`);
+                if (el) el.innerText = loc[lang][key];
+            });
+
+            // Update statuses in queue
+            document.querySelectorAll('.status-text').forEach(el => {
+                el.innerText = loc[lang]['status-queued'];
+            });
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            document.getElementById('sun-icon').classList.toggle('hidden');
+            document.getElementById('moon-icon').classList.toggle('hidden');
+        }
+
+        function setupKeyboard() {
+            window.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+                const key = e.key.toLowerCase();
+                if (key === 'u') fileInput.click();
+                if (key === 'c') generatePDF(true);
+                if (key === 'x') clearQueue();
+            });
+        }
+
+        document.getElementById('setting-quality').addEventListener('input', (e) => {
+            document.getElementById('quality-val').innerText = e.target.value + '%';
         });
-        
-        renderFiles();
-      }
-      
-      // Event Listeners
-      if (dropzone) {
-        dropzone.addEventListener('click', () => fileInput.click());
-        
-        dropzone.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          dropzone.classList.add('dragover');
-        });
-        
-        dropzone.addEventListener('dragleave', () => {
-          dropzone.classList.remove('dragover');
-        });
-        
-        dropzone.addEventListener('drop', (e) => {
-          e.preventDefault();
-          dropzone.classList.remove('dragover');
-          handleFiles(e.dataTransfer.files);
-        });
-      }
-      
-      if (browseLink) {
-        browseLink.addEventListener('click', (e) => {
-          e.stopPropagation();
-          fileInput.click();
-        });
-      }
-      
-      if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-          handleFiles(e.target.files);
-          fileInput.value = '';
-        });
-      }
-      
-      if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
-          files = [];
-          renderFiles();
-        });
-      }
-      
-      if (combineBtn) {
-        combineBtn.addEventListener('click', () => {
-          if (files.length === 0) {
-            alert('No files to combine');
-          } else {
-            alert(`📑 Combine ${files.length} file${files.length !== 1 ? 's' : ''} into one PDF`);
-          }
-        });
-      }
-      
-      // Initial render
-      renderFiles();
-      console.log('✅ App ready');
-    })();
-  </script>
+
+    </script>
 </body>
 </html>
