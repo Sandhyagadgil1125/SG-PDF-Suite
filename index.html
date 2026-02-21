@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SG PDF Suite – Free Online PDF Tools</title>
+    
+    <!-- Custom SG Favicon generated via SVG -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%2342f8f5%22/><text x=%2250%22 y=%2268%22 font-family=%22Arial, sans-serif%22 font-size=%2245%22 font-weight=%22bold%22 fill=%22%230d0f14%22 text-anchor=%22middle%22>SG</text></svg>">
+    
     <!-- Futuristic Font -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
     
@@ -61,19 +65,30 @@
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: var(--accent-glow);
-            text-shadow: 0 0 8px var(--glow-shadow);
         }
 
-        .sub-logo {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
+        .logo-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background-color: var(--accent-glow);
+            color: var(--bg-main);
+            border-radius: 8px;
+            font-weight: 900;
+            margin-right: 12px;
+            font-size: 1.1rem;
             text-shadow: none;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-glow);
+            text-shadow: 0 0 8px var(--glow-shadow);
         }
 
         .nav-links {
@@ -169,7 +184,7 @@
             overflow-y: auto;
         }
 
-        /* Updated Hero Section for Compact Layout */
+        /* Hero Section */
         .hero {
             text-align: center;
             padding: 0 1rem 2rem 1rem;
@@ -376,7 +391,7 @@
             .layout-wrapper { flex-direction: column; }
             .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--accent-glow); }
             .tools-grid { grid-template-columns: 1fr; }
-            .hero h1 { font-size: 1.5rem; } /* Even smaller on mobile */
+            .hero h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -385,8 +400,8 @@
     <!-- Top Navbar -->
     <header class="navbar">
         <div class="logo">
-            <span class="icon">⚡</span>
-            <span class="logo-text">Prompt Minds <span class="sub-logo">- SG PDF Suite</span></span>
+            <span class="logo-box">SG</span>
+            <span class="logo-text">SG PDF Suite</span>
         </div>
         <nav class="nav-links" id="nav-links">
             <a href="#" class="active" onclick="filterTools('All'); closeMobileMenu();">Home</a>
@@ -422,7 +437,7 @@
                 <p>Process, convert, and secure your files directly in your browser with our futuristic tool suite.</p>
             </section>
 
-            <!-- Tools Grid (Heading removed as requested) -->
+            <!-- Tools Grid -->
             <section id="tools-section">
                 <div class="tools-grid" id="tools-grid">
                     <!-- Tools will be injected here by JavaScript -->
@@ -434,7 +449,7 @@
     <!-- Footer -->
     <footer id="contact">
         <div class="footer-content">
-            <p>© 2026 Prompt Minds. All Rights Reserved.</p>
+            <p>© 2026 SG PDF Suite. All Rights Reserved.</p>
             <div class="footer-links">
                 <a href="#">Privacy Policy</a> | 
                 <a href="#">Terms</a> | 
