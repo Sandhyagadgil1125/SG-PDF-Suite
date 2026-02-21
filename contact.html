@@ -1,387 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact Us · PNG to PDF Bridge</title>
-  
-  <!-- SEO & Meta -->
-  <meta name="description" content="Get in touch with the PNG·PDF Bridge team. Send us your questions, feedback, or suggestions.">
-  
-  <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <style>
-    * { font-family: 'Inter', sans-serif; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - SG PDF Suite</title>
     
-    /* Form focus styles */
-    .form-input:focus {
-      outline: none;
-      ring: 2px;
-      ring-color: #3b82f6;
-      border-color: #3b82f6;
-    }
+    <!-- Custom SG Favicon generated via SVG -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%2342f8f5%22/><text x=%2250%22 y=%2268%22 font-family=%22Arial, sans-serif%22 font-size=%2245%22 font-weight=%22bold%22 fill=%22%230d0f14%22 text-anchor=%22middle%22>SG</text></svg>">
     
-    /* Dark mode transitions */
-    .dark .form-input {
-      background-color: #1f2937;
-      border-color: #374151;
-      color: white;
-    }
+    <!-- Futuristic Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
     
-    /* Send button animation */
-    .send-btn {
-      transition: all 0.3s ease;
-    }
-    
-    .send-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
-    }
-    
-    /* Contact card */
-    .contact-card {
-      transition: transform 0.3s ease;
-    }
-    
-    .contact-card:hover {
-      transform: translateY(-5px);
-    }
-  </style>
-</head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 antialiased">
-  
-  <!-- Navigation -->
-  <nav class="border-b dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <!-- Logo -->
-        <a href="/" class="flex items-center gap-2 text-xl font-light hover:text-blue-600 dark:hover:text-blue-400 transition">
-          <span class="text-2xl">📄</span>
-          <span>PNG·PDF <span class="font-semibold text-blue-600 dark:text-blue-400">bridge</span></span>
-        </a>
-        
-        <!-- Navigation Links -->
-        <div class="flex items-center gap-6">
-          <a href="/" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Home</a>
-          <a href="/about.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">About</a>
-          <a href="/contact.html" class="text-sm text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-600 dark:border-blue-400">Contact</a>
-          <a href="/privacy.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Privacy</a>
-          <a href="/terms.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Terms</a>
-          
-          <!-- Theme Toggle -->
-          <button id="themeToggle" class="p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 dark:border-gray-700 transition" aria-label="Toggle theme">
-            <span class="text-lg">🌓</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </nav>
-  
-  <!-- Hero Section -->
-  <section class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto">
-        <div class="text-6xl mb-4">📧</div>
-        <h1 class="text-4xl md:text-5xl font-light mb-4">
-          Get in <span class="font-semibold text-blue-600 dark:text-blue-400">Touch</span>
-        </h1>
-        <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
-          Have questions, feedback, or suggestions? We'd love to hear from you.
-        </p>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Contact Form Section -->
-  <section class="py-16 bg-white dark:bg-gray-900">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        
-        <!-- Contact Info Cards -->
-        <div class="md:col-span-1 space-y-4">
-          <div class="contact-card bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-2xl p-6">
-            <div class="text-3xl mb-3">📧</div>
-            <h3 class="font-semibold mb-2">Email Us</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Send us a message anytime</p>
-            <a href="mailto:contact@sgpdf.in" class="text-blue-600 dark:text-blue-400 font-medium hover:underline break-all">
-              contact@sgpdf.in
-            </a>
-          </div>
-          
-          <div class="contact-card bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-2xl p-6">
-            <div class="text-3xl mb-3">💬</div>
-            <h3 class="font-semibold mb-2">Response Time</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">We typically reply within 24-48 hours</p>
-          </div>
-          
-          <div class="contact-card bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-2xl p-6">
-            <div class="text-3xl mb-3">🔒</div>
-            <h3 class="font-semibold mb-2">Privacy</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Your information stays confidential</p>
-          </div>
-        </div>
-        
-        <!-- Contact Form -->
-        <div class="md:col-span-2">
-          <div class="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-2xl p-8 shadow-lg">
-            <h2 class="text-2xl font-light mb-6">Send us a Message</h2>
-            
-            <form id="contactForm" class="space-y-6">
-              <!-- Name Field -->
-              <div>
-                <label for="name" class="block text-sm font-medium mb-2">
-                  Your Name <span class="text-red-500">*</span>
-                </label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  name="name" 
-                  required 
-                  placeholder="John Doe"
-                  class="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                >
-              </div>
-              
-              <!-- Email Field -->
-              <div>
-                <label for="email" class="block text-sm font-medium mb-2">
-                  Email Address <span class="text-red-500">*</span>
-                </label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="email" 
-                  required 
-                  placeholder="john@example.com"
-                  class="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                >
-              </div>
-              
-              <!-- Message Field -->
-              <div>
-                <label for="message" class="block text-sm font-medium mb-2">
-                  Your Message <span class="text-red-500">*</span>
-                </label>
-                <textarea 
-                  id="message" 
-                  name="message" 
-                  required 
-                  rows="5"
-                  placeholder="Tell us what you think about PNG·PDF Bridge or ask any questions..."
-                  class="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
-                ></textarea>
-              </div>
-              
-              <!-- Email display -->
-              <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-center">
-                <p class="text-sm text-gray-600 dark:text-gray-300">
-                  Your message will be sent to:
-                </p>
-                <p class="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-1">
-                  contact@sgpdf.in
-                </p>
-              </div>
-              
-              <!-- Send Button -->
-              <div class="text-center">
-                <button 
-                  type="submit" 
-                  class="send-btn bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center gap-2 transition shadow-lg w-full md:w-auto justify-center"
-                >
-                  <span>📤</span> Send Message
-                  <span>→</span>
-                </button>
-                <p class="text-xs text-gray-400 mt-3">
-                  We'll get back to you as soon as possible
-                </p>
-              </div>
-            </form>
-            
-            <!-- Success Message (hidden by default) -->
-            <div id="successMessage" class="hidden mt-6 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl text-center">
-              <p class="text-green-600 dark:text-green-400 font-medium">✓ Message sent successfully!</p>
-              <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">We'll respond within 24-48 hours.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-  <!-- FAQ Section -->
-  <section class="py-16 bg-gray-50 dark:bg-gray-950">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl font-light text-center mb-12">Frequently Asked Questions</h2>
-      
-      <div class="space-y-4">
-        <!-- FAQ 1 -->
-        <details class="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 group">
-          <summary class="font-medium cursor-pointer flex items-center justify-between">
-            How quickly do you respond?
-            <span class="text-blue-600 group-open:rotate-180 transition">▼</span>
-          </summary>
-          <p class="mt-3 text-gray-600 dark:text-gray-300 text-sm">
-            We aim to respond to all inquiries within 24-48 hours, Monday through Friday.
-          </p>
-        </details>
-        
-        <!-- FAQ 2 -->
-        <details class="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 group">
-          <summary class="font-medium cursor-pointer flex items-center justify-between">
-            Can I report a bug?
-            <span class="text-blue-600 group-open:rotate-180 transition">▼</span>
-          </summary>
-          <p class="mt-3 text-gray-600 dark:text-gray-300 text-sm">
-            Absolutely! Please include details about what happened, what you expected to happen, and your browser/device information.
-          </p>
-        </details>
-        
-        <!-- FAQ 3 -->
-        <details class="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 group">
-          <summary class="font-medium cursor-pointer flex items-center justify-between">
-            Do you accept feature requests?
-            <span class="text-blue-600 group-open:rotate-180 transition">▼</span>
-          </summary>
-          <p class="mt-3 text-gray-600 dark:text-gray-300 text-sm">
-            Yes! We love hearing ideas for new features. Let us know what would make PNG·PDF Bridge more useful for you.
-          </p>
-        </details>
-        
-        <!-- FAQ 4 -->
-        <details class="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 group">
-          <summary class="font-medium cursor-pointer flex items-center justify-between">
-            Is this service really free?
-            <span class="text-blue-600 group-open:rotate-180 transition">▼</span>
-          </summary>
-          <p class="mt-3 text-gray-600 dark:text-gray-300 text-sm">
-            Yes, completely free! No hidden costs, no premium tiers, no watermarks. If that ever changes, we'll announce it here.
-          </p>
-        </details>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Call to Action -->
-  <section class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-16">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl font-light mb-4">Prefer email?</h2>
-      <p class="text-xl mb-8 text-blue-100">Contact us directly anytime.</p>
-      <a href="mailto:contact@sgpdf.in" class="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center gap-2 transition shadow-xl">
-        <span>📧</span> contact@sgpdf.in
-        <span>→</span>
-      </a>
-      <p class="text-sm text-blue-200 mt-4">We'll respond within 24-48 hours</p>
-    </div>
-  </section>
-  
-  <!-- Footer -->
-  <footer class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-wrap justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-        <div class="flex gap-6">
-          <a href="/" class="hover:text-blue-600 dark:hover:text-blue-400">Home</a>
-          <a href="/about.html" class="hover:text-blue-600 dark:hover:text-blue-400">About</a>
-          <a href="/contact.html" class="hover:text-blue-600 dark:hover:text-blue-400">Contact</a>
-          <a href="/privacy.html" class="hover:text-blue-600 dark:hover:text-blue-400">Privacy</a>
-          <a href="/terms.html" class="hover:text-blue-600 dark:hover:text-blue-400">Terms</a>
-        </div>
-        <div>
-          © 2026 PNG·PDF Bridge — contact@sgpdf.in
-        </div>
-      </div>
-    </div>
-  </footer>
-  
-  <script>
-    // Theme toggle
-    const themeToggle = document.getElementById('themeToggle');
-    
-    // Check for saved theme
-    if (localStorage.getItem('theme') === 'dark' || 
-        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    }
-    
-    themeToggle.addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-    });
-    
-    // Form handling
-    const contactForm = document.getElementById('contactForm');
-    const successMessage = document.getElementById('successMessage');
-    
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      // Get form data
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const message = document.getElementById('message').value;
-      
-      // Validate
-      if (!name || !email || !message) {
-        alert('Please fill in all fields');
-        return;
-      }
-      
-      // Simple email validation
-      if (!email.includes('@') || !email.includes('.')) {
-        alert('Please enter a valid email address');
-        return;
-      }
-      
-      // In a real implementation, you would send this to your server
-      // For now, we'll just show success message and log to console
-      console.log('Form submission:', { name, email, message });
-      console.log('Would send to: contact@sgpdf.in');
-      
-      // Show success message
-      successMessage.classList.remove('hidden');
-      
-      // Reset form
-      contactForm.reset();
-      
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        successMessage.classList.add('hidden');
-      }, 5000);
-      
-      // In production, you would send to your server:
-      /*
-      fetch('https://your-api.com/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message })
-      })
-      .then(response => response.json())
-      .then(data => {
-        successMessage.classList.remove('hidden');
-        contactForm.reset();
-        setTimeout(() => successMessage.classList.add('hidden'), 5000);
-      })
-      .catch(error => {
-        alert('Error sending message. Please email directly: contact@sgpdf.in');
-      });
-      */
-    });
-    
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
+    <style>
+        /* --- Exact Same Variables & Theme Setup --- */
+        :root {
+            --bg-main: #0d0f14;
+            --bg-nav: #1c222d;
+            --bg-sidebar: #12151a;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --accent-glow: #42f8f5;
+            --glow-shadow: rgba(66, 248, 245, 0.6);
+            --font-main: 'Orbitron', sans-serif;
         }
-      });
-    });
-  </script>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        /* --- Typography & Utilities --- */
+        .glow-text {
+            color: var(--accent-glow);
+            text-shadow: 0 0 10px var(--glow-shadow);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: 0.3s ease;
+        }
+
+        /* --- Navbar --- */
+        .navbar {
+            background-color: var(--bg-nav);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-glow);
+            box-shadow: 0 4px 15px var(--glow-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { display: flex; align-items: center; }
+
+        .logo-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background-color: var(--accent-glow);
+            color: var(--bg-main);
+            border-radius: 8px;
+            font-weight: 900;
+            margin-right: 12px;
+            font-size: 1.1rem;
+            text-shadow: none;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-glow);
+            text-shadow: 0 0 8px var(--glow-shadow);
+        }
+
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { font-weight: 500; position: relative; }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent-glow); }
+        .nav-links a::after {
+            content: ''; position: absolute; width: 0%; height: 2px;
+            bottom: -5px; left: 0; background-color: var(--accent-glow);
+            box-shadow: 0 0 8px var(--accent-glow); transition: 0.3s ease;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
+        .hamburger div { width: 25px; height: 3px; background-color: var(--accent-glow); box-shadow: 0 0 5px var(--glow-shadow); }
+
+        /* --- Layout --- */
+        .layout-wrapper { display: flex; min-height: calc(100vh - 150px); } /* Adjusted to keep footer at bottom */
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px; background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--accent-glow); box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            padding: 2rem 1rem; transition: 0.3s ease;
+        }
+
+        .sidebar h3 { margin-bottom: 1rem; color: var(--text-secondary); letter-spacing: 2px; }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li {
+            padding: 12px; margin-bottom: 8px; cursor: pointer; border-radius: 5px;
+            transition: 0.3s ease; border-left: 3px solid transparent;
+        }
+        .sidebar ul li:hover, .sidebar ul li.active {
+            background-color: rgba(66, 248, 245, 0.1); border-left: 3px solid var(--accent-glow);
+            color: var(--accent-glow); text-shadow: 0 0 5px var(--glow-shadow);
+        }
+
+        /* --- Main Content (Centered Form Layout) --- */
+        .main-content { 
+            flex: 1; 
+            padding: 2rem; 
+            overflow-y: auto; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; /* Centers the form perfectly on the screen */
+        }
+
+        .contact-container {
+            width: 100%;
+            max-width: 450px;
+            background-color: var(--bg-sidebar);
+            padding: 2.5rem;
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            text-align: center;
+            position: relative;
+        }
+
+        .contact-container::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, var(--glow-shadow) 10%, transparent 60%);
+            opacity: 0.05; z-index: 0; pointer-events: none;
+        }
+
+        .contact-container > * { position: relative; z-index: 1; }
+
+        .contact-container h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* 4 Boxes stacked in a row perfectly */
+        }
+
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--bg-nav);
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-family: sans-serif;
+            font-size: 1rem;
+            text-align: center; /* Centers the text inside the form boxes */
+            outline: none;
+            transition: 0.3s ease;
+        }
+
+        .contact-form textarea {
+            resize: none;
+            height: 120px;
+        }
+
+        .contact-form input:focus, .contact-form textarea:focus {
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 10px var(--glow-shadow);
+        }
+
+        .btn-glow {
+            background-color: var(--bg-sidebar);
+            color: var(--text-primary);
+            border: 2px solid var(--accent-glow);
+            padding: 15px;
+            font-size: 1.1rem;
+            font-family: var(--font-main);
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(66, 248, 245, 0.2);
+            width: 100%;
+        }
+
+        .btn-glow:hover {
+            background-color: var(--accent-glow);
+            color: var(--bg-sidebar);
+            box-shadow: 0 0 20px var(--glow-shadow);
+        }
+
+        .contact-email-text {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .contact-email-text span {
+            color: var(--accent-glow);
+            text-shadow: 0 0 5px var(--glow-shadow);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--bg-nav); border-top: 2px solid var(--accent-glow);
+            padding: 2rem; text-align: center; box-shadow: 0 -4px 15px var(--glow-shadow);
+        }
+        .footer-content p { margin-bottom: 10px; }
+        .footer-links { margin: 15px 0; line-height: 2; }
+        .footer-links a { margin: 0 8px; font-size: 0.95rem; }
+        .footer-links a:hover { color: var(--accent-glow); text-shadow: 0 0 5px var(--glow-shadow); }
+        .footer-separator { color: #555; margin: 0 2px; }
+        .footer-email {
+            margin-top: 15px; color: var(--accent-glow); font-weight: 500;
+            letter-spacing: 1px; font-size: 1.05rem; text-shadow: 0 0 8px var(--glow-shadow);
+        }
+
+        /* --- Responsive Media Queries --- */
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            .nav-links { 
+                display: none; flex-direction: column; position: absolute; 
+                top: 70px; right: 0; background: var(--bg-nav); padding: 20px; 
+                border-bottom: 2px solid var(--accent-glow); border-left: 2px solid var(--accent-glow); 
+                border-radius: 0 0 0 10px; width: 200px;
+            }
+            .layout-wrapper { flex-direction: column; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--accent-glow); }
+            .footer-separator { display: inline-block; }
+            .contact-container { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-box">SG</span>
+            <span class="logo-text">SG PDF Suite</span>
+        </div>
+        <nav class="nav-links" id="nav-links">
+            <a href="index.html" onclick="closeMobileMenu();">Home</a>
+            <a href="index.html#tools-section" onclick="closeMobileMenu();">Tools</a>
+            <a href="about.html" onclick="closeMobileMenu();">About</a>
+            <a href="contact.html" class="active" onclick="closeMobileMenu();">Contact</a>
+        </nav>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </header>
+
+    <div class="layout-wrapper">
+        <!-- Left Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <h3>Navigation</h3>
+                <ul id="sidebar-categories">
+                    <li onclick="window.location.href='index.html'">🌐 Back to Tools</li>
+                    <li onclick="window.location.href='index.html'">🔻 PDF Tools</li>
+                    <li onclick="window.location.href='index.html'">🧰 Utility Tools</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Centered Contact Form Container -->
+            <div class="contact-container">
+                <h1 class="glow-text">Contact Us</h1>
+                
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('Message feature will be connected soon!'); this.reset();">
+                    <!-- Row 1: Name -->
+                    <input type="text" placeholder="Name" required>
+                    
+                    <!-- Row 2: Email -->
+                    <input type="email" placeholder="Email Address" required>
+                    
+                    <!-- Row 3: Message -->
+                    <textarea placeholder="Message" required></textarea>
+                    
+                    <!-- Row 4: Send Button -->
+                    <button type="submit" class="btn-glow">Send</button>
+                </form>
+
+                <!-- Under the 4 rows -->
+                <div class="contact-email-text">
+                    Email: <span>contact@sgpdf.in</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>© 2026 SG PDF Suite. All Rights Reserved.</p>
+            
+            <!-- Horizontal Footer Tabs exactly matching GitHub files -->
+            <div class="footer-links">
+                <a href="privacy-policy.html">Privacy Policy</a> <span class="footer-separator">|</span>
+                <a href="terms.html">Terms and Conditions</a> <span class="footer-separator">|</span>
+                <a href="disclaimer.html">Disclaimer</a> <span class="footer-separator">|</span>
+                <a href="sitemap.html">Sitemap</a> <span class="footer-separator">|</span>
+                <a href="about.html">About</a> <span class="footer-separator">|</span>
+                <a href="contact.html">Contact</a>
+            </div>
+            
+            <!-- Email display -->
+            <div class="footer-email">contact@sgpdf.in</div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle Logic
+        function toggleMenu() {
+            const navLinks = document.getElementById('nav-links');
+            if(navLinks.style.display === 'flex') {
+                navLinks.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+            }
+        }
+
+        function closeMobileMenu() {
+            if(window.innerWidth <= 768) {
+                document.getElementById('nav-links').style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
