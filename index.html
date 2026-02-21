@@ -362,11 +362,35 @@
         }
 
         .footer-content p { margin-bottom: 10px; }
-        .footer-links a { margin: 0 10px; }
-        .footer-links a:hover { color: var(--accent-glow); text-shadow: 0 0 5px var(--glow-shadow); }
-        .social-icons { margin-top: 15px; font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; gap: 20px;}
-        .social-icons span { transition: 0.3s; }
-        .social-icons span:hover { filter: drop-shadow(0 0 8px var(--accent-glow)); transform: scale(1.2); }
+        
+        .footer-links { 
+            margin: 15px 0; 
+            line-height: 2; /* Helps spacing if links wrap on small screens */
+        }
+        
+        .footer-links a { 
+            margin: 0 8px; 
+            font-size: 0.95rem;
+        }
+        
+        .footer-links a:hover { 
+            color: var(--accent-glow); 
+            text-shadow: 0 0 5px var(--glow-shadow); 
+        }
+
+        .footer-separator {
+            color: #555;
+            margin: 0 2px;
+        }
+
+        .footer-email {
+            margin-top: 15px;
+            color: var(--accent-glow);
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-size: 1.05rem;
+            text-shadow: 0 0 8px var(--glow-shadow);
+        }
 
         /* --- Responsive Media Queries --- */
         @media (max-width: 992px) {
@@ -392,6 +416,9 @@
             .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--accent-glow); }
             .tools-grid { grid-template-columns: 1fr; }
             .hero h1 { font-size: 1.5rem; }
+            
+            /* Hide the separator lines on very small screens for cleaner vertical stacking if they wrap heavily */
+            .footer-separator { display: inline-block; }
         }
     </style>
 </head>
@@ -406,7 +433,6 @@
         <nav class="nav-links" id="nav-links">
             <a href="#" class="active" onclick="filterTools('All'); closeMobileMenu();">Home</a>
             <a href="#tools-section" onclick="closeMobileMenu();">Tools</a>
-            <!-- Updated Links -->
             <a href="About.html" onclick="closeMobileMenu();">About</a>
             <a href="contact.html" onclick="closeMobileMenu();">Contact</a>
         </nav>
@@ -451,14 +477,19 @@
     <footer>
         <div class="footer-content">
             <p>© 2026 SG PDF Suite. All Rights Reserved.</p>
+            
+            <!-- Horizontal Footer Tabs -->
             <div class="footer-links">
-                <a href="#">Privacy Policy</a> | 
-                <a href="#">Terms</a> | 
-                <a href="contact.html">Contact</a> <!-- Updated Footer Link -->
+                <a href="privacy.html">Privacy Policy</a> <span class="footer-separator">|</span>
+                <a href="terms.html">Terms and Conditions</a> <span class="footer-separator">|</span>
+                <a href="disclaimer.html">Disclaimer</a> <span class="footer-separator">|</span>
+                <a href="sitemap.html">Sitemap</a> <span class="footer-separator">|</span>
+                <a href="About.html">About</a> <span class="footer-separator">|</span>
+                <a href="contact.html">Contact</a>
             </div>
-            <div class="social-icons">
-                <span>🌐</span> <span>🐦</span> <span>💼</span>
-            </div>
+            
+            <!-- Email display -->
+            <div class="footer-email">contact@sgpdf.in</div>
         </div>
     </footer>
 
