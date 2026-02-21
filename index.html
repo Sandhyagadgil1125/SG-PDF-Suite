@@ -6,18 +6,7 @@
   <title>PNG to PDF Converter · Private & Client-Side</title>
   
   <!-- SEO & Meta -->
-  <meta name="description" content="Free, private PNG to PDF converter. No uploads, no watermarks, 100% client-side. Convert single or multiple PNGs to PDF in your browser.">
-  <meta name="keywords" content="PNG to PDF, image to PDF, PDF converter, privacy first, client-side">
-  <meta name="author" content="PNG·PDF Bridge">
-  
-  <!-- Open Graph / Social Media -->
-  <meta property="og:title" content="PNG·PDF Bridge - Private PNG to PDF Converter">
-  <meta property="og:description" content="Convert PNGs to PDF instantly in your browser. No uploads, no tracking.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630' viewBox='0 0 1200 630'%3E%3Crect width='1200' height='630' fill='%232563eb'/%3E%3Ctext x='60' y='350' font-family='Arial' font-size='72' fill='white' font-weight='bold'%3E📷 → 📄%3C/text%3E%3Ctext x='60' y='450' font-family='Arial' font-size='36' fill='%23ffffff'%3EPNG to PDF · Private%3C/text%3E%3C/svg%3E">
-  
-  <!-- Favicon (emoji fallback) -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+  <meta name="description" content="Free, private PNG to PDF converter. No uploads, no watermarks, 100% client-side.">
   
   <!-- Tailwind CSS + Inter font -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -27,35 +16,38 @@
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   
   <style>
-    * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    * { font-family: 'Inter', sans-serif; }
     
-    /* Custom styles */
-    .drop-zone-active { 
+    .dropzone-active { 
       background-color: rgba(37, 99, 235, 0.05);
       border-color: #2563eb;
       border-width: 3px;
     }
     
-    .dark .drop-zone-active {
+    .dark .dropzone-active {
       background-color: rgba(37, 99, 235, 0.15);
       border-color: #60a5fa;
     }
     
-    /* File tile status indicators */
-    .tile-status-done { border-left: 4px solid #10b981; }
-    .tile-status-error { border-left: 4px solid #ef4444; }
-    .tile-status-queued { border-left: 4px solid #f59e0b; }
-    .tile-status-converting { border-left: 4px solid #3b82f6; }
+    /* File tile styles */
+    .file-tile { 
+      transition: all 0.2s;
+      border-left: 4px solid transparent;
+    }
+    .file-tile.status-done { border-left-color: #10b981; }
+    .file-tile.status-error { border-left-color: #ef4444; }
+    .file-tile.status-queued { border-left-color: #f59e0b; }
+    .file-tile.status-converting { border-left-color: #3b82f6; }
     
-    /* Drag handle */
-    .drag-handle { cursor: grab; user-select: none; }
+    .drag-handle { 
+      cursor: grab; 
+      user-select: none;
+      font-size: 20px;
+      line-height: 1;
+    }
     .drag-handle:active { cursor: grabbing; }
     
-    /* Progress bar animation */
     .progress-bar { transition: width 0.3s ease; }
-    
-    /* Smooth transitions */
-    .file-tile { transition: all 0.2s; }
     
     /* Custom scrollbar */
     #fileList::-webkit-scrollbar { width: 6px; }
@@ -66,7 +58,6 @@
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 antialiased">
-  <!-- Main container -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
     
     <!-- ===== HEADER ===== -->
@@ -83,21 +74,19 @@
       
       <div class="flex items-center gap-3">
         <!-- Language Switcher -->
-        <select id="langSelect" class="text-sm border rounded-lg px-3 py-2 bg-white dark:bg-gray-800 dark:border-gray-700" aria-label="Language">
+        <select id="langSelect" class="text-sm border rounded-lg px-3 py-2 bg-white dark:bg-gray-800 dark:border-gray-700">
           <option value="en">🇬🇧 English</option>
-          <option value="es">🇪🇸 Español</option>
-          <option value="fr">🇫🇷 Français</option>
         </select>
         
         <!-- Dark Mode Toggle -->
-        <button id="themeToggle" class="p-2.5 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 dark:border-gray-700" aria-label="Toggle theme">
+        <button id="themeToggle" class="p-2.5 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 dark:border-gray-700">
           <span class="text-xl">🌓</span>
         </button>
       </div>
     </header>
     
     <!-- ===== PRIVACY BANNER ===== -->
-    <div class="mb-6 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-sm flex flex-wrap items-center justify-between gap-3">
+    <div class="mb-6 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-sm">
       <div class="flex items-center gap-2">
         <span class="text-2xl">🔒</span>
         <div>
@@ -105,13 +94,12 @@
           <p class="text-blue-600 dark:text-blue-400 text-xs mt-0.5">Your files never leave your device. No uploads, no servers, no tracking.</p>
         </div>
       </div>
-      <a href="#privacy" class="text-blue-700 dark:text-blue-300 underline text-sm hover:no-underline">Privacy Policy →</a>
     </div>
     
-    <!-- ===== MAIN CONTENT: SIDEBAR + UPLOAD AREA ===== -->
+    <!-- ===== MAIN CONTENT ===== -->
     <div class="flex flex-col lg:flex-row gap-6">
       
-      <!-- LEFT SIDEBAR - PDF SETTINGS -->
+      <!-- LEFT SIDEBAR -->
       <aside class="lg:w-72 shrink-0">
         <div class="bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-2xl p-5 sticky top-4">
           <h2 class="font-semibold text-lg mb-4 flex items-center gap-2">
@@ -119,18 +107,16 @@
           </h2>
           
           <div class="space-y-4">
-            <!-- Page Size -->
             <div>
               <label class="block text-sm font-medium mb-1.5">Page Size</label>
               <select id="pageSize" class="w-full border dark:border-gray-700 rounded-lg px-3 py-2.5 bg-gray-50 dark:bg-gray-800">
-                <option value="A4">A4 (210 × 297 mm)</option>
-                <option value="Letter">Letter (8.5 × 11 in)</option>
-                <option value="Legal">Legal (8.5 × 14 in)</option>
+                <option value="A4">A4</option>
+                <option value="Letter">Letter</option>
+                <option value="Legal">Legal</option>
                 <option value="fit" selected>Fit to Image</option>
               </select>
             </div>
             
-            <!-- Orientation -->
             <div>
               <label class="block text-sm font-medium mb-1.5">Orientation</label>
               <select id="orientation" class="w-full border dark:border-gray-700 rounded-lg px-3 py-2.5 bg-gray-50 dark:bg-gray-800">
@@ -140,42 +126,31 @@
               </select>
             </div>
             
-            <!-- Margins -->
             <div>
               <label class="block text-sm font-medium mb-1.5">Margins</label>
               <select id="margins" class="w-full border dark:border-gray-700 rounded-lg px-3 py-2.5 bg-gray-50 dark:bg-gray-800">
                 <option value="0" selected>None</option>
-                <option value="20">Small (20pt)</option>
-                <option value="40">Medium (40pt)</option>
-                <option value="60">Large (60pt)</option>
+                <option value="20">Small</option>
+                <option value="40">Medium</option>
               </select>
             </div>
             
-            <!-- Image Fit -->
             <div>
               <label class="block text-sm font-medium mb-1.5">Image Fit</label>
               <select id="imageFit" class="w-full border dark:border-gray-700 rounded-lg px-3 py-2.5 bg-gray-50 dark:bg-gray-800">
-                <option value="fit" selected>Fit (contain)</option>
-                <option value="fill">Fill (cover)</option>
-                <option value="original">Original Size</option>
+                <option value="fit" selected>Fit</option>
+                <option value="fill">Fill</option>
+                <option value="original">Original</option>
               </select>
             </div>
             
-            <!-- Compression Quality -->
             <div>
               <div class="flex justify-between text-sm mb-1">
-                <label for="quality">Compression Quality</label>
+                <label for="quality">Quality</label>
                 <span id="qualityValue" class="font-mono">85%</span>
               </div>
               <input type="range" id="quality" min="10" max="100" value="85" class="w-full">
-              <p class="text-xs text-gray-400 mt-1.5">Higher quality = larger file size</p>
             </div>
-          </div>
-          
-          <!-- Quick Info -->
-          <div class="mt-6 pt-4 border-t dark:border-gray-800 text-xs text-gray-400">
-            <p>📌 DPI is preserved from original PNG</p>
-            <p class="mt-1">⚡ All conversion happens in your browser</p>
           </div>
         </div>
       </aside>
@@ -189,10 +164,9 @@
           <div class="flex flex-col items-center gap-3">
             <span class="text-6xl mb-2">📤</span>
             <h3 class="text-xl font-medium">Drop PNG files here</h3>
-            <p class="text-gray-500 dark:text-gray-400">or <span class="text-blue-600 font-semibold cursor-pointer">click to browse</span></p>
+            <p class="text-gray-500 dark:text-gray-400">or <span class="text-blue-600 font-semibold">click to browse</span></p>
             <div class="flex gap-4 text-sm text-gray-400 mt-2">
               <span>✓ PNG only</span>
-              <span>✓ Up to 100 files</span>
               <span>✓ No size limit</span>
             </div>
           </div>
@@ -201,22 +175,22 @@
         <!-- TOOLBAR -->
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div class="flex gap-2">
-            <button id="combineBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors">
-              <span>📑</span> Combine to PDF (C)
+            <button id="combineBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2">
+              <span>📑</span> Combine PDF (C)
             </button>
-            <button id="clearBtn" class="border dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors">
-              <span>🗑️</span> Clear all (X)
+            <button id="clearBtn" class="border dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2">
+              <span>🗑️</span> Clear (X)
             </button>
           </div>
           
           <div class="flex items-center gap-3 text-sm bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-xl">
-            <span id="fileCount" class="font-medium">0 images</span>
+            <span id="fileCount">0 images</span>
             <span class="text-gray-400">|</span>
-            <span id="totalSize" class="font-mono text-gray-600 dark:text-gray-300">0 KB</span>
+            <span id="totalSize">0 KB</span>
           </div>
         </div>
         
-        <!-- FILE LIST / QUEUE -->
+        <!-- FILE LIST -->
         <div id="fileList" class="space-y-2 max-h-[500px] overflow-y-auto pr-1"></div>
         
         <!-- EMPTY STATE -->
@@ -226,47 +200,30 @@
           <p class="text-sm text-gray-400 mt-1">Drop PNG files to get started</p>
         </div>
         
-        <!-- BOTTOM COMBINE BUTTON -->
+        <!-- BOTTOM BUTTON -->
         <div class="mt-4 flex justify-end">
-          <button id="combineBottomBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-colors shadow-lg">
+          <button id="combineBottomBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium flex items-center gap-2">
             <span>📥</span> Download Combined PDF
           </button>
         </div>
       </main>
     </div>
-    
-    <!-- ===== FOOTER ===== -->
-    <footer class="mt-12 pt-6 border-t dark:border-gray-800 text-xs text-gray-400">
-      <div class="flex flex-wrap justify-between gap-4">
-        <div class="flex gap-6">
-          <a href="#" class="hover:text-gray-600 dark:hover:text-gray-300">Terms</a>
-          <a href="#" class="hover:text-gray-600 dark:hover:text-gray-300">Privacy</a>
-          <a href="#" class="hover:text-gray-600 dark:hover:text-gray-300">Cookies</a>
-        </div>
-        <div>
-          <p>© 2026 PNG·PDF Bridge — open source, privacy first</p>
-        </div>
-      </div>
-    </footer>
   </div>
 
   <script>
     (function() {
-      // Initialize theme
-      const theme = localStorage.getItem('theme') || 'light';
+      // Theme handling
+      const theme = localStorage.getItem('theme');
       if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
       }
       
-      // Theme toggle
       document.getElementById('themeToggle').addEventListener('click', () => {
         document.documentElement.classList.toggle('dark');
         localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
       });
       
-      // Quality slider display
+      // Quality slider
       const quality = document.getElementById('quality');
       const qualityVal = document.getElementById('qualityValue');
       quality.addEventListener('input', () => {
@@ -288,10 +245,9 @@
       const combineBottomBtn = document.getElementById('combineBottomBtn');
       const clearBtn = document.getElementById('clearBtn');
       
-      // PDFLib
       const { PDFDocument } = PDFLib;
       
-      // Helpers
+      // Helper functions
       function formatBytes(bytes) {
         if (bytes === 0) return '0 B';
         const k = 1024;
@@ -306,7 +262,64 @@
         totalSize.textContent = formatBytes(total);
       }
       
-      // Render file tiles
+      // Process files immediately when added
+      async function processFiles(selectedFiles) {
+        const pngFiles = Array.from(selectedFiles).filter(f => 
+          f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
+        );
+        
+        if (pngFiles.length === 0) {
+          alert('Please select PNG files only');
+          return;
+        }
+        
+        // Add files to array
+        for (const file of pngFiles) {
+          const id = nextId++;
+          const fileObj = {
+            id,
+            file,
+            name: file.name,
+            size: file.size,
+            status: 'queued',
+            thumbnail: null,
+            progress: 10,
+            error: null
+          };
+          files.push(fileObj);
+        }
+        
+        render();
+        
+        // Generate thumbnails one by one
+        for (const fileObj of files.slice(-pngFiles.length)) {
+          try {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = new Image();
+              img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 48;
+                canvas.height = 48;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, 48, 48);
+                fileObj.thumbnail = canvas.toDataURL('image/png');
+                fileObj.status = 'done';
+                fileObj.progress = 100;
+                render();
+              };
+              img.src = e.target.result;
+            };
+            reader.readAsDataURL(fileObj.file);
+          } catch (err) {
+            fileObj.status = 'error';
+            fileObj.error = 'Failed to load image';
+            render();
+          }
+        }
+      }
+      
+      // Render file list
       function render() {
         if (files.length === 0) {
           emptyState.classList.remove('hidden');
@@ -316,13 +329,6 @@
           
           let html = '';
           files.forEach((f, index) => {
-            const statusClass = {
-              'queued': 'tile-status-queued',
-              'converting': 'tile-status-converting',
-              'done': 'tile-status-done',
-              'error': 'tile-status-error'
-            }[f.status] || '';
-            
             const statusIcon = {
               'queued': '⏳',
               'converting': '⚙️',
@@ -331,31 +337,42 @@
             }[f.status] || '⏺️';
             
             html += `
-              <div class="file-tile ${statusClass} flex items-center gap-3 p-3 border dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 shadow-sm" data-id="${f.id}" draggable="true">
-                <span class="drag-handle text-gray-400 text-xl" draggable="false">⋮⋮</span>
+              <div class="file-tile status-${f.status} flex items-center gap-3 p-3 border dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 shadow-sm" data-id="${f.id}" draggable="true">
+                <span class="drag-handle text-gray-400 select-none" draggable="false">⋮⋮</span>
                 
-                <div class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0">
-                  ${f.thumbnail ? `<img src="${f.thumbnail}" class="w-full h-full object-cover" alt="">` : '<div class="w-full h-full flex items-center justify-center text-gray-400">📷</div>'}
+                <div class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 flex items-center justify-center">
+                  ${f.thumbnail ? 
+                    `<img src="${f.thumbnail}" class="w-full h-full object-cover" alt="">` : 
+                    `<span class="text-2xl text-gray-400">📷</span>`
+                  }
                 </div>
                 
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
                     <span class="font-medium truncate max-w-[200px]" title="${f.name}">${f.name}</span>
                     <span class="text-xs text-gray-500">${formatBytes(f.size)}</span>
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800">${statusIcon} ${f.status}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800">
+                      ${statusIcon} ${f.status}
+                    </span>
                   </div>
                   
                   <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-1.5">
-                    <div class="progress-bar bg-blue-600 h-1.5 rounded-full" style="width: ${f.progress || 0}%"></div>
+                    <div class="progress-bar bg-blue-600 h-1.5 rounded-full" style="width: ${f.progress}%"></div>
                   </div>
                   
                   ${f.error ? `<p class="text-xs text-red-500 mt-1">${f.error}</p>` : ''}
                 </div>
                 
                 <div class="flex gap-1 shrink-0">
-                  <button class="download-one px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40" data-id="${f.id}" ${f.status !== 'done' ? 'disabled' : ''}>⬇ PDF</button>
-                  <button class="move-up px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-id="${f.id}" ${index === 0 ? 'disabled' : ''}>↑</button>
-                  <button class="move-down px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-id="${f.id}" ${index === files.length-1 ? 'disabled' : ''}>↓</button>
+                  <button class="download-one px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40" data-id="${f.id}" ${f.status !== 'done' ? 'disabled' : ''}>
+                    ⬇ PDF
+                  </button>
+                  <button class="move-up px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-id="${f.id}" ${index === 0 ? 'disabled' : ''}>
+                    ↑
+                  </button>
+                  <button class="move-down px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-id="${f.id}" ${index === files.length-1 ? 'disabled' : ''}>
+                    ↓
+                  </button>
                 </div>
               </div>
             `;
@@ -367,25 +384,28 @@
           document.querySelectorAll('.download-one').forEach(btn => {
             btn.addEventListener('click', (e) => {
               e.stopPropagation();
-              downloadSingle(Number(e.target.dataset.id));
+              const id = Number(btn.dataset.id);
+              downloadSingle(id);
             });
           });
           
           document.querySelectorAll('.move-up').forEach(btn => {
             btn.addEventListener('click', (e) => {
               e.stopPropagation();
-              moveFile(Number(e.target.dataset.id), -1);
+              const id = Number(btn.dataset.id);
+              moveFile(id, -1);
             });
           });
           
           document.querySelectorAll('.move-down').forEach(btn => {
             btn.addEventListener('click', (e) => {
               e.stopPropagation();
-              moveFile(Number(e.target.dataset.id), 1);
+              const id = Number(btn.dataset.id);
+              moveFile(id, 1);
             });
           });
           
-          // Drag & drop reorder
+          // Drag and drop reordering
           let dragSrcIndex = null;
           const tiles = document.querySelectorAll('.file-tile');
           
@@ -394,9 +414,16 @@
               dragSrcIndex = Array.from(fileList.children).indexOf(tile);
               e.dataTransfer.setData('text/plain', tile.dataset.id);
               e.dataTransfer.effectAllowed = 'move';
+              tile.style.opacity = '0.5';
             });
             
-            tile.addEventListener('dragover', (e) => e.preventDefault());
+            tile.addEventListener('dragend', () => {
+              tile.style.opacity = '1';
+            });
+            
+            tile.addEventListener('dragover', (e) => {
+              e.preventDefault();
+            });
             
             tile.addEventListener('drop', (e) => {
               e.preventDefault();
@@ -416,7 +443,6 @@
         updateStats();
       }
       
-      // Move file up/down
       function moveFile(id, delta) {
         const idx = files.findIndex(f => f.id === id);
         if (idx === -1) return;
@@ -426,80 +452,20 @@
         render();
       }
       
-      // Add files
-      async function addFiles(selected) {
-        const pngs = Array.from(selected).filter(f => 
-          f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
-        );
-        
-        if (pngs.length === 0) {
-          alert('Please select PNG files only');
-          return;
-        }
-        
-        for (const file of pngs) {
-          const id = nextId++;
-          const entry = {
-            id,
-            file,
-            name: file.name,
-            size: file.size,
-            status: 'queued',
-            thumbnail: null,
-            progress: 0,
-            error: null
-          };
-          
-          files.push(entry);
-          
-          // Generate thumbnail
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-              const canvas = document.createElement('canvas');
-              canvas.width = 48;
-              canvas.height = 48;
-              canvas.getContext('2d').drawImage(img, 0, 0, 48, 48);
-              entry.thumbnail = canvas.toDataURL('image/png');
-              entry.status = 'done';
-              entry.progress = 100;
-              render();
-            };
-            img.src = e.target.result;
-          };
-          reader.readAsDataURL(file);
-        }
-        
-        render();
-      }
-      
-      // Download single PDF
       async function downloadSingle(id) {
         const entry = files.find(f => f.id === id);
         if (!entry || entry.status !== 'done') return;
         
         try {
           entry.status = 'converting';
-          entry.progress = 30;
+          entry.progress = 50;
           render();
           
-          const pdf = await PDFDocument.create();
-          const imgBytes = await entry.file.arrayBuffer();
-          const image = await pdf.embedPng(imgBytes);
+          const pdfDoc = await PDFDocument.create();
+          const arrayBuffer = await entry.file.arrayBuffer();
+          const image = await pdfDoc.embedPng(arrayBuffer);
           
-          const pageSize = document.getElementById('pageSize').value;
-          let width = image.width;
-          let height = image.height;
-          
-          if (pageSize !== 'fit') {
-            const sizes = { A4: [595, 842], Letter: [612, 792], Legal: [612, 1008] };
-            if (sizes[pageSize]) {
-              [width, height] = sizes[pageSize];
-            }
-          }
-          
-          const page = pdf.addPage([width, height]);
+          const page = pdfDoc.addPage([image.width, image.height]);
           page.drawImage(image, {
             x: 0,
             y: 0,
@@ -507,53 +473,64 @@
             height: image.height
           });
           
-          entry.progress = 80;
-          
-          const pdfBytes = await pdf.save();
+          const pdfBytes = await pdfDoc.save();
           const blob = new Blob([pdfBytes], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
+          
           const a = document.createElement('a');
           a.href = url;
           a.download = entry.name.replace(/\.png$/i, '.pdf');
           a.click();
+          
           URL.revokeObjectURL(url);
           
           entry.status = 'done';
           entry.progress = 100;
         } catch (err) {
           entry.status = 'error';
-          entry.error = err.message;
+          entry.error = 'Conversion failed';
           entry.progress = 0;
         }
         
         render();
       }
       
-      // Combine all to PDF
       async function combineAll() {
-        const ready = files.filter(f => f.status === 'done');
-        if (ready.length !== files.length) {
+        const readyFiles = files.filter(f => f.status === 'done');
+        if (readyFiles.length !== files.length) {
           alert('Please wait for all images to finish processing');
           return;
         }
         
+        if (files.length === 0) {
+          alert('No files to combine');
+          return;
+        }
+        
         try {
-          const pdf = await PDFDocument.create();
+          const pdfDoc = await PDFDocument.create();
           
           for (const entry of files) {
-            const imgBytes = await entry.file.arrayBuffer();
-            const image = await pdf.embedPng(imgBytes);
-            const page = pdf.addPage([image.width, image.height]);
-            page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+            const arrayBuffer = await entry.file.arrayBuffer();
+            const image = await pdfDoc.embedPng(arrayBuffer);
+            const page = pdfDoc.addPage([image.width, image.height]);
+            page.drawImage(image, {
+              x: 0,
+              y: 0,
+              width: image.width,
+              height: image.height
+            });
           }
           
-          const pdfBytes = await pdf.save();
+          const pdfBytes = await pdfDoc.save();
           const blob = new Blob([pdfBytes], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
+          
           const a = document.createElement('a');
           a.href = url;
           a.download = 'combined.pdf';
           a.click();
+          
           URL.revokeObjectURL(url);
         } catch (err) {
           alert('Error creating PDF: ' + err.message);
@@ -565,21 +542,21 @@
       
       dropzone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        dropzone.classList.add('drop-zone-active');
+        dropzone.classList.add('dropzone-active');
       });
       
       dropzone.addEventListener('dragleave', () => {
-        dropzone.classList.remove('drop-zone-active');
+        dropzone.classList.remove('dropzone-active');
       });
       
       dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
-        dropzone.classList.remove('drop-zone-active');
-        addFiles(e.dataTransfer.files);
+        dropzone.classList.remove('dropzone-active');
+        processFiles(e.dataTransfer.files);
       });
       
       fileInput.addEventListener('change', (e) => {
-        addFiles(e.target.files);
+        processFiles(e.target.files);
         fileInput.value = '';
       });
       
@@ -608,7 +585,7 @@
         }
       });
       
-      // Initialize empty state
+      // Initial render
       render();
     })();
   </script>
