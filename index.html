@@ -3,234 +3,224 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PNG to PDF Converter · Private & Client-Side</title>
+  <title>PNG to PDF · Simple & Private</title>
   
-  <!-- SEO & Meta -->
-  <meta name="description" content="Free, private PNG to PDF converter. No uploads, no watermarks, 100% client-side.">
-  
-  <!-- Tailwind CSS + Inter font -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   
-  <!-- PDF Generation Library -->
+  <!-- PDF Library -->
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   
   <style>
     * { font-family: 'Inter', sans-serif; }
     
-    .dropzone-active { 
-      background-color: rgba(37, 99, 235, 0.05);
-      border-color: #2563eb;
-      border-width: 3px;
+    .dropzone-active {
+      background-color: #eff6ff;
+      border-color: #3b82f6;
     }
     
     .dark .dropzone-active {
-      background-color: rgba(37, 99, 235, 0.15);
+      background-color: #1e3a8a20;
       border-color: #60a5fa;
     }
     
-    /* File tile styles */
-    .file-tile { 
-      transition: all 0.2s;
-      border-left: 4px solid transparent;
+    /* Simple file tile */
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: white;
     }
-    .file-tile.status-done { border-left-color: #10b981; }
-    .file-tile.status-error { border-left-color: #ef4444; }
-    .file-tile.status-queued { border-left-color: #f59e0b; }
-    .file-tile.status-converting { border-left-color: #3b82f6; }
     
-    .drag-handle { 
-      cursor: grab; 
-      user-select: none;
+    .dark .file-item {
+      background: #1f2937;
+      border-color: #374151;
+    }
+    
+    .file-thumb {
+      width: 48px;
+      height: 48px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .dark .file-thumb {
+      background: #374151;
+    }
+    
+    .file-info {
+      flex: 1;
+    }
+    
+    .file-name {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .file-status {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    
+    .progress-bar {
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      margin-top: 6px;
+      width: 100%;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: #3b82f6;
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+    
+    .btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      border: 1px solid #e5e7eb;
+      background: white;
+      cursor: pointer;
+    }
+    
+    .dark .btn {
+      background: #374151;
+      border-color: #4b5563;
+      color: white;
+    }
+    
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    
+    .drag-handle {
+      cursor: grab;
+      color: #9ca3af;
       font-size: 20px;
-      line-height: 1;
+      user-select: none;
     }
-    .drag-handle:active { cursor: grabbing; }
-    
-    .progress-bar { transition: width 0.3s ease; }
-    
-    /* Custom scrollbar */
-    #fileList::-webkit-scrollbar { width: 6px; }
-    #fileList::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-    #fileList::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
-    .dark #fileList::-webkit-scrollbar-track { background: #2d3748; }
-    .dark #fileList::-webkit-scrollbar-thumb { background: #4a5568; }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 antialiased">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+<body class="bg-gray-50 dark:bg-gray-900 p-6">
+  <div class="max-w-6xl mx-auto">
     
-    <!-- ===== HEADER ===== -->
-    <header class="flex flex-wrap items-center justify-between gap-4 mb-6">
-      <div class="flex items-center gap-3">
-        <div class="text-4xl">📄✨</div>
-        <div>
-          <h1 class="text-2xl md:text-3xl font-light tracking-tight">
-            PNG·PDF <span class="font-semibold text-blue-600 dark:text-blue-400">bridge</span>
-          </h1>
-          <p class="text-xs text-gray-500 dark:text-gray-400">private · client-side · no uploads</p>
-        </div>
-      </div>
-      
-      <div class="flex items-center gap-3">
-        <!-- Language Switcher -->
-        <select id="langSelect" class="text-sm border rounded-lg px-3 py-2 bg-white dark:bg-gray-800 dark:border-gray-700">
-          <option value="en">🇬🇧 English</option>
-        </select>
-        
-        <!-- Dark Mode Toggle -->
-        <button id="themeToggle" class="p-2.5 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 dark:border-gray-700">
-          <span class="text-xl">🌓</span>
-        </button>
-      </div>
-    </header>
-    
-    <!-- ===== PRIVACY BANNER ===== -->
-    <div class="mb-6 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-sm">
-      <div class="flex items-center gap-2">
-        <span class="text-2xl">🔒</span>
-        <div>
-          <strong class="text-blue-700 dark:text-blue-300">Privacy First — 100% Client Side</strong>
-          <p class="text-blue-600 dark:text-blue-400 text-xs mt-0.5">Your files never leave your device. No uploads, no servers, no tracking.</p>
-        </div>
-      </div>
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-light">📄 PNG·PDF <span class="text-blue-600">bridge</span></h1>
+      <button id="themeToggle" class="px-3 py-2 border rounded-lg dark:border-gray-700">🌓 Theme</button>
     </div>
     
-    <!-- ===== MAIN CONTENT ===== -->
-    <div class="flex flex-col lg:flex-row gap-6">
+    <!-- Privacy Notice -->
+    <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
+      <p class="text-sm text-blue-700 dark:text-blue-300">🔒 <strong>100% Private</strong> — Files never leave your device</p>
+    </div>
+    
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
       
-      <!-- LEFT SIDEBAR -->
-      <aside class="lg:w-72 shrink-0">
-        <div class="bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-2xl p-5 sticky top-4">
-          <h2 class="font-semibold text-lg mb-4 flex items-center gap-2">
-            <span>⚙️</span> PDF Settings
-          </h2>
+      <!-- Settings Panel -->
+      <div class="lg:col-span-1 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4 h-fit">
+        <h2 class="font-semibold mb-4">⚙️ PDF Settings</h2>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-sm mb-1">Page Size</label>
+            <select id="pageSize" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+              <option value="A4">A4</option>
+              <option value="Letter">Letter</option>
+              <option value="Legal">Legal</option>
+              <option value="fit" selected>Fit to Image</option>
+            </select>
+          </div>
           
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-1.5">Page Size</label>
-              <select id="pageSize" class="w-full border dark:border-gray-700 rounded-lg px-3 py-2.5 bg-gray-50 dark:bg-gray-800">
-                <option value="A4">A4</option>
-                <option value="Letter">Letter</option>
-                <option value="Legal">Legal</option>
-                <option value="fit" selected>Fit to Image</option>
-              </select>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium mb-1.5">Orientation</label>
-              <select id="orientation" class="w-full border dark:border-gray-700 rounded-lg px-3 py-2.5 bg-gray-50 dark:bg-gray-800">
-                <option value="auto" selected>Auto</option>
-                <option value="portrait">Portrait</option>
-                <option value="landscape">Landscape</option>
-              </select>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium mb-1.5">Margins</label>
-              <select id="margins" class="w-full border dark:border-gray-700 rounded-lg px-3 py-2.5 bg-gray-50 dark:bg-gray-800">
-                <option value="0" selected>None</option>
-                <option value="20">Small</option>
-                <option value="40">Medium</option>
-              </select>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium mb-1.5">Image Fit</label>
-              <select id="imageFit" class="w-full border dark:border-gray-700 rounded-lg px-3 py-2.5 bg-gray-50 dark:bg-gray-800">
-                <option value="fit" selected>Fit</option>
-                <option value="fill">Fill</option>
-                <option value="original">Original</option>
-              </select>
-            </div>
-            
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <label for="quality">Quality</label>
-                <span id="qualityValue" class="font-mono">85%</span>
-              </div>
-              <input type="range" id="quality" min="10" max="100" value="85" class="w-full">
-            </div>
+          <div>
+            <label class="block text-sm mb-1">Orientation</label>
+            <select id="orientation" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+              <option value="auto">Auto</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm mb-1">Quality</label>
+            <input type="range" id="quality" min="10" max="100" value="85" class="w-full">
           </div>
         </div>
-      </aside>
+      </div>
       
-      <!-- RIGHT MAIN CONTENT -->
-      <main class="flex-1">
-        <!-- DROP ZONE -->
-        <div id="dropzone" class="border-3 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-8 text-center cursor-pointer transition-all bg-white dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-900 mb-4">
+      <!-- Main Area -->
+      <div class="lg:col-span-3">
+        
+        <!-- Drop Zone -->
+        <div id="dropzone" class="border-3 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition mb-4">
           <input type="file" id="fileInput" multiple accept=".png,image/png" class="hidden">
-          
-          <div class="flex flex-col items-center gap-3">
-            <span class="text-6xl mb-2">📤</span>
-            <h3 class="text-xl font-medium">Drop PNG files here</h3>
-            <p class="text-gray-500 dark:text-gray-400">or <span class="text-blue-600 font-semibold">click to browse</span></p>
-            <div class="flex gap-4 text-sm text-gray-400 mt-2">
-              <span>✓ PNG only</span>
-              <span>✓ No size limit</span>
-            </div>
-          </div>
+          <div class="text-5xl mb-2">📤</div>
+          <h3 class="text-lg font-medium">Drop PNG files here</h3>
+          <p class="text-sm text-gray-500">or click to browse</p>
+          <p class="text-xs text-gray-400 mt-2">✓ PNG only · No size limit</p>
         </div>
         
-        <!-- TOOLBAR -->
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <!-- Toolbar -->
+        <div class="flex justify-between items-center mb-4">
           <div class="flex gap-2">
-            <button id="combineBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2">
-              <span>📑</span> Combine PDF (C)
-            </button>
-            <button id="clearBtn" class="border dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2">
-              <span>🗑️</span> Clear (X)
-            </button>
+            <button id="combineBtn" class="btn btn-primary">📑 Combine PDF (C)</button>
+            <button id="clearBtn" class="btn">🗑️ Clear (X)</button>
+          </div>
+          <div class="text-sm bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg">
+            <span id="fileCount">0 images</span> · <span id="totalSize">0 KB</span>
+          </div>
+        </div>
+        
+        <!-- File List Container -->
+        <div id="fileListContainer">
+          <!-- Empty State -->
+          <div id="emptyState" class="text-center py-16 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl">
+            <div class="text-5xl mb-3">🖼️</div>
+            <p class="text-gray-500">No images added yet</p>
+            <p class="text-sm text-gray-400 mt-1">Drop PNG files to get started</p>
           </div>
           
-          <div class="flex items-center gap-3 text-sm bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-xl">
-            <span id="fileCount">0 images</span>
-            <span class="text-gray-400">|</span>
-            <span id="totalSize">0 KB</span>
-          </div>
+          <!-- File List (will be populated by JavaScript) -->
+          <div id="fileList" class="space-y-2"></div>
         </div>
         
-        <!-- FILE LIST -->
-        <div id="fileList" class="space-y-2 max-h-[500px] overflow-y-auto pr-1"></div>
-        
-        <!-- EMPTY STATE -->
-        <div id="emptyState" class="text-center py-16 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl bg-white dark:bg-gray-900/20">
-          <span class="text-5xl block mb-3">🖼️</span>
-          <p class="text-gray-500 dark:text-gray-400">No images added yet</p>
-          <p class="text-sm text-gray-400 mt-1">Drop PNG files to get started</p>
+        <!-- Bottom Combine Button -->
+        <div class="mt-4 text-right">
+          <button id="combineBottomBtn" class="btn btn-primary">📥 Download Combined PDF</button>
         </div>
-        
-        <!-- BOTTOM BUTTON -->
-        <div class="mt-4 flex justify-end">
-          <button id="combineBottomBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium flex items-center gap-2">
-            <span>📥</span> Download Combined PDF
-          </button>
-        </div>
-      </main>
+      </div>
     </div>
   </div>
-
+  
   <script>
     (function() {
-      // Theme handling
-      const theme = localStorage.getItem('theme');
-      if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      }
-      
+      // Simple theme toggle
       document.getElementById('themeToggle').addEventListener('click', () => {
         document.documentElement.classList.toggle('dark');
-        localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
       });
       
-      // Quality slider
-      const quality = document.getElementById('quality');
-      const qualityVal = document.getElementById('qualityValue');
-      quality.addEventListener('input', () => {
-        qualityVal.textContent = quality.value + '%';
-      });
-      
-      // ========== APP STATE ==========
+      // ===== APP STATE =====
       let files = [];
       let nextId = 1;
       
@@ -245,9 +235,7 @@
       const combineBottomBtn = document.getElementById('combineBottomBtn');
       const clearBtn = document.getElementById('clearBtn');
       
-      const { PDFDocument } = PDFLib;
-      
-      // Helper functions
+      // Helper: format bytes
       function formatBytes(bytes) {
         if (bytes === 0) return '0 B';
         const k = 1024;
@@ -256,222 +244,40 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
       }
       
+      // Update counters
       function updateStats() {
         fileCount.textContent = files.length + ' image' + (files.length !== 1 ? 's' : '');
-        const total = files.reduce((acc, f) => acc + f.size, 0);
+        const total = files.reduce((sum, f) => sum + f.size, 0);
         totalSize.textContent = formatBytes(total);
       }
       
-      // Process files immediately when added
-      async function processFiles(selectedFiles) {
-        const pngFiles = Array.from(selectedFiles).filter(f => 
-          f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
-        );
+      // Move file up/down
+      function moveFile(id, direction) {
+        const index = files.findIndex(f => f.id === id);
+        if (index === -1) return;
         
-        if (pngFiles.length === 0) {
-          alert('Please select PNG files only');
-          return;
-        }
+        const newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= files.length) return;
         
-        // Add files to array
-        for (const file of pngFiles) {
-          const id = nextId++;
-          const fileObj = {
-            id,
-            file,
-            name: file.name,
-            size: file.size,
-            status: 'queued',
-            thumbnail: null,
-            progress: 10,
-            error: null
-          };
-          files.push(fileObj);
-        }
-        
-        render();
-        
-        // Generate thumbnails one by one
-        for (const fileObj of files.slice(-pngFiles.length)) {
-          try {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const img = new Image();
-              img.onload = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 48;
-                canvas.height = 48;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, 48, 48);
-                fileObj.thumbnail = canvas.toDataURL('image/png');
-                fileObj.status = 'done';
-                fileObj.progress = 100;
-                render();
-              };
-              img.src = e.target.result;
-            };
-            reader.readAsDataURL(fileObj.file);
-          } catch (err) {
-            fileObj.status = 'error';
-            fileObj.error = 'Failed to load image';
-            render();
-          }
-        }
+        [files[index], files[newIndex]] = [files[newIndex], files[index]];
+        renderFileList();
       }
       
-      // Render file list
-      function render() {
-        if (files.length === 0) {
-          emptyState.classList.remove('hidden');
-          fileList.innerHTML = '';
-        } else {
-          emptyState.classList.add('hidden');
-          
-          let html = '';
-          files.forEach((f, index) => {
-            const statusIcon = {
-              'queued': '⏳',
-              'converting': '⚙️',
-              'done': '✅',
-              'error': '❌'
-            }[f.status] || '⏺️';
-            
-            html += `
-              <div class="file-tile status-${f.status} flex items-center gap-3 p-3 border dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 shadow-sm" data-id="${f.id}" draggable="true">
-                <span class="drag-handle text-gray-400 select-none" draggable="false">⋮⋮</span>
-                
-                <div class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 flex items-center justify-center">
-                  ${f.thumbnail ? 
-                    `<img src="${f.thumbnail}" class="w-full h-full object-cover" alt="">` : 
-                    `<span class="text-2xl text-gray-400">📷</span>`
-                  }
-                </div>
-                
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <span class="font-medium truncate max-w-[200px]" title="${f.name}">${f.name}</span>
-                    <span class="text-xs text-gray-500">${formatBytes(f.size)}</span>
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800">
-                      ${statusIcon} ${f.status}
-                    </span>
-                  </div>
-                  
-                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-1.5">
-                    <div class="progress-bar bg-blue-600 h-1.5 rounded-full" style="width: ${f.progress}%"></div>
-                  </div>
-                  
-                  ${f.error ? `<p class="text-xs text-red-500 mt-1">${f.error}</p>` : ''}
-                </div>
-                
-                <div class="flex gap-1 shrink-0">
-                  <button class="download-one px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40" data-id="${f.id}" ${f.status !== 'done' ? 'disabled' : ''}>
-                    ⬇ PDF
-                  </button>
-                  <button class="move-up px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-id="${f.id}" ${index === 0 ? 'disabled' : ''}>
-                    ↑
-                  </button>
-                  <button class="move-down px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800" data-id="${f.id}" ${index === files.length-1 ? 'disabled' : ''}>
-                    ↓
-                  </button>
-                </div>
-              </div>
-            `;
-          });
-          
-          fileList.innerHTML = html;
-          
-          // Attach event listeners
-          document.querySelectorAll('.download-one').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              const id = Number(btn.dataset.id);
-              downloadSingle(id);
-            });
-          });
-          
-          document.querySelectorAll('.move-up').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              const id = Number(btn.dataset.id);
-              moveFile(id, -1);
-            });
-          });
-          
-          document.querySelectorAll('.move-down').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              const id = Number(btn.dataset.id);
-              moveFile(id, 1);
-            });
-          });
-          
-          // Drag and drop reordering
-          let dragSrcIndex = null;
-          const tiles = document.querySelectorAll('.file-tile');
-          
-          tiles.forEach(tile => {
-            tile.addEventListener('dragstart', (e) => {
-              dragSrcIndex = Array.from(fileList.children).indexOf(tile);
-              e.dataTransfer.setData('text/plain', tile.dataset.id);
-              e.dataTransfer.effectAllowed = 'move';
-              tile.style.opacity = '0.5';
-            });
-            
-            tile.addEventListener('dragend', () => {
-              tile.style.opacity = '1';
-            });
-            
-            tile.addEventListener('dragover', (e) => {
-              e.preventDefault();
-            });
-            
-            tile.addEventListener('drop', (e) => {
-              e.preventDefault();
-              const target = e.target.closest('.file-tile');
-              if (!target) return;
-              
-              const destIndex = Array.from(fileList.children).indexOf(target);
-              if (dragSrcIndex === null || dragSrcIndex === destIndex) return;
-              
-              const [moved] = files.splice(dragSrcIndex, 1);
-              files.splice(destIndex, 0, moved);
-              render();
-            });
-          });
-        }
-        
-        updateStats();
-      }
-      
-      function moveFile(id, delta) {
-        const idx = files.findIndex(f => f.id === id);
-        if (idx === -1) return;
-        const newIdx = idx + delta;
-        if (newIdx < 0 || newIdx >= files.length) return;
-        [files[idx], files[newIdx]] = [files[newIdx], files[idx]];
-        render();
-      }
-      
-      async function downloadSingle(id) {
-        const entry = files.find(f => f.id === id);
-        if (!entry || entry.status !== 'done') return;
+      // Download single PDF
+      async function downloadSinglePDF(id) {
+        const file = files.find(f => f.id === id);
+        if (!file || file.status !== 'done') return;
         
         try {
-          entry.status = 'converting';
-          entry.progress = 50;
-          render();
+          file.status = 'converting';
+          renderFileList();
           
-          const pdfDoc = await PDFDocument.create();
-          const arrayBuffer = await entry.file.arrayBuffer();
+          const pdfDoc = await PDFLib.PDFDocument.create();
+          const arrayBuffer = await file.file.arrayBuffer();
           const image = await pdfDoc.embedPng(arrayBuffer);
           
           const page = pdfDoc.addPage([image.width, image.height]);
-          page.drawImage(image, {
-            x: 0,
-            y: 0,
-            width: image.width,
-            height: image.height
-          });
+          page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
           
           const pdfBytes = await pdfDoc.save();
           const blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -479,47 +285,36 @@
           
           const a = document.createElement('a');
           a.href = url;
-          a.download = entry.name.replace(/\.png$/i, '.pdf');
+          a.download = file.name.replace(/\.png$/i, '.pdf');
           a.click();
           
           URL.revokeObjectURL(url);
           
-          entry.status = 'done';
-          entry.progress = 100;
+          file.status = 'done';
         } catch (err) {
-          entry.status = 'error';
-          entry.error = 'Conversion failed';
-          entry.progress = 0;
+          file.status = 'error';
+          file.error = 'Conversion failed';
         }
         
-        render();
+        renderFileList();
       }
       
-      async function combineAll() {
+      // Combine all PDFs
+      async function combineAllPDFs() {
         const readyFiles = files.filter(f => f.status === 'done');
-        if (readyFiles.length !== files.length) {
-          alert('Please wait for all images to finish processing');
-          return;
-        }
-        
-        if (files.length === 0) {
-          alert('No files to combine');
+        if (readyFiles.length !== files.length || files.length === 0) {
+          alert('Please wait for all files to be ready');
           return;
         }
         
         try {
-          const pdfDoc = await PDFDocument.create();
+          const pdfDoc = await PDFLib.PDFDocument.create();
           
-          for (const entry of files) {
-            const arrayBuffer = await entry.file.arrayBuffer();
+          for (const file of files) {
+            const arrayBuffer = await file.file.arrayBuffer();
             const image = await pdfDoc.embedPng(arrayBuffer);
             const page = pdfDoc.addPage([image.width, image.height]);
-            page.drawImage(image, {
-              x: 0,
-              y: 0,
-              width: image.width,
-              height: image.height
-            });
+            page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
           }
           
           const pdfBytes = await pdfDoc.save();
@@ -533,8 +328,175 @@
           
           URL.revokeObjectURL(url);
         } catch (err) {
-          alert('Error creating PDF: ' + err.message);
+          alert('Error: ' + err.message);
         }
+      }
+      
+      // Render file list
+      function renderFileList() {
+        if (files.length === 0) {
+          emptyState.style.display = 'block';
+          fileList.innerHTML = '';
+        } else {
+          emptyState.style.display = 'none';
+          
+          let html = '';
+          files.forEach((f, index) => {
+            const statusColor = {
+              'queued': 'text-yellow-600',
+              'converting': 'text-blue-600',
+              'done': 'text-green-600',
+              'error': 'text-red-600'
+            }[f.status] || '';
+            
+            const statusIcon = {
+              'queued': '⏳',
+              'converting': '⚙️',
+              'done': '✅',
+              'error': '❌'
+            }[f.status] || '📄';
+            
+            html += `
+              <div class="file-item" data-id="${f.id}" draggable="true">
+                <span class="drag-handle" draggable="false">⋮⋮</span>
+                
+                <div class="file-thumb">
+                  ${f.thumbnail ? 
+                    `<img src="${f.thumbnail}" class="w-full h-full object-cover">` : 
+                    `<span class="text-2xl">📷</span>`
+                  }
+                </div>
+                
+                <div class="file-info">
+                  <div class="file-name">${f.name}</div>
+                  <div class="file-status ${statusColor}">
+                    ${statusIcon} ${f.status} · ${formatBytes(f.size)}
+                  </div>
+                  
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${f.progress}%"></div>
+                  </div>
+                  
+                  ${f.error ? `<div class="text-xs text-red-500 mt-1">${f.error}</div>` : ''}
+                </div>
+                
+                <div>
+                  <button class="btn download-btn" data-id="${f.id}" ${f.status !== 'done' ? 'disabled' : ''}>
+                    ⬇ PDF
+                  </button>
+                  <button class="btn up-btn" data-id="${f.id}" ${index === 0 ? 'disabled' : ''}>↑</button>
+                  <button class="btn down-btn" data-id="${f.id}" ${index === files.length-1 ? 'disabled' : ''}>↓</button>
+                </div>
+              </div>
+            `;
+          });
+          
+          fileList.innerHTML = html;
+          
+          // Add event listeners
+          document.querySelectorAll('.download-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              downloadSinglePDF(Number(btn.dataset.id));
+            });
+          });
+          
+          document.querySelectorAll('.up-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              moveFile(Number(btn.dataset.id), -1);
+            });
+          });
+          
+          document.querySelectorAll('.down-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              moveFile(Number(btn.dataset.id), 1);
+            });
+          });
+          
+          // Drag and drop reordering
+          let draggedIndex = null;
+          const items = document.querySelectorAll('.file-item');
+          
+          items.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+              draggedIndex = Array.from(fileList.children).indexOf(item);
+              e.dataTransfer.setData('text/plain', item.dataset.id);
+            });
+            
+            item.addEventListener('dragover', (e) => e.preventDefault());
+            
+            item.addEventListener('drop', (e) => {
+              e.preventDefault();
+              const target = e.target.closest('.file-item');
+              if (!target) return;
+              
+              const targetIndex = Array.from(fileList.children).indexOf(target);
+              if (draggedIndex === null || draggedIndex === targetIndex) return;
+              
+              const [moved] = files.splice(draggedIndex, 1);
+              files.splice(targetIndex, 0, moved);
+              renderFileList();
+            });
+          });
+        }
+        
+        updateStats();
+      }
+      
+      // Process uploaded files
+      function handleFiles(selectedFiles) {
+        const pngFiles = Array.from(selectedFiles).filter(f => 
+          f.type === 'image/png' || f.name.toLowerCase().endsWith('.png')
+        );
+        
+        if (pngFiles.length === 0) {
+          alert('Please select PNG files');
+          return;
+        }
+        
+        // Add files to array
+        pngFiles.forEach(file => {
+          const id = nextId++;
+          const fileObj = {
+            id,
+            file,
+            name: file.name,
+            size: file.size,
+            status: 'queued',
+            thumbnail: null,
+            progress: 10,
+            error: null
+          };
+          files.push(fileObj);
+        });
+        
+        renderFileList();
+        
+        // Generate thumbnails
+        pngFiles.forEach((file, idx) => {
+          const fileObj = files[files.length - pngFiles.length + idx];
+          
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = 48;
+              canvas.height = 48;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, 48, 48);
+              
+              fileObj.thumbnail = canvas.toDataURL('image/png');
+              fileObj.status = 'done';
+              fileObj.progress = 100;
+              renderFileList();
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
       }
       
       // Event listeners
@@ -552,41 +514,63 @@
       dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropzone.classList.remove('dropzone-active');
-        processFiles(e.dataTransfer.files);
+        handleFiles(e.dataTransfer.files);
       });
       
       fileInput.addEventListener('change', (e) => {
-        processFiles(e.target.files);
+        handleFiles(e.target.files);
         fileInput.value = '';
       });
       
-      combineBtn.addEventListener('click', combineAll);
-      combineBottomBtn.addEventListener('click', combineAll);
+      combineBtn.addEventListener('click', combineAllPDFs);
+      combineBottomBtn.addEventListener('click', combineAllPDFs);
       
       clearBtn.addEventListener('click', () => {
         files = [];
-        render();
+        renderFileList();
       });
       
       // Keyboard shortcuts
       document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        if (e.ctrlKey || e.metaKey) return;
         const key = e.key.toLowerCase();
         if (key === 'u') {
           e.preventDefault();
           fileInput.click();
         } else if (key === 'c') {
           e.preventDefault();
-          combineAll();
+          combineAllPDFs();
         } else if (key === 'x') {
           e.preventDefault();
           files = [];
-          render();
+          renderFileList();
         }
       });
       
       // Initial render
-      render();
+      renderFileList();
+      
+      // Add test files for debugging (remove in production)
+      // This helps verify the UI works
+      window.testAddFiles = function() {
+        // Create mock file objects
+        for (let i = 1; i <= 3; i++) {
+          const id = nextId++;
+          files.push({
+            id,
+            file: null,
+            name: `test-image-${i}.png`,
+            size: 1024 * 50,
+            status: 'done',
+            thumbnail: null,
+            progress: 100,
+            error: null
+          });
+        }
+        renderFileList();
+      };
+      
+      console.log('App ready - Call window.testAddFiles() to test UI');
     })();
   </script>
 </body>
