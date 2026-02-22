@@ -1,447 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terms and Conditions · PNG to PDF Bridge</title>
-  
-  <!-- SEO & Meta -->
-  <meta name="description" content="Terms and Conditions for PNG·PDF Bridge. Learn about the rules and guidelines for using our free, private PNG to PDF converter.">
-  <meta name="keywords" content="terms and conditions, terms of service, PNG to PDF, legal">
-  <meta name="author" content="PNG·PDF Bridge">
-  
-  <!-- Open Graph -->
-  <meta property="og:title" content="Terms and Conditions - PNG·PDF Bridge">
-  <meta property="og:description" content="Terms of service for using our privacy-first PNG to PDF converter.">
-  <meta property="og:type" content="website">
-  
-  <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <style>
-    * { font-family: 'Inter', sans-serif; }
-    
-    /* Table of contents sticky */
-    .toc-sticky {
-      position: sticky;
-      top: 100px;
-    }
-    
-    /* Terms sections */
-    .terms-section {
-      scroll-margin-top: 80px;
-    }
-    
-    /* Last updated badge */
-    .updated-badge {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    
-    /* Dark mode transitions */
-    .dark .terms-card {
-      background-color: #1f2937;
-      border-color: #374151;
-    }
-    
-    /* Hover effects */
-    .toc-item:hover {
-      color: #3b82f6;
-      transform: translateX(5px);
-    }
-    
-    /* Important notices */
-    .important-notice {
-      border-left: 4px solid #3b82f6;
-    }
-    
-    /* Print styles */
-    @media print {
-      .no-print { display: none; }
-      body { background: white; color: black; }
-    }
-    
-    /* Legal text styling */
-    .legal-text {
-      line-height: 1.8;
-    }
-    
-    .legal-text p {
-      margin-bottom: 1.2rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SG PDF Suite – Terms and Conditions</title>
+
+    <!-- Custom SG Favicon (same as index) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%2342f8f5%22/><text x=%2250%22 y=%2268%22 font-family=%22Arial, sans-serif%22 font-size=%2245%22 font-weight=%22bold%22 fill=%22%230d0f14%22 text-anchor=%22middle%22>SG</text></svg>">
+
+    <!-- Futuristic Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- same variables, navbar, footer, glow as index (without sidebar specifics) --- */
+        :root {
+            --bg-main: #0d0f14;
+            --bg-nav: #1c222d;
+            --bg-sidebar: #12151a;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --accent-glow: #42f8f5;
+            --glow-shadow: rgba(66, 248, 245, 0.6);
+            --font-main: 'Orbitron', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .glow-text {
+            color: var(--accent-glow);
+            text-shadow: 0 0 10px var(--glow-shadow);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: 0.3s ease;
+        }
+
+        /* --- Navbar (identical) --- */
+        .navbar {
+            background-color: var(--bg-nav);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-glow);
+            box-shadow: 0 4px 15px var(--glow-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background-color: var(--accent-glow);
+            color: var(--bg-main);
+            border-radius: 8px;
+            font-weight: 900;
+            margin-right: 12px;
+            font-size: 1.1rem;
+            text-shadow: none;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-glow);
+            text-shadow: 0 0 8px var(--glow-shadow);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--accent-glow);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent-glow);
+            box-shadow: 0 0 8px var(--accent-glow);
+            transition: 0.3s ease;
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--accent-glow);
+            box-shadow: 0 0 5px var(--glow-shadow);
+        }
+
+        /* --- Main layout: no sidebar, just centered content --- */
+        .main-content {
+            flex: 1;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--bg-sidebar);
+            border: 1px solid var(--accent-glow);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(66, 248, 245, 0.2);
+            backdrop-filter: blur(2px);
+            width: 95%;
+        }
+
+        /* --- Terms typography (readable but futuristic) --- */
+        .terms-container h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed var(--accent-glow);
+            padding-bottom: 1rem;
+        }
+
+        .terms-section {
+            margin-bottom: 2rem;
+        }
+
+        .terms-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-glow);
+            text-shadow: 0 0 5px var(--glow-shadow);
+            letter-spacing: 1px;
+        }
+
+        .terms-section p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            font-family: 'Orbitron', sans-serif; /* keep consistency, but lighter weight */
+            font-weight: 400;
+        }
+
+        .terms-section ul {
+            margin-left: 1.5rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            list-style-type: none;
+        }
+
+        .terms-section li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .terms-section li::before {
+            content: '▹';
+            color: var(--accent-glow);
+            position: absolute;
+            left: 0;
+            text-shadow: 0 0 5px var(--accent-glow);
+        }
+
+        .glow-border {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+            margin: 2rem 0;
+            box-shadow: 0 0 10px var(--glow-shadow);
+        }
+
+        /* --- Footer (identical) --- */
+        footer {
+            background-color: var(--bg-nav);
+            border-top: 2px solid var(--accent-glow);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 -4px 15px var(--glow-shadow);
+            margin-top: auto;
+        }
+
+        .footer-content p { margin-bottom: 10px; }
+
+        .footer-links { 
+            margin: 15px 0; 
+            line-height: 2;
+        }
+
+        .footer-links a { 
+            margin: 0 8px; 
+            font-size: 0.95rem;
+        }
+
+        .footer-links a:hover { 
+            color: var(--accent-glow); 
+            text-shadow: 0 0 5px var(--glow-shadow); 
+        }
+
+        .footer-separator {
+            color: #555;
+            margin: 0 2px;
+        }
+
+        .footer-email {
+            margin-top: 15px;
+            color: var(--accent-glow);
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-size: 1.05rem;
+            text-shadow: 0 0 8px var(--glow-shadow);
+        }
+
+        /* --- Mobile adjustments (no sidebar) --- */
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            .nav-links { 
+                display: none; 
+                flex-direction: column; 
+                position: absolute; 
+                top: 70px; 
+                right: 0; 
+                background: var(--bg-nav); 
+                padding: 20px; 
+                border-bottom: 2px solid var(--accent-glow); 
+                border-left: 2px solid var(--accent-glow); 
+                border-radius: 0 0 0 10px;
+                width: 200px;
+                z-index: 200;
+            }
+            .main-content {
+                margin: 1rem auto;
+                padding: 1.5rem;
+            }
+            .terms-container h1 { font-size: 1.8rem; }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 antialiased">
-  
-  <!-- Navigation -->
-  <nav class="border-b dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-0 z-50 no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <!-- Logo -->
-        <a href="/" class="flex items-center gap-2 text-xl font-light hover:text-blue-600 dark:hover:text-blue-400 transition">
-          <span class="text-2xl">📄</span>
-          <span>PNG·PDF <span class="font-semibold text-blue-600 dark:text-blue-400">bridge</span></span>
-        </a>
-        
-        <!-- Navigation Links -->
-        <div class="flex items-center gap-6">
-          <a href="/" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Home</a>
-          <a href="/about.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">About</a>
-          <a href="/contact.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Contact</a>
-          <a href="/privacy.html" class="text-sm hover:text-blue-600 dark:hover:text-blue-400 transition">Privacy</a>
-          <a href="/terms.html" class="text-sm text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-600 dark:border-blue-400">Terms</a>
-          
-          <!-- Theme Toggle -->
-          <button id="themeToggle" class="p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 dark:border-gray-700 transition" aria-label="Toggle theme">
-            <span class="text-lg">🌓</span>
-          </button>
+<body>
+
+    <!-- Top Navbar (exactly the same as index, without any sidebar link, but we keep Home/Tools/About/Contact) -->
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-box">SG</span>
+            <span class="logo-text">SG PDF Suite</span>
         </div>
-      </div>
-    </div>
-  </nav>
-  
-  <!-- Hero Section -->
-  <section class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 py-16 no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto">
-        <div class="text-6xl mb-4">📜</div>
-        <h1 class="text-4xl md:text-5xl font-light mb-4">
-          Terms and <span class="font-semibold text-blue-600 dark:text-blue-400">Conditions</span>
-        </h1>
-        <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
-          Please read these terms carefully before using PNG·PDF Bridge.
-        </p>
-        
-        <!-- Last Updated Badge -->
-        <div class="inline-flex items-center gap-2 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-full px-6 py-3 shadow-sm">
-          <span class="text-2xl">📅</span>
-          <div class="text-left">
-            <p class="text-xs text-gray-500 dark:text-gray-400">Last Updated</p>
-            <p class="font-semibold">February 21, 2026</p>
-          </div>
+        <nav class="nav-links" id="nav-links">
+            <!-- active class not on home here, but we keep same links (active logic is for demonstration) -->
+            <a href="index.html">Home</a>
+            <a href="index.html#tools-section">Tools</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Main Content -->
-  <section class="py-12 bg-white dark:bg-gray-900">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        
-        <!-- Table of Contents - Sidebar -->
-        <div class="lg:col-span-1 no-print">
-          <div class="toc-sticky bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-2xl p-6">
-            <h3 class="font-semibold text-lg mb-4 flex items-center gap-2">
-              <span>📋</span> Contents
-            </h3>
-            <ul class="space-y-2 text-sm">
-              <li><a href="#acceptance" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">1. Acceptance of Terms</a></li>
-              <li><a href="#description" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">2. Service Description</a></li>
-              <li><a href="#user-obligations" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">3. User Obligations</a></li>
-              <li><a href="#intellectual-property" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">4. Intellectual Property</a></li>
-              <li><a href="#disclaimer" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">5. Disclaimer of Warranties</a></li>
-              <li><a href="#limitation" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">6. Limitation of Liability</a></li>
-              <li><a href="#indemnification" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">7. Indemnification</a></li>
-              <li><a href="#third-party" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">8. Third-Party Links</a></li>
-              <li><a href="#modifications" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">9. Modifications to Service</a></li>
-              <li><a href="#termination" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">10. Termination</a></li>
-              <li><a href="#governing-law" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">11. Governing Law</a></li>
-              <li><a href="#contact" class="toc-item block py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition">12. Contact Information</a></li>
-            </ul>
-            
-            <!-- Quick Summary Card -->
-            <div class="mt-6 pt-4 border-t dark:border-gray-700">
-              <div class="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4">
-                <h4 class="font-medium text-sm mb-2 flex items-center gap-1">
-                  <span>⚡</span> Quick Summary
-                </h4>
-                <p class="text-xs text-gray-600 dark:text-gray-400">
-                  Free service, no warranties, you're responsible for your files, we're not liable for damages, 
-                  and we can change or stop the service at any time.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Terms Content -->
-        <div class="lg:col-span-3">
-          <div class="prose prose-lg max-w-none dark:prose-invert legal-text">
-            
-            <!-- Preliminary Notice -->
-            <div class="important-notice bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 rounded-xl p-6 mb-8 no-print">
-              <p class="text-yellow-700 dark:text-yellow-300 font-medium mb-2">⚠️ Important</p>
-              <p class="text-sm text-gray-700 dark:text-gray-300">
-                By accessing or using PNG·PDF Bridge, you agree to be bound by these Terms and Conditions. 
-                If you disagree with any part of the terms, you may not access the service.
-              </p>
-            </div>
-            
-            <!-- Section 1: Acceptance -->
-            <section id="acceptance" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">1.</span> Acceptance of Terms
-              </h2>
-              <p>These Terms and Conditions ("Terms", "Agreement") constitute a legally binding agreement between you ("User", "you") and PNG·PDF Bridge ("we", "us", "our"), governing your access to and use of the PNG·PDF Bridge website and services.</p>
-              <p class="mt-3">By accessing our website at <a href="/" class="text-blue-600 dark:text-blue-400 hover:underline">https://pngpdfbridge.com</a> (the "Service"), you agree to be bound by these Terms. If you do not agree to all the terms and conditions of this agreement, you are prohibited from using the Service.</p>
+    </header>
+
+    <!-- Main content: Terms and Conditions (no sidebar, full width container) -->
+    <main class="main-content">
+        <div class="terms-container">
+            <h1 class="glow-text">TERMS AND CONDITIONS</h1>
+            <div class="last-updated">Last updated: February 21, 2026</div>
+
+            <section class="terms-section">
+                <h2>1. Acceptance of Terms</h2>
+                <p>By accessing or using the SG PDF Suite website (“SG PDF”, “we”, “our”), you agree to be bound by these Terms and Conditions, all applicable laws, and regulations. If you do not agree with any part of these terms, you must not use our website or tools. The materials contained in this website are protected by applicable intellectual property laws.</p>
             </section>
-            
-            <!-- Section 2: Service Description -->
-            <section id="description" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">2.</span> Service Description
-              </h2>
-              <p>PNG·PDF Bridge provides a free, client-side tool that converts PNG image files to PDF documents. Key characteristics of our Service:</p>
-              <ul class="list-disc pl-6 mt-3 space-y-2">
-                <li><strong>100% Client-Side:</strong> All file processing occurs entirely in your web browser. No files are uploaded to our servers.</li>
-                <li><strong>No Account Required:</strong> You can use the Service without registration or providing any personal information.</li>
-                <li><strong>Free of Charge:</strong> The Service is provided completely free, with no hidden costs, premium tiers, or watermarks.</li>
-                <li><strong>No Data Collection:</strong> We do not collect, store, or have access to your files or personal data.</li>
-                <li><strong>As-Is Availability:</strong> The Service is provided "as-is" and may be modified, suspended, or discontinued at any time without notice.</li>
-              </ul>
-            </section>
-            
-            <!-- Section 3: User Obligations -->
-            <section id="user-obligations" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">3.</span> User Obligations
-              </h2>
-              <p>As a user of our Service, you agree to:</p>
-              <ul class="list-disc pl-6 mt-3 space-y-2">
-                <li><strong>Legal Use:</strong> Only use the Service for lawful purposes and in compliance with all applicable laws and regulations.</li>
-                <li><strong>Content Responsibility:</strong> You are solely responsible for the PNG files you process using our Service. You must have the necessary rights and permissions to convert and use those files.</li>
-                <li><strong>No Malicious Use:</strong> You agree not to use the Service to distribute malware, viruses, or other harmful code, or to engage in any activity that could damage, disable, or impair the Service.</li>
-                <li><strong>No Reverse Engineering:</strong> You agree not to reverse engineer, decompile, or attempt to extract the source code of the Service, except to the extent expressly permitted by applicable law.</li>
-                <li><strong>No Automated Access:</strong> You agree not to use bots, scrapers, or other automated means to access the Service without our express written permission.</li>
-                <li><strong>Respect Rate Limits:</strong> While we don't currently impose rate limits, you agree not to use the Service in a way that could overwhelm our infrastructure.</li>
-              </ul>
-            </section>
-            
-            <!-- Section 4: Intellectual Property -->
-            <section id="intellectual-property" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">4.</span> Intellectual Property
-              </h2>
-              
-              <h3 class="text-lg font-medium mt-4 mb-2">4.1 Our IP</h3>
-              <p>The Service, including its original content, features, functionality, and design, is owned by PNG·PDF Bridge and is protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.</p>
-              
-              <h3 class="text-lg font-medium mt-4 mb-2">4.2 Your IP</h3>
-              <p>You retain all rights to your PNG files. We do not claim any ownership over the files you process using our Service. Since files never leave your device, we never have access to them.</p>
-              
-              <h3 class="text-lg font-medium mt-4 mb-2">4.3 Open Source</h3>
-              <p>Portions of our code may be open source. The specific open source components and their licenses are identified in our documentation. You may use, modify, and distribute those components in accordance with their respective licenses.</p>
-            </section>
-            
-            <!-- Section 5: Disclaimer of Warranties -->
-            <section id="disclaimer" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">5.</span> Disclaimer of Warranties
-              </h2>
-              <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl border dark:border-gray-700">
-                <p class="font-mono text-sm uppercase tracking-wider mb-3">THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT ANY WARRANTIES OF ANY KIND.</p>
-                <p class="mt-2">To the fullest extent permitted by law, we disclaim all warranties, express or implied, including but not limited to:</p>
-                <ul class="list-disc pl-6 mt-3 space-y-1">
-                  <li>Implied warranties of merchantability, fitness for a particular purpose, and non-infringement</li>
-                  <li>Warranties that the Service will be uninterrupted, timely, secure, or error-free</li>
-                  <li>Warranties that the results obtained from using the Service will be accurate or reliable</li>
-                  <li>Warranties that any errors in the Service will be corrected</li>
+
+            <section class="terms-section">
+                <h2>2. Use License & Restrictions</h2>
+                <p>Permission is granted to temporarily use the SG PDF Suite tools for personal, non-commercial transitory viewing only. Under this license you may not:</p>
+                <ul>
+                    <li>modify or copy the materials (including our futuristic UI/UX design);</li>
+                    <li>use the materials for any commercial purpose or public display without written consent;</li>
+                    <li>attempt to decompile or reverse engineer any software contained on the website;</li>
+                    <li>remove any copyright or other proprietary notations from the materials;</li>
+                    <li>transfer the materials to another person or "mirror" them on any other server.</li>
                 </ul>
-                <p class="mt-4"><strong>No Guarantee of Conversion:</strong> While we strive to ensure reliable conversion, we cannot guarantee that every PNG file will convert successfully, that the output PDF will meet your requirements, or that the Service will be compatible with all devices and browsers.</p>
-              </div>
+                <p>This license shall automatically terminate if you violate any of these restrictions and may be terminated by SG PDF Suite at any time.</p>
             </section>
-            
-            <!-- Section 6: Limitation of Liability -->
-            <section id="limitation" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">6.</span> Limitation of Liability
-              </h2>
-              <div class="bg-red-50 dark:bg-red-950/30 p-6 rounded-xl border border-red-200 dark:border-red-800">
-                <p class="font-medium mb-3">TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL PNG·PDF BRIDGE BE LIABLE FOR:</p>
-                <ul class="list-disc pl-6 space-y-2">
-                  <li>Any indirect, incidental, special, consequential, or punitive damages</li>
-                  <li>Loss of profits, data, use, goodwill, or other intangible losses</li>
-                  <li>Damages resulting from your access to or use of or inability to access or use the Service</li>
-                  <li>Damages resulting from any conduct or content of any third party on the Service</li>
-                  <li>Damages resulting from unauthorized access, use, or alteration of your transmissions or content</li>
-                </ul>
-                <p class="mt-4"><strong>Our total liability to you shall not exceed the amount you paid us to use the Service (which is $0, as the Service is free).</strong></p>
-                <p class="mt-2 text-sm">Some jurisdictions do not allow the exclusion of certain warranties or the limitation or exclusion of liability for incidental or consequential damages. Accordingly, some of the above limitations may not apply to you.</p>
-              </div>
+
+            <div class="glow-border"></div>
+
+            <section class="terms-section">
+                <h2>3. User Data & Privacy</h2>
+                <p>Our <a href="privacy-policy.html" style="color: var(--accent-glow); text-decoration: underline;">Privacy Policy</a> explains how we treat your personal data and protect your privacy when you use our services. By using SG PDF Suite, you agree that we can use such data in accordance with our Privacy Policy. All file processing is done locally in your browser; we do not store uploaded files on our servers after the session ends. However, you are responsible for the content you process.</p>
             </section>
-            
-            <!-- Section 7: Indemnification -->
-            <section id="indemnification" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">7.</span> Indemnification
-              </h2>
-              <p>You agree to defend, indemnify, and hold harmless PNG·PDF Bridge and its affiliates, licensors, and service providers from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to:</p>
-              <ul class="list-disc pl-6 mt-3 space-y-1">
-                <li>Your violation of these Terms</li>
-                <li>Your use of the Service, including any use of the Service's content, services, and products other than as expressly authorized in these Terms</li>
-                <li>Your violation of any third-party right, including without limitation any copyright, property, or privacy right</li>
-                <li>Any claim that your files caused damage to a third party</li>
-              </ul>
+
+            <section class="terms-section">
+                <h2>4. Disclaimer of Warranties</h2>
+                <p>The SG PDF Suite tools are provided “as is”. We make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability of the tools or the information contained on the website. Any reliance you place on such materials is strictly at your own risk. We do not warrant that the tools will be uninterrupted, error-free, or free of harmful components.</p>
             </section>
-            
-            <!-- Section 8: Third-Party Links -->
-            <section id="third-party" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">8.</span> Third-Party Links and Resources
-              </h2>
-              <p>The Service may contain links to third-party websites or resources. We provide these links for your convenience only and do not endorse the content, products, or services on those sites.</p>
-              <p class="mt-3">We have no control over the contents of those sites or resources and accept no responsibility for them or for any loss or damage that may arise from your use of them. If you decide to access any third-party website linked to our Service, you do so entirely at your own risk and subject to the terms and conditions of use for such websites.</p>
+
+            <section class="terms-section">
+                <h2>5. Limitations of Liability</h2>
+                <p>In no event shall SG PDF Suite or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on our website, even if we have been notified orally or in writing of the possibility of such damage. Some jurisdictions do not allow limitations on implied warranties or liability for incidental damages, so these limitations may not apply to you.</p>
             </section>
-            
-            <!-- Section 9: Modifications to Service -->
-            <section id="modifications" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">9.</span> Modifications to the Service
-              </h2>
-              <p>We reserve the right to modify, suspend, or discontinue, temporarily or permanently, the Service (or any part thereof) at any time with or without notice. You agree that we shall not be liable to you or to any third party for any modification, suspension, or discontinuance of the Service.</p>
-              <p class="mt-3">We may also update these Terms from time to time. When we do, we will revise the "Last Updated" date at the top of this page. Your continued use of the Service after any such changes constitutes your acceptance of the new Terms.</p>
+
+            <div class="glow-border"></div>
+
+            <section class="terms-section">
+                <h2>6. Revisions and Errata</h2>
+                <p>The materials appearing on SG PDF Suite may include technical, typographical, or photographic errors. We do not warrant that any of the materials are accurate, complete, or current. We may make changes to the tools and prices described at any time without notice.</p>
             </section>
-            
-            <!-- Section 10: Termination -->
-            <section id="termination" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">10.</span> Termination
-              </h2>
-              <p>We may terminate or suspend your access to the Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach these Terms.</p>
-              <p class="mt-3">All provisions of these Terms which by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity, and limitations of liability.</p>
+
+            <section class="terms-section">
+                <h2>7. Links to Third-Party Sites</h2>
+                <p>Our website may contain links to external sites that are not operated by us. If you click on a third-party link, you will be directed to that third party's site. We strongly advise you to review the Terms and Conditions and Privacy Policy of every site you visit. We have no control over and assume no responsibility for the content or practices of any third-party sites.</p>
             </section>
-            
-            <!-- Section 11: Governing Law -->
-            <section id="governing-law" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">11.</span> Governing Law
-              </h2>
-              <p>These Terms shall be governed and construed in accordance with the laws of [Your Country/State], without regard to its conflict of law provisions.</p>
-              <p class="mt-3">Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect.</p>
+
+            <section class="terms-section">
+                <h2>8. Governing Law</h2>
+                <p>Any claim relating to SG PDF Suite shall be governed by the laws of the Republic of India without regard to its conflict of law provisions. You agree to submit to the personal and exclusive jurisdiction of the courts located in Mumbai.</p>
             </section>
-            
-            <!-- Section 12: Contact Information -->
-            <section id="contact" class="terms-section mb-10">
-              <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <span class="text-blue-600">12.</span> Contact Information
-              </h2>
-              <p>If you have any questions about these Terms, please contact us:</p>
-              
-              <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl">
-                  <p class="font-medium mb-2">📧 Email</p>
-                  <a href="mailto:contact@sgpdf.in" class="text-blue-600 dark:text-blue-400 hover:underline">contact@sgpdf.in</a>
-                </div>
-                
-                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl">
-                  <p class="font-medium mb-2">⏱️ Response Time</p>
-                  <p>Within 48 hours, Monday-Friday</p>
-                </div>
-                
-                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl md:col-span-2">
-                  <p class="font-medium mb-2">🏢 Legal Address</p>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    PNG·PDF Bridge<br>
-                    [Your Business Address]<br>
-                    [City, State, ZIP]<br>
-                    [Country]
-                  </p>
-                </div>
-              </div>
+
+            <section class="terms-section">
+                <h2>9. Modifications to Terms</h2>
+                <p>SG PDF Suite may revise these Terms and Conditions at any time without notice. By continuing to use this website, you are agreeing to be bound by the then-current version of these Terms. It is your responsibility to check this page periodically for changes.</p>
             </section>
-            
-            <!-- Acknowledgment -->
-            <div class="mt-8 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl text-center">
-              <p class="text-green-700 dark:text-green-300 font-medium">By using PNG·PDF Bridge, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
+
+            <div class="glow-border"></div>
+
+            <section class="terms-section">
+                <h2>10. Contact Information</h2>
+                <p>If you have any questions about these Terms, please contact us at:</p>
+                <p style="margin-top: 10px;"><span class="glow-text">📧 contact@sgpdf.in</span><br>📬 SG PDF Suite, 42 Futuristic Avenue, Cyber City, India</p>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer (identical to index, all links active) -->
+    <footer>
+        <div class="footer-content">
+            <p>© 2026 SG PDF Suite. All Rights Reserved.</p>
+            <div class="footer-links">
+                <a href="privacy-policy.html">Privacy Policy</a> <span class="footer-separator">|</span>
+                <a href="terms.html" class="active">Terms and Conditions</a> <span class="footer-separator">|</span>
+                <a href="disclaimer.html">Disclaimer</a> <span class="footer-separator">|</span>
+                <a href="sitemap.html">Sitemap</a> <span class="footer-separator">|</span>
+                <a href="about.html">About</a> <span class="footer-separator">|</span>
+                <a href="contact.html">Contact</a>
             </div>
-          </div>
+            <div class="footer-email">contact@sgpdf.in</div>
         </div>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Call to Action -->
-  <section class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-16 no-print">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl font-light mb-4">Ready to convert?</h2>
-      <p class="text-xl mb-8 text-blue-100">Free, private, and no signup required.</p>
-      <a href="/" class="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center gap-2 transition shadow-xl">
-        <span>📄</span> Go to Converter
-        <span>→</span>
-      </a>
-    </div>
-  </section>
-  
-  <!-- Footer -->
-  <footer class="bg-white dark:bg-gray-900 border-t dark:border-gray-800 py-8 no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-wrap justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-        <div class="flex gap-6">
-          <a href="/" class="hover:text-blue-600 dark:hover:text-blue-400">Home</a>
-          <a href="/about.html" class="hover:text-blue-600 dark:hover:text-blue-400">About</a>
-          <a href="/contact.html" class="hover:text-blue-600 dark:hover:text-blue-400">Contact</a>
-          <a href="/privacy.html" class="hover:text-blue-600 dark:hover:text-blue-400">Privacy</a>
-          <a href="/terms.html" class="hover:text-blue-600 dark:hover:text-blue-400">Terms</a>
-        </div>
-        <div>
-          © 2026 PNG·PDF Bridge — Free & private PNG to PDF conversion
-        </div>
-      </div>
-    </div>
-  </footer>
-  
-  <script>
-    // Theme toggle
-    const themeToggle = document.getElementById('themeToggle');
-    
-    // Check for saved theme
-    if (localStorage.getItem('theme') === 'dark' || 
-        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    }
-    
-    themeToggle.addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-    });
-    
-    // Smooth scrolling for TOC links
-    document.querySelectorAll('.toc-item').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href');
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    });
-    
-    // Highlight current section in TOC
-    window.addEventListener('scroll', () => {
-      const sections = document.querySelectorAll('.terms-section');
-      const tocItems = document.querySelectorAll('.toc-item');
-      
-      let current = '';
-      sections.forEach(section => {
-        const sectionTop = section.offsetTop - 100;
-        if (window.scrollY >= sectionTop) {
-          current = section.getAttribute('id');
-        }
-      });
-      
-      tocItems.forEach(item => {
-        item.classList.remove('text-blue-600', 'font-medium');
-        if (item.getAttribute('href') === '#' + current) {
-          item.classList.add('text-blue-600', 'font-medium');
-        }
-      });
-    });
-  </script>
+    </footer>
+
+    <!-- minimal script for mobile hamburger (exactly as index, but without sidebar filtering) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('nav-links');
+            
+            hamburger.addEventListener('click', () => {
+                if(navLinks.style.display === 'flex') {
+                    navLinks.style.display = 'none';
+                } else {
+                    navLinks.style.display = 'flex';
+                }
+            });
+
+            // close mobile menu when link clicked
+            const links = navLinks.querySelectorAll('a');
+            links.forEach(link => {
+                link.addEventListener('click', () => {
+                    if(window.innerWidth <= 768) {
+                        navLinks.style.display = 'none';
+                    }
+                });
+            });
+
+            // Optional: set active state for current page (terms)
+            const currentPage = 'terms.html';
+            links.forEach(link => {
+                if(link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    // if it's index, but we don't want active on home for terms page
+                }
+            });
+        });
+
+        // Also handle window resize to reset nav display if screen becomes larger
+        window.addEventListener('resize', () => {
+            const navLinks = document.getElementById('nav-links');
+            if(window.innerWidth > 768) {
+                navLinks.style.display = 'flex';  // default for desktop is flex from css
+            } else {
+                navLinks.style.display = ''; // let css/hamburger manage
+            }
+        });
+    </script>
+
+    <!-- no modal or tool scripts because it's terms page -->
 </body>
 </html>
