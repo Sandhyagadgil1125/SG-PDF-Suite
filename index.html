@@ -421,13 +421,19 @@
             /* Hide the separator lines on very small screens for cleaner vertical stacking if they wrap heavily */
             .footer-separator { display: inline-block; }
         }
-    </style>
-    /* Hide sidebar on mobile screens */
+        /* Hide sidebar on mobile screens - only show tools grid */
 @media (max-width: 768px) {
     .sidebar {
-        display: none;
+        display: none !important;
+    }
+    
+    /* Make tools grid show as single row on mobile */
+    .tools-grid {
+        grid-template-columns: 1fr !important;
     }
 }
+    </style>
+
 </head>
 <body>
 
