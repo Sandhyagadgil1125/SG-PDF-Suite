@@ -435,7 +435,12 @@
     </style>
 
 <!-- Add PDF processing library -->
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js">
+<!-- Add PDF processing library -->
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<!-- Add JSZip for creating zip files -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>    
+</script>
 </head>
 <body>
 
@@ -642,28 +647,34 @@
         const fileInput = document.getElementById('file-input');
 
         function openModal(title, desc, toolId) {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-desc').innerText = desc;
-            currentToolId = toolId;
-            
-            document.getElementById('upload-zone').style.display = 'block';
-            document.getElementById('processing-zone').style.display = 'none';
-            document.getElementById('progress-bar').style.width = '0%';
-            document.getElementById('download-btn').style.display = 'none';
-            document.getElementById('status-text').innerText = 'Uploading...';
-            document.getElementById('status-text').classList.remove('glow-text');
-            document.getElementById('file-input').value = "";
-            
-            var uploadP = document.querySelector('.upload-zone p:first-child');
-            if (uploadP) {
-                if (toolId === 'merge') {
-                    document.getElementById('file-input').multiple = true;
-                    uploadP.innerText = 'Drag & Drop PDF files here (select multiple)';
-                } else {
-                    document.getElementById('file-input').multiple = false;
-                    uploadP.innerText = 'Drag & Drop your files here';
-                }
-            }
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-desc').innerText = desc;
+    currentToolId = toolId;
+    
+    document.getElementById('upload-zone').style.display = 'block';
+    document.getElementById('processing-zone').style.display = 'none';
+    document.getElementById('progress-bar').style.width = '0%';
+    document.getElementById('download-btn').style.display = 'none';
+    document.getElementById('status-text').innerText = 'Uploading...';
+    document.getElementById('status-text').classList.remove('glow-text');
+    document.getElementById('file-input').value = "";
+    
+    var uploadP = document.querySelector('.upload-zone p:first-child');
+    if (uploadP) {
+        if (toolId === 'merge') {
+            document.getElementById('file-input').multiple = true;
+            uploadP.innerText = 'Drag & Drop PDF files here (select multiple)';
+        } else if (toolId === 'split') {
+            document.getElementById('file-input').multiple = false;
+            uploadP.innerText = 'Drag & Drop a PDF file to split into individual pages';
+        } else {
+            document.getElementById('file-input').multiple = false;
+            uploadP.innerText = 'Drag & Drop your files here';
+        }
+    }
+    
+    document.getElementById('tool-modal').classList.add('active');
+}
             
             document.getElementById('tool-modal').classList.add('active');
         }
@@ -691,14 +702,16 @@
             e.preventDefault();
             uploadZone.classList.remove('dragover');
             
-            if (e.dataTransfer.files.length > 0) {
-                if (currentToolId === 'merge') {
-                    processMergePDF(e.dataTransfer.files);
-                } else {
-                    alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
-                    simulateProcessing();
-                }
-            }
+           if (e.dataTransfer.files.length > 0) {
+        if (currentToolId === 'merge') {
+        processMergePDF(e.dataTransfer.files);
+        } else if (currentToolId === 'split') {
+        processSplitPDF(e.dataTransfer.files[0]);
+        } else {
+        alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
+        simulateProcessing();
+        }
+    }
         });
 
         fileInput.addEventListener('change', () => {
@@ -752,6 +765,202 @@
             }, 400);
         }
         
+        // REAL Split PDF function
+async function processSplitPDF(file) {
+    if (!file) {
+        alert('Please select a PDF file to split');
+        return;
+    }
+    
+    const uploadZone = document.getElementById('upload-zone');
+    const processingZone = document.getElementById('processing-zone');
+    const progressBar = document.getElementById('progress-bar');
+    const statusText = document.getElementById('status-text');
+    const downloadBtn = document.getElementById('download-btn');
+    
+    uploadZone.style.display = 'none';
+    processingZone.style.display = 'block';
+    
+    try {
+        statusText.innerText = 'Loading PDF...';
+        progressBar.style.width = '20%';
+        
+        // Load the PDF
+        const fileBytes = await file.arrayBuffer();
+        const pdfDoc = await PDFLib.PDFDocument.load(fileBytes);
+        const pageCount = pdfDoc.getPageCount();
+        
+        statusText.innerText = `PDF has ${pageCount} pages. Creating individual PDFs...`;
+        progressBar.style.width = '40%';
+        
+        // Check if JSZip is available
+        if (typeof JSZip === 'undefined') {
+            // Fallback - download pages individually
+            for (let i = 0; i < pageCount; i++) {
+                statusText.innerText = `Creating page ${i + 1} of ${pageCount}...`;
+                progressBar.style.width = `${40 + ((i + 1) / pageCount) * 40}%`;
+                
+                const newPdf = await PDFLib.PDFDocument.create();
+                const [copiedPage] = await newPdf.copyPages(pdfDoc, [i]);
+                newPdf.addPage(copiedPage);
+                
+                const pdfBytes = await newPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `page-${i + 1}.pdf`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            progressBar.style.width = '100%';
+            statusText.innerText = `✓ Complete! Downloaded ${pageCount} individual PDFs`;
+            statusText.classList.add('glow-text');
+            downloadBtn.style.display = 'none';
+            return;
+        }
+        
+        // Use JSZip if available
+        const zip = new JSZip();
+        
+        for (let i = 0; i < pageCount; i++) {
+            statusText.innerText = `Creating page ${i + 1} of ${pageCount}...`;
+            progressBar.style.width = `${40 + ((i + 1) / pageCount) * 40}%`;
+            
+            const newPdf = await PDFLib.PDFDocument.create();
+            const [copiedPage] = await newPdf.copyPages(pdfDoc, [i]);
+            newPdf.addPage(copiedPage);
+            
+            const pdfBytes = await newPdf.save();
+            zip.file(`page-${i + 1}.pdf`, pdfBytes);
+        }
+        
+        statusText.innerText = 'Creating zip file...';
+        progressBar.style.width = '90%';
+        
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        
+        progressBar.style.width = '100%';
+        statusText.innerText = `✓ Complete! Split ${pageCount} pages into individual PDFs`;
+        statusText.classList.add('glow-text');
+        
+        const url = URL.createObjectURL(zipBlob);
+        
+        downloadBtn.style.display = 'inline-block';
+        downloadBtn.onclick = () => {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'split-pdf-pages.zip';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        
+    } catch (error) {
+        console.error('Split failed:', error);
+        statusText.innerText = '❌ Error splitting PDF';
+        statusText.style.color = '#ff6b6b';
+        downloadBtn.style.display = 'none';
+    }
+}
+    
+    const uploadZone = document.getElementById('upload-zone');
+    const processingZone = document.getElementById('processing-zone');
+    const progressBar = document.getElementById('progress-bar');
+    const statusText = document.getElementById('status-text');
+    const downloadBtn = document.getElementById('download-btn');
+    
+    uploadZone.style.display = 'none';
+    processingZone.style.display = 'block';
+    
+    try {
+        statusText.innerText = 'Loading PDF...';
+        progressBar.style.width = '20%';
+        
+        // Load the PDF
+        const fileBytes = await file.arrayBuffer();
+        const pdfDoc = await PDFLib.PDFDocument.load(fileBytes);
+        const pageCount = pdfDoc.getPageCount();
+        
+        statusText.innerText = `PDF has ${pageCount} pages. Creating individual PDFs...`;
+        progressBar.style.width = '40%';
+        
+        // Check if JSZip is available
+        if (typeof JSZip === 'undefined') {
+            // Fallback - download pages individually
+            for (let i = 0; i < pageCount; i++) {
+                statusText.innerText = `Creating page ${i + 1} of ${pageCount}...`;
+                progressBar.style.width = `${40 + ((i + 1) / pageCount) * 40}%`;
+                
+                const newPdf = await PDFLib.PDFDocument.create();
+                const [copiedPage] = await newPdf.copyPages(pdfDoc, [i]);
+                newPdf.addPage(copiedPage);
+                
+                const pdfBytes = await newPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `page-${i + 1}.pdf`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            progressBar.style.width = '100%';
+            statusText.innerText = `✓ Complete! Downloaded ${pageCount} individual PDFs`;
+            statusText.classList.add('glow-text');
+            downloadBtn.style.display = 'none';
+            return;
+        }
+        
+        // Use JSZip if available
+        const zip = new JSZip();
+        
+        for (let i = 0; i < pageCount; i++) {
+            statusText.innerText = `Creating page ${i + 1} of ${pageCount}...`;
+            progressBar.style.width = `${40 + ((i + 1) / pageCount) * 40}%`;
+            
+            const newPdf = await PDFLib.PDFDocument.create();
+            const [copiedPage] = await newPdf.copyPages(pdfDoc, [i]);
+            newPdf.addPage(copiedPage);
+            
+            const pdfBytes = await newPdf.save();
+            zip.file(`page-${i + 1}.pdf`, pdfBytes);
+        }
+        
+        statusText.innerText = 'Creating zip file...';
+        progressBar.style.width = '90%';
+        
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        
+        progressBar.style.width = '100%';
+        statusText.innerText = `✓ Complete! Split ${pageCount} pages into individual PDFs`;
+        statusText.classList.add('glow-text');
+        
+        const url = URL.createObjectURL(zipBlob);
+        
+        downloadBtn.style.display = 'inline-block';
+        downloadBtn.onclick = () => {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'split-pdf-pages.zip';
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        
+    } catch (error) {
+        console.error('Split failed:', error);
+        statusText.innerText = '❌ Error splitting PDF';
+        statusText.style.color = '#ff6b6b';
+        downloadBtn.style.display = 'none';
+    }
+}
         // REAL Merge PDF function
         async function processMergePDF(files) {
             if (!files || files.length < 2) {
@@ -813,19 +1022,19 @@
                 downloadBtn.style.display = 'inline-block';
                 downloadBtn.onclick = () => {
                     const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'merged.pdf';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                };
-                
-            } catch (error) {
-                console.error('Merge failed:', error);
-                statusText.innerText = '❌ Error merging PDFs';
-                statusText.style.color = '#ff6b6b';
-                downloadBtn.style.display = 'none';
+                a.href = url;
+                a.download = 'merged.pdf';
+                a.click();
+                URL.revokeObjectURL(url);
             }
+            
+        } catch (error) {
+            console.error('Merge failed:', error);
+            statusText.innerText = '❌ Error merging PDFs';
+            statusText.style.color = '#ff6b6b';
+            downloadBtn.style.display = 'none';
         }
-    </script>
+    }
+</script>
 </body>
 </html>
