@@ -573,9 +573,7 @@
             { id: 'stt', title: 'Speech to Text', category: 'Utility Tools', icon: '🎙️', desc: 'Voice dictation to text.' },
             { id: 'timer', title: 'Timer / Stopwatch', category: 'Utility Tools', icon: '⏱️', desc: 'Track time accurately.' }
         ];
-            // Add these new variables
-            let currentToolId = null;
-            let currentFiles = [];
+           
         // Add these new variables
         let currentToolId = null;
         let currentFiles = [];
@@ -826,12 +824,7 @@ async function processMergePDF(files) {
         downloadBtn.style.display = 'none';
     }
 }
-// REAL Merge PDF function
-async function processMergePDF(files) {
-    if (!files || files.length < 2) {
-        alert('Please select at least 2 PDF files to merge');
-        return;
-    }
+
     
     const uploadZone = document.getElementById('upload-zone');
     const processingZone = document.getElementById('processing-zone');
@@ -899,7 +892,6 @@ async function processMergePDF(files) {
         statusText.style.color = '#ff6b6b';
         downloadBtn.style.display = 'none';
     }
-}
     </script>
 </body>
 </html>
