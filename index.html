@@ -577,6 +577,7 @@
         // Add these new variables
         let currentToolId = null;
         let currentFiles = [];
+        
         // Initialize Layout
         document.addEventListener("DOMContentLoaded", () => {
             renderTools('All');
@@ -601,28 +602,28 @@
         }
 
         // Render Tools based on category
-function renderTools(category) {
-    const grid = document.getElementById('tools-grid');
-    grid.innerHTML = ''; 
+        function renderTools(category) {
+            const grid = document.getElementById('tools-grid');
+            grid.innerHTML = ''; 
 
-    const filteredTools = category === 'All' 
-        ? toolsData 
-        : toolsData.filter(t => t.category === category);
+            const filteredTools = category === 'All' 
+                ? toolsData 
+                : toolsData.filter(t => t.category === category);
 
-    filteredTools.forEach(tool => {
-        const card = document.createElement('div');
-        card.className = 'tool-card';
-        card.innerHTML = `
-            <div>
-                <div class="tool-icon">${tool.icon}</div>
-                <h3 class="glow-text">${tool.title}</h3>
-                <p>${tool.desc}</p>
-            </div>
-            <button class="btn-glow small-btn" onclick="openModal('${tool.title}', '${tool.desc}', '${tool.id}')">Open Tool</button>
-        `;
-        grid.appendChild(card);
-    });
-}
+            filteredTools.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'tool-card';
+                card.innerHTML = `
+                    <div>
+                        <div class="tool-icon">${tool.icon}</div>
+                        <h3 class="glow-text">${tool.title}</h3>
+                        <p>${tool.desc}</p>
+                    </div>
+                    <button class="btn-glow small-btn" onclick="openModal('${tool.title}', '${tool.desc}', '${tool.id}')">Open Tool</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
 
         // Sidebar Filtering logic
         function filterTools(category) {
@@ -639,33 +640,33 @@ function renderTools(category) {
         const uploadZone = document.getElementById('upload-zone');
         const processingZone = document.getElementById('processing-zone');
         const fileInput = document.getElementById('file-input');
-function openModal(title, desc, toolId) {
-    document.getElementById('modal-title').innerText = title;
-    document.getElementById('modal-desc').innerText = desc;
-    currentToolId = toolId; // Store which tool was clicked
-    
-    // Reset UI
-    document.getElementById('upload-zone').style.display = 'block';
-    document.getElementById('processing-zone').style.display = 'none';
-    document.getElementById('progress-bar').style.width = '0%';
-    document.getElementById('download-btn').style.display = 'none';
-    document.getElementById('status-text').innerText = 'Uploading...';
-    document.getElementById('status-text').classList.remove('glow-text');
-    document.getElementById('file-input').value = "";
-    
-    // Special handling for Merge PDF - allow multiple files
-    if (toolId === 'merge') {
-        document.getElementById('file-input').multiple = true;
-        document.querySelector('.upload-zone p:first-child').innerText = 'Drag & Drop PDF files here (select multiple)';
-    } else {
-        document.getElementById('file-input').multiple = false;
-        document.querySelector('.upload-zone p:first-child').innerText = 'Drag & Drop your files here';
-    }
-    
-    document.getElementById('tool-modal').classList.add('active');
-}
-   
 
+        function openModal(title, desc, toolId) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            currentToolId = toolId;
+            
+            document.getElementById('upload-zone').style.display = 'block';
+            document.getElementById('processing-zone').style.display = 'none';
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('download-btn').style.display = 'none';
+            document.getElementById('status-text').innerText = 'Uploading...';
+            document.getElementById('status-text').classList.remove('glow-text');
+            document.getElementById('file-input').value = "";
+            
+            var uploadP = document.querySelector('.upload-zone p:first-child');
+            if (uploadP) {
+                if (toolId === 'merge') {
+                    document.getElementById('file-input').multiple = true;
+                    uploadP.innerText = 'Drag & Drop PDF files here (select multiple)';
+                } else {
+                    document.getElementById('file-input').multiple = false;
+                    uploadP.innerText = 'Drag & Drop your files here';
+                }
+            }
+            
+            document.getElementById('tool-modal').classList.add('active');
+        }
 
         closeModalBtn.addEventListener('click', () => {
             modal.classList.remove('active');
@@ -687,29 +688,29 @@ function openModal(title, desc, toolId) {
         });
 
         uploadZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadZone.classList.remove('dragover');
-    
-    if (e.dataTransfer.files.length > 0) {
-        if (currentToolId === 'merge') {
-            processMergePDF(e.dataTransfer.files);
-        } else {
-            alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
-            simulateProcessing();
-        }
-    }
-});
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                if (currentToolId === 'merge') {
+                    processMergePDF(e.dataTransfer.files);
+                } else {
+                    alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
+                    simulateProcessing();
+                }
+            }
+        });
 
         fileInput.addEventListener('change', () => {
-    if (fileInput.files.length > 0) {
-        if (currentToolId === 'merge') {
-            processMergePDF(fileInput.files);
-        } else {
-            alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
-            simulateProcessing();
-        }
-    }
-});
+            if (fileInput.files.length > 0) {
+                if (currentToolId === 'merge') {
+                    processMergePDF(fileInput.files);
+                } else {
+                    alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
+                    simulateProcessing();
+                }
+            }
+        });
         
         // Simulate Frontend Processing
         function simulateProcessing() {
@@ -750,80 +751,81 @@ function openModal(title, desc, toolId) {
                 progressBar.style.width = progress + '%';
             }, 400);
         }
+        
         // REAL Merge PDF function
-async function processMergePDF(files) {
-    if (!files || files.length < 2) {
-        alert('Please select at least 2 PDF files to merge');
-        return;
-    }
-    
-    const uploadZone = document.getElementById('upload-zone');
-    const processingZone = document.getElementById('processing-zone');
-    const progressBar = document.getElementById('progress-bar');
-    const statusText = document.getElementById('status-text');
-    const downloadBtn = document.getElementById('download-btn');
-    
-    uploadZone.style.display = 'none';
-    processingZone.style.display = 'block';
-    
-    try {
-        statusText.innerText = 'Loading PDFs...';
-        progressBar.style.width = '20%';
-        
-        // Create a new PDF document
-        const mergedPdf = await PDFLib.PDFDocument.create();
-        
-        // Process each file
-        let totalPages = 0;
-        const fileArray = Array.from(files);
-        
-        for (let i = 0; i < fileArray.length; i++) {
-            statusText.innerText = `Processing file ${i + 1} of ${fileArray.length}...`;
-            progressBar.style.width = `${20 + ((i + 1) / fileArray.length) * 50}%`;
+        async function processMergePDF(files) {
+            if (!files || files.length < 2) {
+                alert('Please select at least 2 PDF files to merge');
+                return;
+            }
             
-            const file = fileArray[i];
-            const fileBytes = await file.arrayBuffer();
+            const uploadZone = document.getElementById('upload-zone');
+            const processingZone = document.getElementById('processing-zone');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
             
-            // Load the PDF
-            const pdfDoc = await PDFLib.PDFDocument.load(fileBytes);
-            const pageIndices = pdfDoc.getPageIndices();
-            totalPages += pageIndices.length;
+            uploadZone.style.display = 'none';
+            processingZone.style.display = 'block';
             
-            // Copy pages to merged document
-            const copiedPages = await mergedPdf.copyPages(pdfDoc, pageIndices);
-            copiedPages.forEach((page) => mergedPdf.addPage(page));
+            try {
+                statusText.innerText = 'Loading PDFs...';
+                progressBar.style.width = '20%';
+                
+                // Create a new PDF document
+                const mergedPdf = await PDFLib.PDFDocument.create();
+                
+                // Process each file
+                let totalPages = 0;
+                const fileArray = Array.from(files);
+                
+                for (let i = 0; i < fileArray.length; i++) {
+                    statusText.innerText = `Processing file ${i + 1} of ${fileArray.length}...`;
+                    progressBar.style.width = `${20 + ((i + 1) / fileArray.length) * 50}%`;
+                    
+                    const file = fileArray[i];
+                    const fileBytes = await file.arrayBuffer();
+                    
+                    // Load the PDF
+                    const pdfDoc = await PDFLib.PDFDocument.load(fileBytes);
+                    const pageIndices = pdfDoc.getPageIndices();
+                    totalPages += pageIndices.length;
+                    
+                    // Copy pages to merged document
+                    const copiedPages = await mergedPdf.copyPages(pdfDoc, pageIndices);
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                }
+                
+                statusText.innerText = 'Saving merged PDF...';
+                progressBar.style.width = '80%';
+                
+                // Save the merged PDF
+                const mergedPdfBytes = await mergedPdf.save();
+                
+                progressBar.style.width = '100%';
+                statusText.innerText = `✓ Complete! Merged ${fileArray.length} files (${totalPages} pages)`;
+                statusText.classList.add('glow-text');
+                
+                // Create download
+                const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'merged.pdf';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+                
+            } catch (error) {
+                console.error('Merge failed:', error);
+                statusText.innerText = '❌ Error merging PDFs';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
         }
-        
-        statusText.innerText = 'Saving merged PDF...';
-        progressBar.style.width = '80%';
-        
-        // Save the merged PDF
-        const mergedPdfBytes = await mergedPdf.save();
-        
-        progressBar.style.width = '100%';
-        statusText.innerText = `✓ Complete! Merged ${fileArray.length} files (${totalPages} pages)`;
-        statusText.classList.add('glow-text');
-        
-        // Create download
-        const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        
-        downloadBtn.style.display = 'inline-block';
-        downloadBtn.onclick = () => {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'merged.pdf';
-            a.click();
-            URL.revokeObjectURL(url);
-        };
-        
-    } catch (error) {
-        console.error('Merge failed:', error);
-        statusText.innerText = '❌ Error merging PDFs';
-        statusText.style.color = '#ff6b6b';
-        downloadBtn.style.display = 'none';
-    }
-}
     </script>
 </body>
 </html>
