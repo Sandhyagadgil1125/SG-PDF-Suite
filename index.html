@@ -429,9 +429,11 @@
         }
     </style>
 
-    <!-- Add PDF processing library and JSZip -->
+    <!-- Add PDF processing library, JSZip, and DOCX libraries -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://unpkg.com/docx@7.8.2/build/index.min.js"></script>
 </head>
 <body>
 
@@ -528,6 +530,9 @@
     </div>
 
     <script>
+        // Initialize PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        
         // Data for all 33 Tools
         const toolsData = [
             // PDF Tools
@@ -647,6 +652,7 @@
             document.getElementById('status-text').innerText = 'Uploading...';
             document.getElementById('status-text').classList.remove('glow-text');
             document.getElementById('file-input').value = "";
+            document.getElementById('file-input').multiple = false;
             
             var uploadP = document.querySelector('.upload-zone p:first-child');
             if (uploadP) {
@@ -654,13 +660,12 @@
                     document.getElementById('file-input').multiple = true;
                     uploadP.innerText = 'Drag & Drop PDF files here (select multiple)';
                 } else if (toolId === 'split') {
-                    document.getElementById('file-input').multiple = false;
                     uploadP.innerText = 'Drag & Drop a PDF file to split into individual pages';
                 } else if (toolId === 'compress') {
-                    document.getElementById('file-input').multiple = false;
                     uploadP.innerText = 'Drag & Drop a PDF file to compress';
+                } else if (toolId === 'pdf-word') {
+                    uploadP.innerText = 'Drag & Drop a PDF file to convert to Word';
                 } else {
-                    document.getElementById('file-input').multiple = false;
                     uploadP.innerText = 'Drag & Drop your files here';
                 }
             }
@@ -698,6 +703,8 @@
                     processSplitPDF(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'compress') {
                     processCompressPDF(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'pdf-word') {
+                    processPDFtoWord(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -713,6 +720,8 @@
                     processSplitPDF(fileInput.files[0]);
                 } else if (currentToolId === 'compress') {
                     processCompressPDF(fileInput.files[0]);
+                } else if (currentToolId === 'pdf-word') {
+                    processPDFtoWord(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -758,6 +767,115 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // REAL PDF to Word function
+        async function processPDFtoWord(file) {
+            if (!file) {
+                alert('Please select a PDF file to convert');
+                return;
+            }
+            
+            const uploadZone = document.getElementById('upload-zone');
+            const processingZone = document.getElementById('processing-zone');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            uploadZone.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            try {
+                statusText.innerText = 'Loading PDF...';
+                progressBar.style.width = '10%';
+                
+                // Read the PDF file
+                const fileReader = new FileReader();
+                
+                fileReader.onload = async function(e) {
+                    try {
+                        const typedarray = new Uint8Array(e.target.result);
+                        
+                        statusText.innerText = 'Extracting text from PDF...';
+                        progressBar.style.width = '30%';
+                        
+                        // Load PDF with PDF.js
+                        const loadingTask = pdfjsLib.getDocument({ data: typedarray });
+                        const pdf = await loadingTask.promise;
+                        const numPages = pdf.numPages;
+                        
+                        statusText.innerText = `Processing ${numPages} pages...`;
+                        progressBar.style.width = '40%';
+                        
+                        // Extract text from all pages
+                        let fullText = '';
+                        
+                        for (let i = 1; i <= numPages; i++) {
+                            statusText.innerText = `Reading page ${i} of ${numPages}...`;
+                            progressBar.style.width = `${40 + (i / numPages) * 40}%`;
+                            
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            const pageText = textContent.items.map(item => item.str).join(' ');
+                            fullText += pageText + '\n\n';
+                        }
+                        
+                        statusText.innerText = 'Creating Word document...';
+                        progressBar.style.width = '85%';
+                        
+                        // Create DOCX using docx library
+                        const { Document, Packer, Paragraph, TextRun } = docx;
+                        
+                        // Split text into paragraphs
+                        const paragraphs = fullText.split('\n\n').map(para => {
+                            return new Paragraph({
+                                children: [new TextRun(para.trim())]
+                            });
+                        });
+                        
+                        // Create document
+                        const doc = new Document({
+                            sections: [{
+                                properties: {},
+                                children: paragraphs
+                            }]
+                        });
+                        
+                        // Generate DOCX
+                        const blob = await Packer.toBlob(doc);
+                        
+                        progressBar.style.width = '100%';
+                        statusText.innerText = `✓ Complete! Converted ${numPages} pages to Word`;
+                        statusText.classList.add('glow-text');
+                        
+                        // Create download
+                        const url = URL.createObjectURL(blob);
+                        
+                        downloadBtn.style.display = 'inline-block';
+                        downloadBtn.onclick = () => {
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = file.name.replace('.pdf', '.docx');
+                            a.click();
+                            URL.revokeObjectURL(url);
+                        };
+                        
+                    } catch (error) {
+                        console.error('PDF to Word conversion failed:', error);
+                        statusText.innerText = '❌ Error converting PDF to Word';
+                        statusText.style.color = '#ff6b6b';
+                        downloadBtn.style.display = 'none';
+                    }
+                };
+                
+                fileReader.readAsArrayBuffer(file);
+                
+            } catch (error) {
+                console.error('PDF to Word failed:', error);
+                statusText.innerText = '❌ Error converting PDF to Word';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
         }
         
         // REAL Compress PDF function
