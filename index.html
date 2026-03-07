@@ -518,8 +518,34 @@
                 <div class="upload-icon">📁</div>
                 <p>Drag & Drop your files here</p>
                 <p class="small-text">or</p>
-                <input type="file" id="file-input" hidden multiple>
+                <input type="file" id="file-input" hidden>
                 <button class="btn-glow small-btn" onclick="document.getElementById('file-input').click()">Browse Files</button>
+            </div>
+
+            <div class="organize-controls" id="organize-controls" style="display: none; margin-top: 20px; text-align: left;">
+                <h3 style="color: var(--accent-glow); margin-bottom: 10px;">Page Controls</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div>
+                        <label style="color: var(--text-secondary);">Page Order:</label>
+                        <input type="text" id="page-order" placeholder="e.g., 1,3,2,4" style="width: 100%; padding: 8px; background: var(--bg-main); border: 1px solid var(--accent-glow); color: var(--text-primary); border-radius: 5px;">
+                        <small style="color: #888;">Enter page numbers separated by commas</small>
+                    </div>
+                    <div>
+                        <label style="color: var(--text-secondary);">Pages to Delete:</label>
+                        <input type="text" id="pages-to-delete" placeholder="e.g., 2,5" style="width: 100%; padding: 8px; background: var(--bg-main); border: 1px solid var(--accent-glow); color: var(--text-primary); border-radius: 5px;">
+                        <small style="color: #888;">Enter page numbers to remove</small>
+                    </div>
+                    <div>
+                        <label style="color: var(--text-secondary);">Rotate Pages:</label>
+                        <select id="rotate-pages" style="width: 100%; padding: 8px; background: var(--bg-main); border: 1px solid var(--accent-glow); color: var(--text-primary); border-radius: 5px;">
+                            <option value="">Select rotation</option>
+                            <option value="90">Rotate 90° clockwise</option>
+                            <option value="180">Rotate 180°</option>
+                            <option value="270">Rotate 90° counter-clockwise</option>
+                        </select>
+                    </div>
+                    <button class="btn-glow" id="apply-organize" style="margin-top: 10px;">Apply Changes</button>
+                </div>
             </div>
 
             <div class="processing-zone" id="processing-zone" style="display: none;">
@@ -579,6 +605,8 @@
         // Add these new variables
         let currentToolId = null;
         let currentFiles = [];
+        let currentPDFDoc = null;
+        let originalFileName = '';
         
         // Initialize Layout
         document.addEventListener("DOMContentLoaded", () => {
@@ -640,16 +668,18 @@
         const modal = document.getElementById('tool-modal');
         const closeModalBtn = document.getElementById('close-modal');
         const uploadZone = document.getElementById('upload-zone');
+        const organizeControls = document.getElementById('organize-controls');
         const processingZone = document.getElementById('processing-zone');
         const fileInput = document.getElementById('file-input');
 
-        // CORRECTED openModal function - only ONE version
+        // CORRECTED openModal function
         function openModal(title, desc, toolId) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-desc').innerText = desc;
             currentToolId = toolId;
             
             document.getElementById('upload-zone').style.display = 'block';
+            organizeControls.style.display = 'none';
             document.getElementById('processing-zone').style.display = 'none';
             document.getElementById('progress-bar').style.width = '0%';
             document.getElementById('download-btn').style.display = 'none';
@@ -696,6 +726,9 @@
                     document.getElementById('file-input').multiple = true;
                     document.getElementById('file-input').accept = ".jpg,.jpeg,.png";
                     uploadP.innerText = 'Drag & Drop images to convert to PDF (select multiple)';
+                } else if (toolId === 'organize') {
+                    document.getElementById('file-input').accept = ".pdf";
+                    uploadP.innerText = 'Drag & Drop a PDF file to organize pages';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here';
@@ -751,6 +784,8 @@
                     processPDFtoJPG(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'jpg-pdf') {
                     processJPGtoPDF(e.dataTransfer.files);
+                } else if (currentToolId === 'organize') {
+                    loadPDFForOrganize(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -758,7 +793,7 @@
             }
         });
 
-        // CORRECTED fileInput event handler - only ONE version
+        // CORRECTED fileInput event handler
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) {
                 if (currentToolId === 'merge') {
@@ -783,6 +818,8 @@
                     processPDFtoJPG(fileInput.files[0]);
                 } else if (currentToolId === 'jpg-pdf') {
                     processJPGtoPDF(fileInput.files);
+                } else if (currentToolId === 'organize') {
+                    loadPDFForOrganize(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -828,6 +865,122 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // Load PDF for Organize tool
+        async function loadPDFForOrganize(file) {
+            if (!file) {
+                alert('Please select a PDF file');
+                return;
+            }
+            
+            originalFileName = file.name;
+            
+            try {
+                const fileBytes = await file.arrayBuffer();
+                currentPDFDoc = await PDFLib.PDFDocument.load(fileBytes);
+                const pageCount = currentPDFDoc.getPageCount();
+                
+                // Show organize controls
+                uploadZone.style.display = 'none';
+                organizeControls.style.display = 'block';
+                
+                // Add some info about the PDF
+                const infoDiv = document.createElement('div');
+                infoDiv.innerHTML = `<p style="color: var(--accent-glow);">Loaded: ${file.name} (${pageCount} pages)</p>`;
+                organizeControls.insertBefore(infoDiv, organizeControls.firstChild);
+                
+                // Setup apply button
+                document.getElementById('apply-organize').onclick = applyOrganizeChanges;
+                
+            } catch (error) {
+                console.error('Failed to load PDF:', error);
+                alert('Error loading PDF file');
+            }
+        }
+        
+        // Apply organize changes
+        async function applyOrganizeChanges() {
+            if (!currentPDFDoc) return;
+            
+            const pageOrder = document.getElementById('page-order').value;
+            const pagesToDelete = document.getElementById('pages-to-delete').value;
+            const rotateOption = document.getElementById('rotate-pages').value;
+            
+            uploadZone.style.display = 'none';
+            organizeControls.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            try {
+                statusText.innerText = 'Applying changes...';
+                progressBar.style.width = '30%';
+                
+                // Get all page indices
+                const totalPages = currentPDFDoc.getPageCount();
+                let pageIndices = [];
+                
+                // Parse page order if provided
+                if (pageOrder.trim()) {
+                    const order = pageOrder.split(',').map(num => parseInt(num.trim()) - 1);
+                    pageIndices = order.filter(index => index >= 0 && index < totalPages);
+                } else {
+                    // Default to all pages in original order
+                    for (let i = 0; i < totalPages; i++) pageIndices.push(i);
+                }
+                
+                // Parse pages to delete
+                if (pagesToDelete.trim()) {
+                    const deleteIndices = pagesToDelete.split(',').map(num => parseInt(num.trim()) - 1);
+                    pageIndices = pageIndices.filter(index => !deleteIndices.includes(index));
+                }
+                
+                progressBar.style.width = '60%';
+                
+                // Create new PDF with selected pages
+                const newPdf = await PDFLib.PDFDocument.create();
+                const pages = await newPdf.copyPages(currentPDFDoc, pageIndices);
+                pages.forEach(page => newPdf.addPage(page));
+                
+                // Apply rotation if specified
+                if (rotateOption) {
+                    const rotation = parseInt(rotateOption);
+                    newPdf.getPages().forEach(page => {
+                        page.setRotation(PDFLib.degrees(rotation));
+                    });
+                }
+                
+                progressBar.style.width = '80%';
+                
+                // Save the PDF
+                const pdfBytes = await newPdf.save();
+                
+                progressBar.style.width = '100%';
+                statusText.innerText = `✓ Complete! Organized PDF (${pageIndices.length} pages)`;
+                statusText.classList.add('glow-text');
+                
+                // Create download
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `organized-${originalFileName}`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+                
+            } catch (error) {
+                console.error('Organize failed:', error);
+                statusText.innerText = '❌ Error organizing PDF';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
         }
         
         // REAL JPG to PDF function
