@@ -429,12 +429,13 @@
         }
     </style>
 
-    <!-- Add PDF processing library, JSZip, DOCX, and Mammoth libraries -->
+    <!-- Add PDF processing library, JSZip, DOCX, Mammoth, and PPTX libraries -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/docx@7.8.2/build/index.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 </head>
 <body>
 
@@ -674,6 +675,9 @@
                 } else if (toolId === 'word-pdf') {
                     document.getElementById('file-input').accept = ".docx,.doc";
                     uploadP.innerText = 'Drag & Drop a Word document to convert to PDF';
+                } else if (toolId === 'pdf-ppt') {
+                    document.getElementById('file-input').accept = ".pdf";
+                    uploadP.innerText = 'Drag & Drop a PDF file to convert to PowerPoint';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here';
@@ -717,6 +721,8 @@
                     processPDFtoWord(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'word-pdf') {
                     processWordToPDF(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'pdf-ppt') {
+                    processPDFtoPPT(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -736,6 +742,8 @@
                     processPDFtoWord(fileInput.files[0]);
                 } else if (currentToolId === 'word-pdf') {
                     processWordToPDF(fileInput.files[0]);
+                } else if (currentToolId === 'pdf-ppt') {
+                    processPDFtoPPT(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -781,6 +789,132 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // REAL PDF to PowerPoint function
+        async function processPDFtoPPT(file) {
+            if (!file) {
+                alert('Please select a PDF file to convert');
+                return;
+            }
+            
+            const uploadZone = document.getElementById('upload-zone');
+            const processingZone = document.getElementById('processing-zone');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            uploadZone.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            try {
+                statusText.innerText = 'Loading PDF...';
+                progressBar.style.width = '10%';
+                
+                // Read the PDF file
+                const fileReader = new FileReader();
+                
+                fileReader.onload = async function(e) {
+                    try {
+                        const typedarray = new Uint8Array(e.target.result);
+                        
+                        statusText.innerText = 'Extracting text from PDF...';
+                        progressBar.style.width = '30%';
+                        
+                        // Load PDF with PDF.js
+                        const loadingTask = pdfjsLib.getDocument({ data: typedarray });
+                        const pdf = await loadingTask.promise;
+                        const numPages = pdf.numPages;
+                        
+                        statusText.innerText = `Processing ${numPages} pages...`;
+                        progressBar.style.width = '40%';
+                        
+                        // Create a new PowerPoint presentation
+                        const pptx = new PptxGenJS();
+                        
+                        // Extract text from all pages and add to slides
+                        for (let i = 1; i <= numPages; i++) {
+                            statusText.innerText = `Converting page ${i} of ${numPages} to slide...`;
+                            progressBar.style.width = `${40 + (i / numPages) * 40}%`;
+                            
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            const pageText = textContent.items.map(item => item.str).join(' ');
+                            
+                            // Add a new slide
+                            const slide = pptx.addSlide();
+                            
+                            // Add title
+                            slide.addText(`Page ${i}`, {
+                                x: 0.5,
+                                y: 0.3,
+                                w: '90%',
+                                h: 0.8,
+                                fontSize: 24,
+                                bold: true,
+                                color: '363636'
+                            });
+                            
+                            // Add content (split into chunks if too long)
+                            const maxCharsPerSlide = 1000;
+                            let remainingText = pageText;
+                            let textY = 1.5;
+                            
+                            while (remainingText.length > 0) {
+                                const chunk = remainingText.substring(0, maxCharsPerSlide);
+                                remainingText = remainingText.substring(maxCharsPerSlide);
+                                
+                                slide.addText(chunk, {
+                                    x: 0.5,
+                                    y: textY,
+                                    w: '90%',
+                                    h: 4,
+                                    fontSize: 14,
+                                    color: '363636',
+                                    bullet: true
+                                });
+                                textY += 1.5;
+                            }
+                        }
+                        
+                        statusText.innerText = 'Generating PowerPoint file...';
+                        progressBar.style.width = '90%';
+                        
+                        // Generate PowerPoint
+                        const pptxBlob = await pptx.write({ outputType: 'blob' });
+                        
+                        progressBar.style.width = '100%';
+                        statusText.innerText = `✓ Complete! Converted ${numPages} pages to PowerPoint`;
+                        statusText.classList.add('glow-text');
+                        
+                        // Create download
+                        const url = URL.createObjectURL(pptxBlob);
+                        
+                        downloadBtn.style.display = 'inline-block';
+                        downloadBtn.onclick = () => {
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = file.name.replace('.pdf', '.pptx');
+                            a.click();
+                            URL.revokeObjectURL(url);
+                        };
+                        
+                    } catch (error) {
+                        console.error('PDF to PowerPoint conversion failed:', error);
+                        statusText.innerText = '❌ Error converting PDF to PowerPoint';
+                        statusText.style.color = '#ff6b6b';
+                        downloadBtn.style.display = 'none';
+                    }
+                };
+                
+                fileReader.readAsArrayBuffer(file);
+                
+            } catch (error) {
+                console.error('PDF to PowerPoint failed:', error);
+                statusText.innerText = '❌ Error converting PDF to PowerPoint';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
         }
         
         // REAL Word to PDF function
