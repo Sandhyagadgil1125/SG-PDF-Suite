@@ -336,7 +336,7 @@
         .upload-icon { font-size: 3rem; margin-bottom: 10px; }
         .small-text { font-size: 0.8rem; margin: 10px 0; color: #888; }
 
-        .organize-controls, .edit-controls, .rotate-controls, .unlock-controls, .protect-controls {
+        .organize-controls, .edit-controls, .rotate-controls, .unlock-controls, .protect-controls, .pagenum-controls {
             margin-top: 20px;
             text-align: left;
             max-height: 400px;
@@ -352,13 +352,19 @@
             gap: 15px;
         }
 
-        .edit-controls h3, .rotate-controls h3, .unlock-controls h3, .protect-controls h3 {
+        .pagenum-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .edit-controls h3, .rotate-controls h3, .unlock-controls h3, .protect-controls h3, .pagenum-controls h3 {
             color: var(--accent-glow);
             margin-bottom: 10px;
             grid-column: span 2;
         }
 
-        .edit-controls label, .rotate-controls label, .unlock-controls label, .protect-controls label {
+        .edit-controls label, .rotate-controls label, .unlock-controls label, .protect-controls label, .pagenum-controls label {
             color: var(--text-secondary);
             display: block;
             margin-bottom: 5px;
@@ -366,7 +372,7 @@
 
         .edit-controls input, .edit-controls select, .edit-controls textarea,
         .rotate-controls input, .rotate-controls select, .unlock-controls input,
-        .protect-controls input {
+        .protect-controls input, .pagenum-controls input, .pagenum-controls select {
             width: 100%;
             padding: 8px;
             background: var(--bg-main);
@@ -381,7 +387,7 @@
             resize: vertical;
         }
 
-        .edit-controls button, .rotate-controls button, .unlock-controls button, .protect-controls button {
+        .edit-controls button, .rotate-controls button, .unlock-controls button, .protect-controls button, .pagenum-controls button {
             grid-column: span 2;
             margin-top: 10px;
         }
@@ -425,6 +431,41 @@
             background: rgba(66, 248, 245, 0.05);
             border-radius: 5px;
         }
+
+        .position-preview {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 20px;
+            background: var(--bg-main);
+            border: 1px solid var(--accent-glow);
+            border-radius: 5px;
+            position: relative;
+            height: 150px;
+        }
+
+        .page-preview {
+            width: 100px;
+            height: 130px;
+            background: rgba(66, 248, 245, 0.1);
+            border: 2px solid var(--accent-glow);
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .page-number-preview {
+            position: absolute;
+            color: var(--accent-glow);
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .preview-top-left { top: 5px; left: 5px; }
+        .preview-top-center { top: 5px; left: 50%; transform: translateX(-50%); }
+        .preview-top-right { top: 5px; right: 5px; }
+        .preview-bottom-left { bottom: 5px; left: 5px; }
+        .preview-bottom-center { bottom: 5px; left: 50%; transform: translateX(-50%); }
+        .preview-bottom-right { bottom: 5px; right: 5px; }
 
         .processing-zone { margin-top: 2rem; }
         .progress-bar-container {
@@ -507,10 +548,10 @@
             .tools-grid { grid-template-columns: 1fr; }
             .hero h1 { font-size: 1.5rem; }
             .footer-separator { display: inline-block; }
-            .edit-controls {
+            .edit-controls, .pagenum-controls {
                 grid-template-columns: 1fr;
             }
-            .edit-controls h3, .edit-controls button {
+            .edit-controls h3, .edit-controls button, .pagenum-controls h3, .pagenum-controls button {
                 grid-column: span 1;
             }
         }
@@ -752,6 +793,56 @@
                 <button class="btn-glow" id="apply-protect-btn">Protect & Download</button>
             </div>
 
+            <div class="pagenum-controls" id="pagenum-controls" style="display: none;">
+                <h3>Add Page Numbers</h3>
+                
+                <div>
+                    <label>Start Number:</label>
+                    <input type="number" id="pagenum-start" value="1" min="1" max="999">
+                </div>
+                
+                <div>
+                    <label>Format:</label>
+                    <select id="pagenum-format">
+                        <option value="1">1, 2, 3...</option>
+                        <option value="i">i, ii, iii...</option>
+                        <option value="I">I, II, III...</option>
+                        <option value="a">a, b, c...</option>
+                        <option value="A">A, B, C...</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Position:</label>
+                    <select id="pagenum-position">
+                        <option value="bottom-center">Bottom Center</option>
+                        <option value="bottom-left">Bottom Left</option>
+                        <option value="bottom-right">Bottom Right</option>
+                        <option value="top-center">Top Center</option>
+                        <option value="top-left">Top Left</option>
+                        <option value="top-right">Top Right</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Font Size:</label>
+                    <input type="number" id="pagenum-size" value="12" min="6" max="72">
+                </div>
+                
+                <div>
+                    <label>Text Color:</label>
+                    <input type="color" id="pagenum-color" value="#42f8f5">
+                </div>
+                
+                <div class="position-preview">
+                    <div class="page-preview">
+                        <div class="page-number-preview preview-bottom-center" id="preview-number">1</div>
+                    </div>
+                </div>
+                
+                <button class="btn-glow" id="apply-pagenum-btn">Add Numbers & Download</button>
+            </div>
+
             <div class="processing-zone" id="processing-zone" style="display: none;">
                 <h3 id="status-text">Uploading...</h3>
                 <div class="progress-bar-container">
@@ -846,7 +937,29 @@
                 const customInput = document.getElementById('custom-pages-input');
                 customInput.style.display = this.value === 'custom' ? 'block' : 'none';
             });
+
+            // Setup page number preview
+            const pagenumPosition = document.getElementById('pagenum-position');
+            const pagenumStart = document.getElementById('pagenum-start');
+            const previewNumber = document.getElementById('preview-number');
+            
+            if (pagenumPosition && previewNumber) {
+                pagenumPosition.addEventListener('change', updatePageNumberPreview);
+                pagenumStart.addEventListener('input', updatePageNumberPreview);
+            }
         });
+
+        function updatePageNumberPreview() {
+            const position = document.getElementById('pagenum-position').value;
+            const startNum = document.getElementById('pagenum-start').value;
+            const previewNumber = document.getElementById('preview-number');
+            
+            // Remove all position classes
+            previewNumber.className = 'page-number-preview';
+            // Add the new position class
+            previewNumber.classList.add(`preview-${position}`);
+            previewNumber.textContent = startNum;
+        }
 
         function closeMobileMenu() {
             if(window.innerWidth <= 768) {
@@ -896,6 +1009,7 @@
         const rotateControls = document.getElementById('rotate-controls');
         const unlockControls = document.getElementById('unlock-controls');
         const protectControls = document.getElementById('protect-controls');
+        const pagenumControls = document.getElementById('pagenum-controls');
         const processingZone = document.getElementById('processing-zone');
         const fileInput = document.getElementById('file-input');
 
@@ -911,6 +1025,7 @@
             rotateControls.style.display = 'none';
             unlockControls.style.display = 'none';
             protectControls.style.display = 'none';
+            pagenumControls.style.display = 'none';
             document.getElementById('processing-zone').style.display = 'none';
             document.getElementById('progress-bar').style.width = '0%';
             document.getElementById('download-btn').style.display = 'none';
@@ -972,6 +1087,9 @@
                 } else if (toolId === 'protect') {
                     document.getElementById('file-input').accept = ".pdf";
                     uploadP.innerText = 'Drag & Drop a PDF file to protect with password';
+                } else if (toolId === 'page-num') {
+                    document.getElementById('file-input').accept = ".pdf";
+                    uploadP.innerText = 'Drag & Drop a PDF file to add page numbers';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here';
@@ -1037,6 +1155,8 @@
                     loadPDFForUnlock(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'protect') {
                     loadPDFForProtect(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'page-num') {
+                    loadPDFForPageNumbers(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1079,6 +1199,8 @@
                     loadPDFForUnlock(fileInput.files[0]);
                 } else if (currentToolId === 'protect') {
                     loadPDFForProtect(fileInput.files[0]);
+                } else if (currentToolId === 'page-num') {
+                    loadPDFForPageNumbers(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1124,6 +1246,191 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // Load PDF for Page Numbers tool
+        async function loadPDFForPageNumbers(file) {
+            if (!file) {
+                alert('Please select a PDF file');
+                return;
+            }
+            
+            originalFileName = file.name;
+            
+            try {
+                const fileBytes = await file.arrayBuffer();
+                currentPDFDoc = await PDFLib.PDFDocument.load(fileBytes);
+                
+                // Show page number controls
+                uploadZone.style.display = 'none';
+                pagenumControls.style.display = 'grid';
+                
+                // Add some info about the PDF
+                const infoDiv = document.createElement('div');
+                infoDiv.innerHTML = `<p style="color: var(--accent-glow); margin-bottom: 10px;">Loaded: ${file.name}</p>`;
+                pagenumControls.insertBefore(infoDiv, pagenumControls.firstChild);
+                
+                // Setup apply button
+                document.getElementById('apply-pagenum-btn').onclick = applyPageNumbers;
+                
+                // Update preview
+                updatePageNumberPreview();
+                
+            } catch (error) {
+                console.error('Failed to load PDF:', error);
+                alert('Error loading PDF file');
+            }
+        }
+        
+        // Apply page numbers
+        async function applyPageNumbers() {
+            if (!currentPDFDoc) return;
+            
+            const startNum = parseInt(document.getElementById('pagenum-start').value);
+            const format = document.getElementById('pagenum-format').value;
+            const position = document.getElementById('pagenum-position').value;
+            const fontSize = parseInt(document.getElementById('pagenum-size').value);
+            const colorHex = document.getElementById('pagenum-color').value;
+            
+            uploadZone.style.display = 'none';
+            pagenumControls.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            try {
+                statusText.innerText = 'Adding page numbers...';
+                progressBar.style.width = '30%';
+                
+                // Create a new PDF with the same content
+                const newPdf = await PDFLib.PDFDocument.create();
+                const pages = await newPdf.copyPages(currentPDFDoc, currentPDFDoc.getPageIndices());
+                
+                progressBar.style.width = '50%';
+                
+                // Convert color hex to RGB
+                const r = parseInt(colorHex.slice(1, 3), 16) / 255;
+                const g = parseInt(colorHex.slice(3, 5), 16) / 255;
+                const b = parseInt(colorHex.slice(5, 7), 16) / 255;
+                
+                // Embed a standard font
+                const font = await newPdf.embedFont(PDFLib.StandardFonts.Helvetica);
+                
+                // Add page numbers to each page
+                for (let i = 0; i < pages.length; i++) {
+                    const page = pages[i];
+                    newPdf.addPage(page);
+                    
+                    // Calculate page number text based on format
+                    let pageNumText = '';
+                    const currentNum = startNum + i;
+                    
+                    switch(format) {
+                        case '1':
+                            pageNumText = currentNum.toString();
+                            break;
+                        case 'i':
+                            pageNumText = toRoman(currentNum).toLowerCase();
+                            break;
+                        case 'I':
+                            pageNumText = toRoman(currentNum).toUpperCase();
+                            break;
+                        case 'a':
+                            pageNumText = toLetter(currentNum).toLowerCase();
+                            break;
+                        case 'A':
+                            pageNumText = toLetter(currentNum).toUpperCase();
+                            break;
+                    }
+                    
+                    // Get page dimensions
+                    const { width, height } = page.getSize();
+                    
+                    // Calculate position based on selected option
+                    let x = width / 2;
+                    let y = 30;
+                    
+                    switch(position) {
+                        case 'top-left':
+                            x = 50;
+                            y = height - 40;
+                            break;
+                        case 'top-center':
+                            x = width / 2;
+                            y = height - 40;
+                            break;
+                        case 'top-right':
+                            x = width - 50;
+                            y = height - 40;
+                            break;
+                        case 'bottom-left':
+                            x = 50;
+                            y = 40;
+                            break;
+                        case 'bottom-center':
+                            x = width / 2;
+                            y = 40;
+                            break;
+                        case 'bottom-right':
+                            x = width - 50;
+                            y = 40;
+                            break;
+                    }
+                    
+                    // Draw page number
+                    page.drawText(pageNumText, {
+                        x: x,
+                        y: y,
+                        size: fontSize,
+                        font: font,
+                        color: PDFLib.rgb(r, g, b)
+                    });
+                }
+                
+                progressBar.style.width = '80%';
+                
+                // Save the PDF
+                const pdfBytes = await newPdf.save();
+                
+                progressBar.style.width = '100%';
+                statusText.innerText = `✓ Complete! Added page numbers to ${pages.length} pages`;
+                statusText.classList.add('glow-text');
+                
+                // Create download
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `numbered-${originalFileName}`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+                
+            } catch (error) {
+                console.error('Page numbers failed:', error);
+                statusText.innerText = '❌ Error adding page numbers';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
+        }
+        
+        // Helper function to convert number to Roman numerals
+        function toRoman(num) {
+            const roman = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+            if (num <= 10) return roman[num];
+            return num.toString(); // Fallback for numbers > 10
+        }
+        
+        // Helper function to convert number to letter (a, b, c, ...)
+        function toLetter(num) {
+            const letters = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+            if (num <= 26) return letters[num];
+            return num.toString(); // Fallback for numbers > 26
         }
         
         // Load PDF for Protect tool
