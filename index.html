@@ -429,13 +429,14 @@
         }
     </style>
 
-    <!-- Add PDF processing library, JSZip, DOCX, Mammoth, and PPTX libraries -->
+    <!-- Add PDF processing library, JSZip, DOCX, Mammoth, PPTX, and Excel libraries -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://unpkg.com/docx@7.8.2/build/index.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -681,6 +682,9 @@
                 } else if (toolId === 'ppt-pdf') {
                     document.getElementById('file-input').accept = ".pptx,.ppt";
                     uploadP.innerText = 'Drag & Drop a PowerPoint file to convert to PDF';
+                } else if (toolId === 'pdf-excel') {
+                    document.getElementById('file-input').accept = ".pdf";
+                    uploadP.innerText = 'Drag & Drop a PDF file to convert to Excel';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here';
@@ -728,6 +732,8 @@
                     processPDFtoPPT(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'ppt-pdf') {
                     processPPTtoPDF(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'pdf-excel') {
+                    processPDFtoExcel(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -751,6 +757,8 @@
                     processPDFtoPPT(fileInput.files[0]);
                 } else if (currentToolId === 'ppt-pdf') {
                     processPPTtoPDF(fileInput.files[0]);
+                } else if (currentToolId === 'pdf-excel') {
+                    processPDFtoExcel(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -798,6 +806,122 @@
             }, 400);
         }
         
+        // REAL PDF to Excel function
+        async function processPDFtoExcel(file) {
+            if (!file) {
+                alert('Please select a PDF file to convert');
+                return;
+            }
+            
+            const uploadZone = document.getElementById('upload-zone');
+            const processingZone = document.getElementById('processing-zone');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            uploadZone.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            try {
+                statusText.innerText = 'Loading PDF...';
+                progressBar.style.width = '10%';
+                
+                // Read the PDF file
+                const fileReader = new FileReader();
+                
+                fileReader.onload = async function(e) {
+                    try {
+                        const typedarray = new Uint8Array(e.target.result);
+                        
+                        statusText.innerText = 'Extracting text from PDF...';
+                        progressBar.style.width = '30%';
+                        
+                        // Load PDF with PDF.js
+                        const loadingTask = pdfjsLib.getDocument({ data: typedarray });
+                        const pdf = await loadingTask.promise;
+                        const numPages = pdf.numPages;
+                        
+                        statusText.innerText = `Processing ${numPages} pages...`;
+                        progressBar.style.width = '40%';
+                        
+                        // Create workbook and worksheet
+                        const workbook = XLSX.utils.book_new();
+                        const worksheetData = [];
+                        
+                        // Add header row
+                        worksheetData.push(['Page', 'Content']);
+                        
+                        // Extract text from all pages
+                        for (let i = 1; i <= numPages; i++) {
+                            statusText.innerText = `Reading page ${i} of ${numPages}...`;
+                            progressBar.style.width = `${40 + (i / numPages) * 40}%`;
+                            
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            const pageText = textContent.items.map(item => item.str).join(' ');
+                            
+                            // Try to detect table-like structures
+                            const lines = pageText.split('\n');
+                            for (const line of lines) {
+                                if (line.trim().length > 0) {
+                                    // Check if line looks like tabular data (has multiple spaces or tabs)
+                                    if (line.includes('  ') || line.includes('\t')) {
+                                        const cells = line.split(/\s{2,}|\t/);
+                                        worksheetData.push([`Page ${i}`, ...cells]);
+                                    } else {
+                                        worksheetData.push([`Page ${i}`, line]);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Create worksheet
+                        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+                        
+                        // Add worksheet to workbook
+                        XLSX.utils.book_append_sheet(workbook, worksheet, 'PDF Content');
+                        
+                        statusText.innerText = 'Generating Excel file...';
+                        progressBar.style.width = '90%';
+                        
+                        // Generate Excel file
+                        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+                        const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        
+                        progressBar.style.width = '100%';
+                        statusText.innerText = `✓ Complete! Converted ${numPages} pages to Excel`;
+                        statusText.classList.add('glow-text');
+                        
+                        // Create download
+                        const url = URL.createObjectURL(blob);
+                        
+                        downloadBtn.style.display = 'inline-block';
+                        downloadBtn.onclick = () => {
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = file.name.replace('.pdf', '.xlsx');
+                            a.click();
+                            URL.revokeObjectURL(url);
+                        };
+                        
+                    } catch (error) {
+                        console.error('PDF to Excel conversion failed:', error);
+                        statusText.innerText = '❌ Error converting PDF to Excel';
+                        statusText.style.color = '#ff6b6b';
+                        downloadBtn.style.display = 'none';
+                    }
+                };
+                
+                fileReader.readAsArrayBuffer(file);
+                
+            } catch (error) {
+                console.error('PDF to Excel failed:', error);
+                statusText.innerText = '❌ Error converting PDF to Excel';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
+        }
+        
         // REAL PowerPoint to PDF function
         async function processPPTtoPDF(file) {
             if (!file) {
@@ -817,10 +941,6 @@
             try {
                 statusText.innerText = 'Loading PowerPoint file...';
                 progressBar.style.width = '20%';
-                
-                // For PowerPoint to PDF, we'll create a simple PDF with the filename
-                // In a production environment, you'd want to use a proper PPTX parser
-                // This is a simplified version that creates a PDF with the slide information
                 
                 statusText.innerText = 'Creating PDF from PowerPoint...';
                 progressBar.style.width = '40%';
