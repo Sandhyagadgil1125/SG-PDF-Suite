@@ -643,6 +643,7 @@
         const processingZone = document.getElementById('processing-zone');
         const fileInput = document.getElementById('file-input');
 
+        // CORRECTED openModal function - only ONE version
         function openModal(title, desc, toolId) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-desc').innerText = desc;
@@ -685,6 +686,12 @@
                 } else if (toolId === 'pdf-excel') {
                     document.getElementById('file-input').accept = ".pdf";
                     uploadP.innerText = 'Drag & Drop a PDF file to convert to Excel';
+                } else if (toolId === 'excel-pdf') {
+                    document.getElementById('file-input').accept = ".xlsx,.xls";
+                    uploadP.innerText = 'Drag & Drop an Excel file to convert to PDF';
+                } else if (toolId === 'pdf-jpg') {
+                    document.getElementById('file-input').accept = ".pdf";
+                    uploadP.innerText = 'Drag & Drop a PDF file to convert to JPG images';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here';
@@ -734,6 +741,10 @@
                     processPPTtoPDF(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'pdf-excel') {
                     processPDFtoExcel(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'excel-pdf') {
+                    processExcelToPDF(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'pdf-jpg') {
+                    processPDFtoJPG(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -741,6 +752,7 @@
             }
         });
 
+        // CORRECTED fileInput event handler - only ONE version
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) {
                 if (currentToolId === 'merge') {
@@ -759,6 +771,10 @@
                     processPPTtoPDF(fileInput.files[0]);
                 } else if (currentToolId === 'pdf-excel') {
                     processPDFtoExcel(fileInput.files[0]);
+                } else if (currentToolId === 'excel-pdf') {
+                    processExcelToPDF(fileInput.files[0]);
+                } else if (currentToolId === 'pdf-jpg') {
+                    processPDFtoJPG(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -806,6 +822,226 @@
             }, 400);
         }
         
+        // REAL Excel to PDF function
+        async function processExcelToPDF(file) {
+            if (!file) {
+                alert('Please select an Excel file to convert');
+                return;
+            }
+            
+            const uploadZone = document.getElementById('upload-zone');
+            const processingZone = document.getElementById('processing-zone');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            uploadZone.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            try {
+                statusText.innerText = 'Loading Excel file...';
+                progressBar.style.width = '20%';
+                
+                // Read the Excel file
+                const arrayBuffer = await file.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                
+                statusText.innerText = 'Parsing Excel data...';
+                progressBar.style.width = '40%';
+                
+                // Parse Excel using SheetJS
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                statusText.innerText = 'Creating PDF from Excel...';
+                progressBar.style.width = '60%';
+                
+                // Create a new PDF document
+                const pdfDoc = await PDFLib.PDFDocument.create();
+                
+                // Process each sheet
+                for (const sheetName of workbook.SheetNames) {
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    if (jsonData.length === 0) continue;
+                    
+                    // Add a new page for this sheet
+                    const page = pdfDoc.addPage();
+                    const { width, height } = page.getSize();
+                    
+                    // Add sheet title
+                    page.drawText(`Sheet: ${sheetName}`, {
+                        x: 50,
+                        y: height - 50,
+                        size: 16,
+                        color: PDFLib.rgb(0, 0, 0)
+                    });
+                    
+                    // Convert data to text representation
+                    let y = height - 100;
+                    const fontSize = 10;
+                    
+                    for (const row of jsonData) {
+                        if (y < 50) {
+                            // Add new page if needed
+                            const newPage = pdfDoc.addPage();
+                            y = height - 50;
+                        }
+                        
+                        const rowText = row.map(cell => cell?.toString() || '').join(' | ');
+                        page.drawText(rowText, {
+                            x: 50,
+                            y: y,
+                            size: fontSize,
+                            color: PDFLib.rgb(0, 0, 0)
+                        });
+                        y -= fontSize * 1.5;
+                    }
+                }
+                
+                statusText.innerText = 'Saving PDF...';
+                progressBar.style.width = '80%';
+                
+                // Save the PDF
+                const pdfBytes = await pdfDoc.save();
+                
+                progressBar.style.width = '100%';
+                statusText.innerText = `✓ Complete! Converted Excel to PDF`;
+                statusText.classList.add('glow-text');
+                
+                // Create download
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = file.name.replace(/\.xlsx?$/, '.pdf');
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+                
+            } catch (error) {
+                console.error('Excel to PDF conversion failed:', error);
+                statusText.innerText = '❌ Error converting Excel to PDF';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
+        }
+
+        // REAL PDF to JPG function
+        async function processPDFtoJPG(file) {
+            if (!file) {
+                alert('Please select a PDF file to convert');
+                return;
+            }
+            
+            const uploadZone = document.getElementById('upload-zone');
+            const processingZone = document.getElementById('processing-zone');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            uploadZone.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            try {
+                statusText.innerText = 'Loading PDF...';
+                progressBar.style.width = '10%';
+                
+                // Read the PDF file
+                const fileReader = new FileReader();
+                
+                fileReader.onload = async function(e) {
+                    try {
+                        const typedarray = new Uint8Array(e.target.result);
+                        
+                        statusText.innerText = 'Rendering PDF pages...';
+                        progressBar.style.width = '30%';
+                        
+                        // Load PDF with PDF.js
+                        const loadingTask = pdfjsLib.getDocument({ data: typedarray });
+                        const pdf = await loadingTask.promise;
+                        const numPages = pdf.numPages;
+                        
+                        statusText.innerText = `Converting ${numPages} pages to JPG...`;
+                        progressBar.style.width = '40%';
+                        
+                        // Create a zip file for all JPGs
+                        const zip = new JSZip();
+                        
+                        // Convert each page to JPG
+                        for (let i = 1; i <= numPages; i++) {
+                            statusText.innerText = `Converting page ${i} of ${numPages} to JPG...`;
+                            progressBar.style.width = `${40 + (i / numPages) * 40}%`;
+                            
+                            const page = await pdf.getPage(i);
+                            const viewport = page.getViewport({ scale: 1.5 });
+                            
+                            // Create canvas to render PDF page
+                            const canvas = document.createElement('canvas');
+                            const context = canvas.getContext('2d');
+                            canvas.width = viewport.width;
+                            canvas.height = viewport.height;
+                            
+                            // Render PDF page to canvas
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport
+                            };
+                            
+                            await page.render(renderContext).promise;
+                            
+                            // Convert canvas to JPG blob
+                            const jpgBlob = await new Promise(resolve => {
+                                canvas.toBlob(resolve, 'image/jpeg', 0.9);
+                            });
+                            
+                            // Add to zip
+                            zip.file(`page-${i}.jpg`, jpgBlob);
+                        }
+                        
+                        statusText.innerText = 'Creating zip file...';
+                        progressBar.style.width = '90%';
+                        
+                        // Generate zip
+                        const zipBlob = await zip.generateAsync({ type: 'blob' });
+                        
+                        progressBar.style.width = '100%';
+                        statusText.innerText = `✓ Complete! Converted ${numPages} pages to JPG`;
+                        statusText.classList.add('glow-text');
+                        
+                        // Create download
+                        const url = URL.createObjectURL(zipBlob);
+                        
+                        downloadBtn.style.display = 'inline-block';
+                        downloadBtn.onclick = () => {
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = file.name.replace('.pdf', '-images.zip');
+                            a.click();
+                            URL.revokeObjectURL(url);
+                        };
+                        
+                    } catch (error) {
+                        console.error('PDF to JPG conversion failed:', error);
+                        statusText.innerText = '❌ Error converting PDF to JPG';
+                        statusText.style.color = '#ff6b6b';
+                        downloadBtn.style.display = 'none';
+                    }
+                };
+                
+                fileReader.readAsArrayBuffer(file);
+                
+            } catch (error) {
+                console.error('PDF to JPG failed:', error);
+                statusText.innerText = '❌ Error converting PDF to JPG';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
+        }
+
         // REAL PDF to Excel function
         async function processPDFtoExcel(file) {
             if (!file) {
