@@ -656,6 +656,9 @@
                 } else if (toolId === 'split') {
                     document.getElementById('file-input').multiple = false;
                     uploadP.innerText = 'Drag & Drop a PDF file to split into individual pages';
+                } else if (toolId === 'compress') {
+                    document.getElementById('file-input').multiple = false;
+                    uploadP.innerText = 'Drag & Drop a PDF file to compress';
                 } else {
                     document.getElementById('file-input').multiple = false;
                     uploadP.innerText = 'Drag & Drop your files here';
@@ -693,6 +696,8 @@
                     processMergePDF(e.dataTransfer.files);
                 } else if (currentToolId === 'split') {
                     processSplitPDF(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'compress') {
+                    processCompressPDF(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -706,6 +711,8 @@
                     processMergePDF(fileInput.files);
                 } else if (currentToolId === 'split') {
                     processSplitPDF(fileInput.files[0]);
+                } else if (currentToolId === 'compress') {
+                    processCompressPDF(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -751,6 +758,80 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // REAL Compress PDF function
+        async function processCompressPDF(file) {
+            if (!file) {
+                alert('Please select a PDF file to compress');
+                return;
+            }
+            
+            const uploadZone = document.getElementById('upload-zone');
+            const processingZone = document.getElementById('processing-zone');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            uploadZone.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            try {
+                statusText.innerText = 'Loading PDF...';
+                progressBar.style.width = '20%';
+                
+                // Get original file size
+                const originalSize = file.size;
+                const originalSizeKB = (originalSize / 1024).toFixed(2);
+                
+                // Load the PDF
+                const fileBytes = await file.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(fileBytes);
+                const pageCount = pdfDoc.getPageCount();
+                
+                statusText.innerText = `Compressing ${pageCount} page PDF...`;
+                progressBar.style.width = '40%';
+                
+                // Compression options
+                const compressedPdfBytes = await pdfDoc.save({
+                    useObjectStreams: false,
+                    addDefaultPage: false,
+                    objectsPerTick: 50
+                });
+                
+                progressBar.style.width = '80%';
+                
+                // Calculate compression ratio
+                const compressedSize = compressedPdfBytes.length;
+                const compressedSizeKB = (compressedSize / 1024).toFixed(2);
+                const reduction = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
+                
+                statusText.innerText = `Creating compressed PDF...`;
+                progressBar.style.width = '90%';
+                
+                // Create download
+                const blob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                progressBar.style.width = '100%';
+                statusText.innerText = `✓ Complete! Reduced by ${reduction}% (${originalSizeKB}KB → ${compressedSizeKB}KB)`;
+                statusText.classList.add('glow-text');
+                
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `compressed-${file.name}`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+                
+            } catch (error) {
+                console.error('Compression failed:', error);
+                statusText.innerText = '❌ Error compressing PDF';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
         }
         
         // REAL Split PDF function
