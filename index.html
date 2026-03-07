@@ -963,9 +963,9 @@
         // Initialize PDF.js worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
         
-        // Data for all 33 Tools
+        // Data for all Tools
         const toolsData = [
-            // PDF Tools
+            // PDF Tools (18 tools)
             { id: 'merge', title: 'Merge PDF', category: 'PDF Tools', icon: '🔗', desc: 'Combine multiple PDFs into one.' },
             { id: 'split', title: 'Split PDF', category: 'PDF Tools', icon: '✂️', desc: 'Extract pages or split a PDF.' },
             { id: 'compress', title: 'Compress PDF', category: 'PDF Tools', icon: '🗜️', desc: 'Reduce PDF file size.' },
@@ -985,22 +985,11 @@
             { id: 'page-num', title: 'Add Page Numbers', category: 'PDF Tools', icon: '🔢', desc: 'Insert page numbers to PDF.' },
             { id: 'watermark', title: 'Add Watermark', category: 'PDF Tools', icon: '©️', desc: 'Stamp image or text over PDF.' },
 
-            // Utility & Image Tools
+            // Utility Tools (4 tools)
             { id: 'img-comp', title: 'Image Compressor', category: 'Utility Tools', icon: '📉', desc: 'Reduce JPG, PNG, WEBP size.' },
-            { id: 'img-conv', title: 'Image Converter', category: 'Utility Tools', icon: '🔁', desc: 'Convert between JPG, PNG, WEBP.' },
             { id: 'audio-conv', title: 'Audio Converter', category: 'Utility Tools', icon: '🎵', desc: 'Convert audio file formats.' },
             { id: 'vid-comp', title: 'Video Compressor', category: 'Utility Tools', icon: '🎥', desc: 'Reduce video size instantly.' },
-            { id: 'qr-gen', title: 'QR Code Generator', category: 'Utility Tools', icon: '🔲', desc: 'Create custom QR codes.' },
-            { id: 'pass-gen', title: 'Password Generator', category: 'Utility Tools', icon: '🔑', desc: 'Generate secure passwords.' },
-            { id: 'word-count', title: 'Word/Char Counter', category: 'Utility Tools', icon: '🔠', desc: 'Count words and characters.' },
-            { id: 'age-calc', title: 'Age Calculator', category: 'Utility Tools', icon: '🎂', desc: 'Calculate exact age from DOB.' },
-            { id: 'bmi-calc', title: 'BMI Calculator', category: 'Utility Tools', icon: '⚖️', desc: 'Check your Body Mass Index.' },
-            { id: 'color-pick', title: 'Color Picker', category: 'Utility Tools', icon: '🎨', desc: 'Extract HEX/RGB color codes.' },
-            { id: 'unit-conv', title: 'Unit Converter', category: 'Utility Tools', icon: '📏', desc: 'Convert length, weight, etc.' },
-            { id: 'json-fmt', title: 'JSON Formatter', category: 'Utility Tools', icon: '💻', desc: 'Format and beautify JSON.' },
-            { id: 'tts', title: 'Text to Speech', category: 'Utility Tools', icon: '🗣️', desc: 'Read text out loud natively.' },
-            { id: 'stt', title: 'Speech to Text', category: 'Utility Tools', icon: '🎙️', desc: 'Voice dictation to text.' },
-            { id: 'timer', title: 'Timer / Stopwatch', category: 'Utility Tools', icon: '⏱️', desc: 'Track time accurately.' }
+            { id: 'json-fmt', title: 'JSON Formatter', category: 'Utility Tools', icon: '💻', desc: 'Format and beautify JSON.' }
         ];
            
         // Add these new variables
@@ -1257,6 +1246,9 @@
                 } else if (toolId === 'watermark') {
                     document.getElementById('file-input').accept = ".pdf";
                     uploadP.innerText = 'Drag & Drop a PDF file to add watermark';
+                } else if (toolId === 'img-comp' || toolId === 'audio-conv' || toolId === 'vid-comp' || toolId === 'json-fmt') {
+                    document.getElementById('file-input').accept = "";
+                    uploadP.innerText = 'Drag & Drop your files here (simulation mode)';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here';
