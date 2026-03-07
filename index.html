@@ -336,7 +336,7 @@
         .upload-icon { font-size: 3rem; margin-bottom: 10px; }
         .small-text { font-size: 0.8rem; margin: 10px 0; color: #888; }
 
-        .organize-controls, .edit-controls, .rotate-controls {
+        .organize-controls, .edit-controls, .rotate-controls, .unlock-controls {
             margin-top: 20px;
             text-align: left;
             max-height: 400px;
@@ -352,20 +352,20 @@
             gap: 15px;
         }
 
-        .edit-controls h3, .rotate-controls h3 {
+        .edit-controls h3, .rotate-controls h3, .unlock-controls h3 {
             color: var(--accent-glow);
             margin-bottom: 10px;
             grid-column: span 2;
         }
 
-        .edit-controls label, .rotate-controls label {
+        .edit-controls label, .rotate-controls label, .unlock-controls label {
             color: var(--text-secondary);
             display: block;
             margin-bottom: 5px;
         }
 
         .edit-controls input, .edit-controls select, .edit-controls textarea,
-        .rotate-controls input, .rotate-controls select {
+        .rotate-controls input, .rotate-controls select, .unlock-controls input {
             width: 100%;
             padding: 8px;
             background: var(--bg-main);
@@ -380,7 +380,7 @@
             resize: vertical;
         }
 
-        .edit-controls button, .rotate-controls button {
+        .edit-controls button, .rotate-controls button, .unlock-controls button {
             grid-column: span 2;
             margin-top: 10px;
         }
@@ -416,6 +416,13 @@
         .rotate-option .angle {
             font-size: 1.5rem;
             font-weight: bold;
+        }
+
+        .password-input {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(66, 248, 245, 0.05);
+            border-radius: 5px;
         }
 
         .processing-zone { margin-top: 2rem; }
@@ -709,6 +716,18 @@
                 <button class="btn-glow" id="apply-rotate-btn" style="margin-top: 20px;">Rotate & Download</button>
             </div>
 
+            <div class="unlock-controls" id="unlock-controls" style="display: none;">
+                <h3>Unlock PDF</h3>
+                
+                <div class="password-input">
+                    <label>Enter Password:</label>
+                    <input type="password" id="pdf-password" placeholder="Enter password to unlock PDF">
+                    <small style="color: #888; display: block; margin-top: 5px;">If you don't know the password, this tool won't work.</small>
+                </div>
+                
+                <button class="btn-glow" id="apply-unlock-btn">Unlock & Download</button>
+            </div>
+
             <div class="processing-zone" id="processing-zone" style="display: none;">
                 <h3 id="status-text">Uploading...</h3>
                 <div class="progress-bar-container">
@@ -851,6 +870,7 @@
         const organizeControls = document.getElementById('organize-controls');
         const editControls = document.getElementById('edit-controls');
         const rotateControls = document.getElementById('rotate-controls');
+        const unlockControls = document.getElementById('unlock-controls');
         const processingZone = document.getElementById('processing-zone');
         const fileInput = document.getElementById('file-input');
 
@@ -864,6 +884,7 @@
             organizeControls.style.display = 'none';
             editControls.style.display = 'none';
             rotateControls.style.display = 'none';
+            unlockControls.style.display = 'none';
             document.getElementById('processing-zone').style.display = 'none';
             document.getElementById('progress-bar').style.width = '0%';
             document.getElementById('download-btn').style.display = 'none';
@@ -919,6 +940,9 @@
                 } else if (toolId === 'rotate') {
                     document.getElementById('file-input').accept = ".pdf";
                     uploadP.innerText = 'Drag & Drop a PDF file to rotate pages';
+                } else if (toolId === 'unlock') {
+                    document.getElementById('file-input').accept = ".pdf";
+                    uploadP.innerText = 'Drag & Drop a password-protected PDF file';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here';
@@ -980,6 +1004,8 @@
                     loadPDFForEdit(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'rotate') {
                     loadPDFForRotate(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'unlock') {
+                    loadPDFForUnlock(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1018,6 +1044,8 @@
                     loadPDFForEdit(fileInput.files[0]);
                 } else if (currentToolId === 'rotate') {
                     loadPDFForRotate(fileInput.files[0]);
+                } else if (currentToolId === 'unlock') {
+                    loadPDFForUnlock(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1063,6 +1091,115 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // Load PDF for Unlock tool
+        async function loadPDFForUnlock(file) {
+            if (!file) {
+                alert('Please select a PDF file');
+                return;
+            }
+            
+            originalFileName = file.name;
+            
+            try {
+                const fileBytes = await file.arrayBuffer();
+                
+                // Try to load without password first (if not encrypted)
+                try {
+                    currentPDFDoc = await PDFLib.PDFDocument.load(fileBytes);
+                    // If it loads without password, it's not encrypted
+                    alert('This PDF is not password protected. No need to unlock.');
+                    return;
+                } catch (e) {
+                    // PDF is encrypted, we need password
+                    // Show unlock controls
+                    uploadZone.style.display = 'none';
+                    unlockControls.style.display = 'block';
+                    
+                    // Store the file bytes for later use
+                    currentPDFDoc = fileBytes;
+                    
+                    // Add some info about the PDF
+                    const infoDiv = document.createElement('div');
+                    infoDiv.innerHTML = `<p style="color: var(--accent-glow); margin-bottom: 10px;">Loaded: ${file.name} (Password Protected)</p>`;
+                    unlockControls.insertBefore(infoDiv, unlockControls.firstChild);
+                    
+                    // Setup unlock button
+                    document.getElementById('apply-unlock-btn').onclick = applyUnlock;
+                }
+                
+            } catch (error) {
+                console.error('Failed to load PDF:', error);
+                alert('Error loading PDF file');
+            }
+        }
+        
+        // Apply unlock
+        async function applyUnlock() {
+            const password = document.getElementById('pdf-password').value;
+            
+            if (!password) {
+                alert('Please enter a password');
+                return;
+            }
+            
+            uploadZone.style.display = 'none';
+            unlockControls.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            try {
+                statusText.innerText = 'Attempting to unlock PDF...';
+                progressBar.style.width = '30%';
+                
+                // Try to load with password
+                const pdfDoc = await PDFLib.PDFDocument.load(currentPDFDoc, { password: password });
+                
+                progressBar.style.width = '60%';
+                
+                // Create a new PDF without password protection
+                const newPdf = await PDFLib.PDFDocument.create();
+                const pages = await newPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+                pages.forEach(page => newPdf.addPage(page));
+                
+                progressBar.style.width = '80%';
+                
+                // Save the unlocked PDF
+                const pdfBytes = await newPdf.save();
+                
+                progressBar.style.width = '100%';
+                statusText.innerText = `✓ Complete! PDF unlocked successfully`;
+                statusText.classList.add('glow-text');
+                
+                // Create download
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `unlocked-${originalFileName}`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+                
+            } catch (error) {
+                console.error('Unlock failed:', error);
+                statusText.innerText = '❌ Incorrect password or cannot unlock';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+                
+                // Show unlock controls again
+                setTimeout(() => {
+                    processingZone.style.display = 'none';
+                    unlockControls.style.display = 'block';
+                }, 2000);
+            }
         }
         
         // Load PDF for Rotate tool
