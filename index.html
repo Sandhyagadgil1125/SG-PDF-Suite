@@ -518,7 +518,7 @@
                 <div class="upload-icon">📁</div>
                 <p>Drag & Drop your files here</p>
                 <p class="small-text">or</p>
-                <input type="file" id="file-input" hidden>
+                <input type="file" id="file-input" hidden multiple>
                 <button class="btn-glow small-btn" onclick="document.getElementById('file-input').click()">Browse Files</button>
             </div>
 
@@ -692,6 +692,10 @@
                 } else if (toolId === 'pdf-jpg') {
                     document.getElementById('file-input').accept = ".pdf";
                     uploadP.innerText = 'Drag & Drop a PDF file to convert to JPG images';
+                } else if (toolId === 'jpg-pdf') {
+                    document.getElementById('file-input').multiple = true;
+                    document.getElementById('file-input').accept = ".jpg,.jpeg,.png";
+                    uploadP.innerText = 'Drag & Drop images to convert to PDF (select multiple)';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here';
@@ -745,6 +749,8 @@
                     processExcelToPDF(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'pdf-jpg') {
                     processPDFtoJPG(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'jpg-pdf') {
+                    processJPGtoPDF(e.dataTransfer.files);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -775,6 +781,8 @@
                     processExcelToPDF(fileInput.files[0]);
                 } else if (currentToolId === 'pdf-jpg') {
                     processPDFtoJPG(fileInput.files[0]);
+                } else if (currentToolId === 'jpg-pdf') {
+                    processJPGtoPDF(fileInput.files);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -820,6 +828,107 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // REAL JPG to PDF function
+        async function processJPGtoPDF(files) {
+            if (!files || files.length === 0) {
+                alert('Please select at least one image');
+                return;
+            }
+            
+            const uploadZone = document.getElementById('upload-zone');
+            const processingZone = document.getElementById('processing-zone');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            uploadZone.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            try {
+                statusText.innerText = 'Loading images...';
+                progressBar.style.width = '10%';
+                
+                // Create a new PDF document
+                const pdfDoc = await PDFLib.PDFDocument.create();
+                
+                // Process each image
+                const fileArray = Array.from(files);
+                let processedCount = 0;
+                
+                for (let i = 0; i < fileArray.length; i++) {
+                    const file = fileArray[i];
+                    
+                    // Check if file is an image
+                    if (!file.type.startsWith('image/')) {
+                        continue;
+                    }
+                    
+                    statusText.innerText = `Processing image ${i + 1} of ${fileArray.length}...`;
+                    progressBar.style.width = `${10 + ((i + 1) / fileArray.length) * 70}%`;
+                    
+                    // Read the image file
+                    const imageBytes = await file.arrayBuffer();
+                    
+                    // Determine image type and embed in PDF
+                    let image;
+                    if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+                        image = await pdfDoc.embedJpg(imageBytes);
+                    } else if (file.type === 'image/png') {
+                        image = await pdfDoc.embedPng(imageBytes);
+                    } else {
+                        // Skip unsupported formats
+                        continue;
+                    }
+                    
+                    // Add a new page with image dimensions
+                    const page = pdfDoc.addPage([image.width, image.height]);
+                    
+                    // Draw the image on the page
+                    page.drawImage(image, {
+                        x: 0,
+                        y: 0,
+                        width: image.width,
+                        height: image.height,
+                    });
+                    
+                    processedCount++;
+                }
+                
+                if (processedCount === 0) {
+                    throw new Error('No valid images found');
+                }
+                
+                statusText.innerText = 'Saving PDF...';
+                progressBar.style.width = '90%';
+                
+                // Save the PDF
+                const pdfBytes = await pdfDoc.save();
+                
+                progressBar.style.width = '100%';
+                statusText.innerText = `✓ Complete! Created PDF with ${processedCount} images`;
+                statusText.classList.add('glow-text');
+                
+                // Create download
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'images-to-pdf.pdf';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+                
+            } catch (error) {
+                console.error('JPG to PDF conversion failed:', error);
+                statusText.innerText = '❌ Error converting images to PDF';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+            }
         }
         
         // REAL Excel to PDF function
