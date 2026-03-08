@@ -336,7 +336,7 @@
         .upload-icon { font-size: 3rem; margin-bottom: 10px; }
         .small-text { font-size: 0.8rem; margin: 10px 0; color: #888; }
 
-        .organize-controls, .edit-controls, .rotate-controls, .unlock-controls, .protect-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls {
+        .organize-controls, .edit-controls, .rotate-controls, .unlock-controls, .protect-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls, .vid-comp-controls {
             margin-top: 20px;
             text-align: left;
             max-height: 400px;
@@ -346,7 +346,7 @@
             border-radius: 5px;
         }
 
-        .edit-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls {
+        .edit-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls, .vid-comp-controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
@@ -358,13 +358,13 @@
             gap: 15px;
         }
 
-        .edit-controls h3, .rotate-controls h3, .unlock-controls h3, .protect-controls h3, .pagenum-controls h3, .watermark-controls h3, .img-comp-controls h3, .audio-conv-controls h3 {
+        .edit-controls h3, .rotate-controls h3, .unlock-controls h3, .protect-controls h3, .pagenum-controls h3, .watermark-controls h3, .img-comp-controls h3, .audio-conv-controls h3, .vid-comp-controls h3 {
             color: var(--accent-glow);
             margin-bottom: 10px;
             grid-column: span 2;
         }
 
-        .edit-controls label, .rotate-controls label, .unlock-controls label, .protect-controls label, .pagenum-controls label, .watermark-controls label, .img-comp-controls label, .audio-conv-controls label {
+        .edit-controls label, .rotate-controls label, .unlock-controls label, .protect-controls label, .pagenum-controls label, .watermark-controls label, .img-comp-controls label, .audio-conv-controls label, .vid-comp-controls label {
             color: var(--text-secondary);
             display: block;
             margin-bottom: 5px;
@@ -375,7 +375,8 @@
         .protect-controls input, .pagenum-controls input, .pagenum-controls select,
         .watermark-controls input, .watermark-controls select, .watermark-controls textarea,
         .img-comp-controls input, .img-comp-controls select,
-        .audio-conv-controls input, .audio-conv-controls select {
+        .audio-conv-controls input, .audio-conv-controls select,
+        .vid-comp-controls input, .vid-comp-controls select {
             width: 100%;
             padding: 8px;
             background: var(--bg-main);
@@ -390,7 +391,7 @@
             resize: vertical;
         }
 
-        .edit-controls button, .rotate-controls button, .unlock-controls button, .protect-controls button, .pagenum-controls button, .watermark-controls button, .img-comp-controls button, .audio-conv-controls button {
+        .edit-controls button, .rotate-controls button, .unlock-controls button, .protect-controls button, .pagenum-controls button, .watermark-controls button, .img-comp-controls button, .audio-conv-controls button, .vid-comp-controls button {
             grid-column: span 2;
             margin-top: 10px;
         }
@@ -533,6 +534,21 @@
             font-size: 1rem;
         }
 
+        .video-preview {
+            grid-column: span 2;
+            width: 100%;
+            margin: 10px 0;
+            border: 1px solid var(--accent-glow);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .video-preview video {
+            width: 100%;
+            max-height: 200px;
+            display: block;
+        }
+
         .processing-zone { margin-top: 2rem; }
         .progress-bar-container {
             width: 100%; height: 10px;
@@ -614,10 +630,10 @@
             .tools-grid { grid-template-columns: 1fr; }
             .hero h1 { font-size: 1.5rem; }
             .footer-separator { display: inline-block; }
-            .edit-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls {
+            .edit-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls, .vid-comp-controls {
                 grid-template-columns: 1fr;
             }
-            .edit-controls h3, .edit-controls button, .pagenum-controls h3, .pagenum-controls button, .watermark-controls h3, .watermark-controls button, .img-comp-controls h3, .img-comp-controls button, .audio-conv-controls h3, .audio-conv-controls button {
+            .edit-controls h3, .edit-controls button, .pagenum-controls h3, .pagenum-controls button, .watermark-controls h3, .watermark-controls button, .img-comp-controls h3, .img-comp-controls button, .audio-conv-controls h3, .audio-conv-controls button, .vid-comp-controls h3, .vid-comp-controls button {
                 grid-column: span 1;
             }
         }
@@ -1084,6 +1100,71 @@
                 <button class="btn-glow" id="apply-audio-conv-btn">Convert & Download</button>
             </div>
 
+            <div class="vid-comp-controls" id="vid-comp-controls" style="display: none;">
+                <h3>Video Compressor</h3>
+                
+                <div class="video-preview" id="video-preview" style="display: none;">
+                    <video id="preview-video" controls></video>
+                </div>
+                
+                <div style="grid-column: span 2;">
+                    <label>Quality:</label>
+                    <input type="range" id="vid-quality" min="0.1" max="1" step="0.1" value="0.7">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Low</span>
+                        <span id="vid-quality-value">70%</span>
+                        <span>High</span>
+                    </div>
+                </div>
+                
+                <div>
+                    <label>Resolution:</label>
+                    <select id="vid-resolution">
+                        <option value="original">Original</option>
+                        <option value="720p">720p (1280x720)</option>
+                        <option value="480p">480p (854x480)</option>
+                        <option value="360p">360p (640x360)</option>
+                        <option value="240p">240p (426x240)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Frame Rate:</label>
+                    <select id="vid-fps">
+                        <option value="30">30 fps</option>
+                        <option value="24">24 fps</option>
+                        <option value="15">15 fps</option>
+                        <option value="10">10 fps</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Output Format:</label>
+                    <select id="vid-format">
+                        <option value="video/mp4">MP4</option>
+                        <option value="video/webm">WebM</option>
+                        <option value="video/ogg">OGG</option>
+                    </select>
+                </div>
+                
+                <div class="size-comparison" id="vid-size-comparison" style="display: none;">
+                    <div class="size-box">
+                        <div class="size-label">Original</div>
+                        <div class="size-value" id="vid-original-size">0 MB</div>
+                    </div>
+                    <div class="size-box">
+                        <div class="size-label">Compressed</div>
+                        <div class="size-value" id="vid-compressed-size">0 MB</div>
+                    </div>
+                    <div class="size-box">
+                        <div class="size-label">Reduction</div>
+                        <div class="size-reduction" id="vid-reduction">0%</div>
+                    </div>
+                </div>
+                
+                <button class="btn-glow" id="apply-vid-comp-btn">Compress & Download</button>
+            </div>
+
             <div class="processing-zone" id="processing-zone" style="display: none;">
                 <h3 id="status-text">Uploading...</h3>
                 <div class="progress-bar-container">
@@ -1138,6 +1219,7 @@
         let watermarkImageData = null;
         let currentImageFile = null;
         let currentAudioFile = null;
+        let currentVideoFile = null;
         
         // Initialize Layout
         document.addEventListener("DOMContentLoaded", () => {
@@ -1221,6 +1303,15 @@
             if (imgQuality && imgQualityValue) {
                 imgQuality.addEventListener('input', function() {
                     imgQualityValue.textContent = Math.round(this.value * 100) + '%';
+                });
+            }
+
+            // Setup video compressor quality slider
+            const vidQuality = document.getElementById('vid-quality');
+            const vidQualityValue = document.getElementById('vid-quality-value');
+            if (vidQuality && vidQualityValue) {
+                vidQuality.addEventListener('input', function() {
+                    vidQualityValue.textContent = Math.round(this.value * 100) + '%';
                 });
             }
         });
@@ -1310,6 +1401,7 @@
         const watermarkControls = document.getElementById('watermark-controls');
         const imgCompControls = document.getElementById('img-comp-controls');
         const audioConvControls = document.getElementById('audio-conv-controls');
+        const vidCompControls = document.getElementById('vid-comp-controls');
         const processingZone = document.getElementById('processing-zone');
         const fileInput = document.getElementById('file-input');
 
@@ -1329,6 +1421,8 @@
             watermarkControls.style.display = 'none';
             imgCompControls.style.display = 'none';
             audioConvControls.style.display = 'none';
+            vidCompControls.style.display = 'none';
+            document.getElementById('video-preview').style.display = 'none';
             document.getElementById('processing-zone').style.display = 'none';
             document.getElementById('progress-bar').style.width = '0%';
             document.getElementById('download-btn').style.display = 'none';
@@ -1341,6 +1435,7 @@
             // Hide size comparisons
             document.getElementById('size-comparison').style.display = 'none';
             document.getElementById('audio-size-comparison').style.display = 'none';
+            document.getElementById('vid-size-comparison').style.display = 'none';
             
             var uploadP = document.querySelector('.upload-zone p:first-child');
             if (uploadP) {
@@ -1406,6 +1501,9 @@
                 } else if (toolId === 'audio-conv') {
                     document.getElementById('file-input').accept = ".mp3,.wav,.ogg,.aac,.m4a,.flac";
                     uploadP.innerText = 'Drag & Drop an audio file to convert';
+                } else if (toolId === 'vid-comp') {
+                    document.getElementById('file-input').accept = ".mp4,.webm,.ogg,.mov,.avi,.mkv";
+                    uploadP.innerText = 'Drag & Drop a video file to compress';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here (simulation mode)';
@@ -1479,6 +1577,8 @@
                     loadImageForCompression(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'audio-conv') {
                     loadAudioForConversion(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'vid-comp') {
+                    loadVideoForCompression(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1529,6 +1629,8 @@
                     loadImageForCompression(fileInput.files[0]);
                 } else if (currentToolId === 'audio-conv') {
                     loadAudioForConversion(fileInput.files[0]);
+                } else if (currentToolId === 'vid-comp') {
+                    loadVideoForCompression(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1574,6 +1676,198 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // Load Video for Compression
+        async function loadVideoForCompression(file) {
+            if (!file) {
+                alert('Please select a video file');
+                return;
+            }
+            
+            // Check if file is a video
+            if (!file.type.startsWith('video/')) {
+                alert('Please select a valid video file');
+                return;
+            }
+            
+            currentVideoFile = file;
+            originalFileName = file.name;
+            
+            // Show video compression controls
+            uploadZone.style.display = 'none';
+            vidCompControls.style.display = 'grid';
+            
+            // Display original file size
+            const originalSize = (file.size / (1024 * 1024)).toFixed(2);
+            document.getElementById('vid-original-size').textContent = originalSize + ' MB';
+            document.getElementById('vid-size-comparison').style.display = 'flex';
+            
+            // Create video preview
+            const videoUrl = URL.createObjectURL(file);
+            const videoPreview = document.getElementById('preview-video');
+            videoPreview.src = videoUrl;
+            document.getElementById('video-preview').style.display = 'block';
+            
+            // Setup compress button
+            document.getElementById('apply-vid-comp-btn').onclick = applyVideoCompression;
+        }
+        
+        // Apply Video Compression
+        async function applyVideoCompression() {
+            if (!currentVideoFile) return;
+            
+            const quality = parseFloat(document.getElementById('vid-quality').value);
+            const resolution = document.getElementById('vid-resolution').value;
+            const fps = parseInt(document.getElementById('vid-fps').value);
+            const format = document.getElementById('vid-format').value;
+            
+            vidCompControls.style.display = 'none';
+            document.getElementById('video-preview').style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            try {
+                statusText.innerText = 'Loading video...';
+                progressBar.style.width = '10%';
+                
+                // Create video element to get metadata
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                
+                const videoUrl = URL.createObjectURL(currentVideoFile);
+                const metadataPromise = new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        resolve({
+                            width: video.videoWidth,
+                            height: video.videoHeight,
+                            duration: video.duration
+                        });
+                    };
+                    video.src = videoUrl;
+                });
+                
+                const metadata = await metadataPromise;
+                
+                progressBar.style.width = '20%';
+                statusText.innerText = 'Processing video frames...';
+                
+                // Calculate target dimensions
+                let targetWidth = metadata.width;
+                let targetHeight = metadata.height;
+                
+                if (resolution !== 'original') {
+                    const resMap = {
+                        '720p': { width: 1280, height: 720 },
+                        '480p': { width: 854, height: 480 },
+                        '360p': { width: 640, height: 360 },
+                        '240p': { width: 426, height: 240 }
+                    };
+                    
+                    const target = resMap[resolution];
+                    const scale = Math.min(target.width / metadata.width, target.height / metadata.height);
+                    targetWidth = Math.round(metadata.width * scale);
+                    targetHeight = Math.round(metadata.height * scale);
+                }
+                
+                // Create canvas for frame processing
+                const canvas = document.createElement('canvas');
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                const ctx = canvas.getContext('2d');
+                
+                // Create media stream from canvas
+                const stream = canvas.captureStream(fps);
+                
+                // Set up MediaRecorder
+                const mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: format,
+                    videoBitsPerSecond: Math.round(quality * 2000000) // 2Mbps * quality
+                });
+                
+                const chunks = [];
+                
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) {
+                        chunks.push(e.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: format });
+                    const url = URL.createObjectURL(blob);
+                    
+                    progressBar.style.width = '100%';
+                    
+                    // Calculate compression stats
+                    const originalSize = currentVideoFile.size;
+                    const compressedSize = blob.size;
+                    const reduction = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
+                    
+                    document.getElementById('vid-compressed-size').textContent = (compressedSize / (1024 * 1024)).toFixed(2) + ' MB';
+                    document.getElementById('vid-reduction').textContent = reduction + '%';
+                    
+                    statusText.innerText = `✓ Complete! Reduced by ${reduction}%`;
+                    statusText.classList.add('glow-text');
+                    
+                    downloadBtn.style.display = 'inline-block';
+                    downloadBtn.onclick = () => {
+                        const a = document.createElement('a');
+                        a.href = url;
+                        const ext = format.split('/')[1];
+                        a.download = `compressed-${originalFileName.split('.')[0]}.${ext}`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    };
+                };
+                
+                // Seek through video and draw frames
+                mediaRecorder.start();
+                
+                const seekPromise = new Promise((resolve) => {
+                    const frameDuration = 1 / fps;
+                    let currentTime = 0;
+                    
+                    const processFrame = () => {
+                        if (currentTime >= metadata.duration) {
+                            mediaRecorder.stop();
+                            resolve();
+                            return;
+                        }
+                        
+                        video.currentTime = currentTime;
+                        
+                        video.onseeked = () => {
+                            ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
+                            currentTime += frameDuration;
+                            setTimeout(processFrame, 0);
+                        };
+                        
+                        progressBar.style.width = `${20 + (currentTime / metadata.duration) * 60}%`;
+                        statusText.innerText = `Processing video: ${Math.round(currentTime / metadata.duration * 100)}%`;
+                    };
+                    
+                    processFrame();
+                });
+                
+                await seekPromise;
+                
+            } catch (error) {
+                console.error('Video compression failed:', error);
+                statusText.innerText = '❌ Error compressing video';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+                
+                // Show video compression controls again
+                setTimeout(() => {
+                    processingZone.style.display = 'none';
+                    vidCompControls.style.display = 'grid';
+                    document.getElementById('video-preview').style.display = 'block';
+                }, 2000);
+            }
         }
         
         // Load Audio for Conversion
