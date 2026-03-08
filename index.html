@@ -336,7 +336,7 @@
         .upload-icon { font-size: 3rem; margin-bottom: 10px; }
         .small-text { font-size: 0.8rem; margin: 10px 0; color: #888; }
 
-        .organize-controls, .edit-controls, .rotate-controls, .unlock-controls, .protect-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls, .vid-comp-controls {
+        .organize-controls, .edit-controls, .rotate-controls, .unlock-controls, .protect-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls, .vid-comp-controls, .json-fmt-controls {
             margin-top: 20px;
             text-align: left;
             max-height: 400px;
@@ -346,7 +346,7 @@
             border-radius: 5px;
         }
 
-        .edit-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls, .vid-comp-controls {
+        .edit-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls, .vid-comp-controls, .json-fmt-controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
@@ -358,13 +358,13 @@
             gap: 15px;
         }
 
-        .edit-controls h3, .rotate-controls h3, .unlock-controls h3, .protect-controls h3, .pagenum-controls h3, .watermark-controls h3, .img-comp-controls h3, .audio-conv-controls h3, .vid-comp-controls h3 {
+        .edit-controls h3, .rotate-controls h3, .unlock-controls h3, .protect-controls h3, .pagenum-controls h3, .watermark-controls h3, .img-comp-controls h3, .audio-conv-controls h3, .vid-comp-controls h3, .json-fmt-controls h3 {
             color: var(--accent-glow);
             margin-bottom: 10px;
             grid-column: span 2;
         }
 
-        .edit-controls label, .rotate-controls label, .unlock-controls label, .protect-controls label, .pagenum-controls label, .watermark-controls label, .img-comp-controls label, .audio-conv-controls label, .vid-comp-controls label {
+        .edit-controls label, .rotate-controls label, .unlock-controls label, .protect-controls label, .pagenum-controls label, .watermark-controls label, .img-comp-controls label, .audio-conv-controls label, .vid-comp-controls label, .json-fmt-controls label {
             color: var(--text-secondary);
             display: block;
             margin-bottom: 5px;
@@ -376,7 +376,8 @@
         .watermark-controls input, .watermark-controls select, .watermark-controls textarea,
         .img-comp-controls input, .img-comp-controls select,
         .audio-conv-controls input, .audio-conv-controls select,
-        .vid-comp-controls input, .vid-comp-controls select {
+        .vid-comp-controls input, .vid-comp-controls select,
+        .json-fmt-controls textarea {
             width: 100%;
             padding: 8px;
             background: var(--bg-main);
@@ -384,14 +385,16 @@
             color: var(--text-primary);
             border-radius: 5px;
             margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
         }
 
-        .edit-controls textarea, .watermark-controls textarea {
-            height: 80px;
+        .edit-controls textarea, .watermark-controls textarea, .json-fmt-controls textarea {
+            height: 200px;
             resize: vertical;
+            font-family: 'Courier New', monospace;
         }
 
-        .edit-controls button, .rotate-controls button, .unlock-controls button, .protect-controls button, .pagenum-controls button, .watermark-controls button, .img-comp-controls button, .audio-conv-controls button, .vid-comp-controls button {
+        .edit-controls button, .rotate-controls button, .unlock-controls button, .protect-controls button, .pagenum-controls button, .watermark-controls button, .img-comp-controls button, .audio-conv-controls button, .vid-comp-controls button, .json-fmt-controls button {
             grid-column: span 2;
             margin-top: 10px;
         }
@@ -549,6 +552,28 @@
             display: block;
         }
 
+        .json-output {
+            grid-column: span 2;
+            background: var(--bg-main);
+            border: 1px solid var(--accent-glow);
+            border-radius: 5px;
+            padding: 10px;
+            max-height: 200px;
+            overflow: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .json-error {
+            color: #ff6b6b;
+            padding: 10px;
+            border: 1px solid #ff6b6b;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
         .processing-zone { margin-top: 2rem; }
         .progress-bar-container {
             width: 100%; height: 10px;
@@ -630,10 +655,10 @@
             .tools-grid { grid-template-columns: 1fr; }
             .hero h1 { font-size: 1.5rem; }
             .footer-separator { display: inline-block; }
-            .edit-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls, .vid-comp-controls {
+            .edit-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls, .vid-comp-controls, .json-fmt-controls {
                 grid-template-columns: 1fr;
             }
-            .edit-controls h3, .edit-controls button, .pagenum-controls h3, .pagenum-controls button, .watermark-controls h3, .watermark-controls button, .img-comp-controls h3, .img-comp-controls button, .audio-conv-controls h3, .audio-conv-controls button, .vid-comp-controls h3, .vid-comp-controls button {
+            .edit-controls h3, .edit-controls button, .pagenum-controls h3, .pagenum-controls button, .watermark-controls h3, .watermark-controls button, .img-comp-controls h3, .img-comp-controls button, .audio-conv-controls h3, .audio-conv-controls button, .vid-comp-controls h3, .vid-comp-controls button, .json-fmt-controls h3, .json-fmt-controls button {
                 grid-column: span 1;
             }
         }
@@ -1165,6 +1190,40 @@
                 <button class="btn-glow" id="apply-vid-comp-btn">Compress & Download</button>
             </div>
 
+            <div class="json-fmt-controls" id="json-fmt-controls" style="display: none;">
+                <h3>JSON Formatter</h3>
+                
+                <div style="grid-column: span 2;">
+                    <label>Enter JSON:</label>
+                    <textarea id="json-input" placeholder='{"name": "SG PDF Suite", "version": "1.0", "tools": ["PDF", "Image", "Audio", "Video", "JSON"]}'></textarea>
+                </div>
+                
+                <div style="grid-column: span 2; display: flex; gap: 10px;">
+                    <select id="json-indent" style="flex: 1;">
+                        <option value="2">2 spaces</option>
+                        <option value="4" selected>4 spaces</option>
+                        <option value="8">8 spaces</option>
+                        <option value="tab">Tab</option>
+                    </select>
+                    
+                    <select id="json-sort" style="flex: 1;">
+                        <option value="none">No sorting</option>
+                        <option value="keys">Sort by keys</option>
+                    </select>
+                </div>
+                
+                <div style="grid-column: span 2; display: flex; gap: 10px;">
+                    <button class="btn-glow" id="json-format-btn" style="flex: 1;">Format JSON</button>
+                    <button class="btn-glow" id="json-validate-btn" style="flex: 1;">Validate JSON</button>
+                    <button class="btn-glow" id="json-minify-btn" style="flex: 1;">Minify JSON</button>
+                </div>
+                
+                <div class="json-output" id="json-output" style="display: none;"></div>
+                <div class="json-error" id="json-error" style="display: none;"></div>
+                
+                <button class="btn-glow" id="json-download-btn" style="display: none;">Download JSON</button>
+            </div>
+
             <div class="processing-zone" id="processing-zone" style="display: none;">
                 <h3 id="status-text">Uploading...</h3>
                 <div class="progress-bar-container">
@@ -1220,6 +1279,7 @@
         let currentImageFile = null;
         let currentAudioFile = null;
         let currentVideoFile = null;
+        let currentJsonData = null;
         
         // Initialize Layout
         document.addEventListener("DOMContentLoaded", () => {
@@ -1314,6 +1374,11 @@
                     vidQualityValue.textContent = Math.round(this.value * 100) + '%';
                 });
             }
+
+            // Setup JSON formatter buttons
+            document.getElementById('json-format-btn').addEventListener('click', formatJSON);
+            document.getElementById('json-validate-btn').addEventListener('click', validateJSON);
+            document.getElementById('json-minify-btn').addEventListener('click', minifyJSON);
         });
 
         function updatePageNumberPreview() {
@@ -1402,6 +1467,7 @@
         const imgCompControls = document.getElementById('img-comp-controls');
         const audioConvControls = document.getElementById('audio-conv-controls');
         const vidCompControls = document.getElementById('vid-comp-controls');
+        const jsonFmtControls = document.getElementById('json-fmt-controls');
         const processingZone = document.getElementById('processing-zone');
         const fileInput = document.getElementById('file-input');
 
@@ -1422,6 +1488,7 @@
             imgCompControls.style.display = 'none';
             audioConvControls.style.display = 'none';
             vidCompControls.style.display = 'none';
+            jsonFmtControls.style.display = 'none';
             document.getElementById('video-preview').style.display = 'none';
             document.getElementById('processing-zone').style.display = 'none';
             document.getElementById('progress-bar').style.width = '0%';
@@ -1436,6 +1503,11 @@
             document.getElementById('size-comparison').style.display = 'none';
             document.getElementById('audio-size-comparison').style.display = 'none';
             document.getElementById('vid-size-comparison').style.display = 'none';
+            
+            // Hide JSON output
+            document.getElementById('json-output').style.display = 'none';
+            document.getElementById('json-error').style.display = 'none';
+            document.getElementById('json-download-btn').style.display = 'none';
             
             var uploadP = document.querySelector('.upload-zone p:first-child');
             if (uploadP) {
@@ -1504,10 +1576,19 @@
                 } else if (toolId === 'vid-comp') {
                     document.getElementById('file-input').accept = ".mp4,.webm,.ogg,.mov,.avi,.mkv";
                     uploadP.innerText = 'Drag & Drop a video file to compress';
+                } else if (toolId === 'json-fmt') {
+                    document.getElementById('file-input').accept = ".json";
+                    uploadP.innerText = 'Drag & Drop a JSON file or paste below';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here (simulation mode)';
                 }
+            }
+            
+            // If JSON formatter, show the textarea immediately
+            if (toolId === 'json-fmt') {
+                document.getElementById('upload-zone').style.display = 'none';
+                jsonFmtControls.style.display = 'grid';
             }
             
             document.getElementById('tool-modal').classList.add('active');
@@ -1579,6 +1660,8 @@
                     loadAudioForConversion(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'vid-comp') {
                     loadVideoForCompression(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'json-fmt') {
+                    loadJSONFromFile(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1631,6 +1714,8 @@
                     loadAudioForConversion(fileInput.files[0]);
                 } else if (currentToolId === 'vid-comp') {
                     loadVideoForCompression(fileInput.files[0]);
+                } else if (currentToolId === 'json-fmt') {
+                    loadJSONFromFile(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1676,6 +1761,143 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // Load JSON from file
+        async function loadJSONFromFile(file) {
+            if (!file) {
+                alert('Please select a JSON file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('json-input').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+        
+        // Format JSON
+        function formatJSON() {
+            const input = document.getElementById('json-input').value;
+            const indentOption = document.getElementById('json-indent').value;
+            const sortOption = document.getElementById('json-sort').value;
+            
+            let indent;
+            if (indentOption === 'tab') {
+                indent = '\t';
+            } else {
+                indent = parseInt(indentOption);
+            }
+            
+            try {
+                const json = JSON.parse(input);
+                
+                // Sort keys if requested
+                if (sortOption === 'keys') {
+                    const sortedJson = sortObjectKeys(json);
+                    currentJsonData = sortedJson;
+                    document.getElementById('json-output').textContent = JSON.stringify(sortedJson, null, indent);
+                } else {
+                    currentJsonData = json;
+                    document.getElementById('json-output').textContent = JSON.stringify(json, null, indent);
+                }
+                
+                document.getElementById('json-output').style.display = 'block';
+                document.getElementById('json-error').style.display = 'none';
+                document.getElementById('json-download-btn').style.display = 'inline-block';
+                
+                // Setup download button
+                document.getElementById('json-download-btn').onclick = downloadJSON;
+                
+            } catch (error) {
+                document.getElementById('json-error').textContent = 'Invalid JSON: ' + error.message;
+                document.getElementById('json-error').style.display = 'block';
+                document.getElementById('json-output').style.display = 'none';
+                document.getElementById('json-download-btn').style.display = 'none';
+            }
+        }
+        
+        // Validate JSON
+        function validateJSON() {
+            const input = document.getElementById('json-input').value;
+            
+            try {
+                JSON.parse(input);
+                document.getElementById('json-error').textContent = '✓ Valid JSON!';
+                document.getElementById('json-error').style.color = '#4caf50';
+                document.getElementById('json-error').style.display = 'block';
+                document.getElementById('json-output').style.display = 'none';
+                document.getElementById('json-download-btn').style.display = 'none';
+                
+                // Reset color after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('json-error').style.color = '#ff6b6b';
+                }, 3000);
+                
+            } catch (error) {
+                document.getElementById('json-error').textContent = '✗ Invalid JSON: ' + error.message;
+                document.getElementById('json-error').style.color = '#ff6b6b';
+                document.getElementById('json-error').style.display = 'block';
+                document.getElementById('json-output').style.display = 'none';
+                document.getElementById('json-download-btn').style.display = 'none';
+            }
+        }
+        
+        // Minify JSON
+        function minifyJSON() {
+            const input = document.getElementById('json-input').value;
+            
+            try {
+                const json = JSON.parse(input);
+                currentJsonData = json;
+                document.getElementById('json-output').textContent = JSON.stringify(json);
+                document.getElementById('json-output').style.display = 'block';
+                document.getElementById('json-error').style.display = 'none';
+                document.getElementById('json-download-btn').style.display = 'inline-block';
+                
+                // Setup download button
+                document.getElementById('json-download-btn').onclick = downloadJSON;
+                
+            } catch (error) {
+                document.getElementById('json-error').textContent = 'Invalid JSON: ' + error.message;
+                document.getElementById('json-error').style.display = 'block';
+                document.getElementById('json-output').style.display = 'none';
+                document.getElementById('json-download-btn').style.display = 'none';
+            }
+        }
+        
+        // Download JSON
+        function downloadJSON() {
+            if (!currentJsonData) return;
+            
+            const jsonStr = JSON.stringify(currentJsonData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'formatted.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Helper function to sort object keys recursively
+        function sortObjectKeys(obj) {
+            if (obj === null || typeof obj !== 'object') {
+                return obj;
+            }
+            
+            if (Array.isArray(obj)) {
+                return obj.map(sortObjectKeys);
+            }
+            
+            const sortedObj = {};
+            Object.keys(obj).sort().forEach(key => {
+                sortedObj[key] = sortObjectKeys(obj[key]);
+            });
+            
+            return sortedObj;
         }
         
         // Load Video for Compression
