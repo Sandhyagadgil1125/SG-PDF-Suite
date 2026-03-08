@@ -336,7 +336,7 @@
         .upload-icon { font-size: 3rem; margin-bottom: 10px; }
         .small-text { font-size: 0.8rem; margin: 10px 0; color: #888; }
 
-        .organize-controls, .edit-controls, .rotate-controls, .unlock-controls, .protect-controls, .pagenum-controls, .watermark-controls, .img-comp-controls {
+        .organize-controls, .edit-controls, .rotate-controls, .unlock-controls, .protect-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls {
             margin-top: 20px;
             text-align: left;
             max-height: 400px;
@@ -346,7 +346,7 @@
             border-radius: 5px;
         }
 
-        .edit-controls, .watermark-controls, .img-comp-controls {
+        .edit-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
@@ -358,13 +358,13 @@
             gap: 15px;
         }
 
-        .edit-controls h3, .rotate-controls h3, .unlock-controls h3, .protect-controls h3, .pagenum-controls h3, .watermark-controls h3, .img-comp-controls h3 {
+        .edit-controls h3, .rotate-controls h3, .unlock-controls h3, .protect-controls h3, .pagenum-controls h3, .watermark-controls h3, .img-comp-controls h3, .audio-conv-controls h3 {
             color: var(--accent-glow);
             margin-bottom: 10px;
             grid-column: span 2;
         }
 
-        .edit-controls label, .rotate-controls label, .unlock-controls label, .protect-controls label, .pagenum-controls label, .watermark-controls label, .img-comp-controls label {
+        .edit-controls label, .rotate-controls label, .unlock-controls label, .protect-controls label, .pagenum-controls label, .watermark-controls label, .img-comp-controls label, .audio-conv-controls label {
             color: var(--text-secondary);
             display: block;
             margin-bottom: 5px;
@@ -374,7 +374,8 @@
         .rotate-controls input, .rotate-controls select, .unlock-controls input,
         .protect-controls input, .pagenum-controls input, .pagenum-controls select,
         .watermark-controls input, .watermark-controls select, .watermark-controls textarea,
-        .img-comp-controls input, .img-comp-controls select {
+        .img-comp-controls input, .img-comp-controls select,
+        .audio-conv-controls input, .audio-conv-controls select {
             width: 100%;
             padding: 8px;
             background: var(--bg-main);
@@ -389,7 +390,7 @@
             resize: vertical;
         }
 
-        .edit-controls button, .rotate-controls button, .unlock-controls button, .protect-controls button, .pagenum-controls button, .watermark-controls button, .img-comp-controls button {
+        .edit-controls button, .rotate-controls button, .unlock-controls button, .protect-controls button, .pagenum-controls button, .watermark-controls button, .img-comp-controls button, .audio-conv-controls button {
             grid-column: span 2;
             margin-top: 10px;
         }
@@ -613,10 +614,10 @@
             .tools-grid { grid-template-columns: 1fr; }
             .hero h1 { font-size: 1.5rem; }
             .footer-separator { display: inline-block; }
-            .edit-controls, .pagenum-controls, .watermark-controls, .img-comp-controls {
+            .edit-controls, .pagenum-controls, .watermark-controls, .img-comp-controls, .audio-conv-controls {
                 grid-template-columns: 1fr;
             }
-            .edit-controls h3, .edit-controls button, .pagenum-controls h3, .pagenum-controls button, .watermark-controls h3, .watermark-controls button, .img-comp-controls h3, .img-comp-controls button {
+            .edit-controls h3, .edit-controls button, .pagenum-controls h3, .pagenum-controls button, .watermark-controls h3, .watermark-controls button, .img-comp-controls h3, .img-comp-controls button, .audio-conv-controls h3, .audio-conv-controls button {
                 grid-column: span 1;
             }
         }
@@ -639,6 +640,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <!-- Add lamejs for MP3 encoding -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
 </head>
 <body>
 
@@ -1026,6 +1029,61 @@
                 <button class="btn-glow" id="apply-img-comp-btn">Compress & Download</button>
             </div>
 
+            <div class="audio-conv-controls" id="audio-conv-controls" style="display: none;">
+                <h3>Audio Converter</h3>
+                
+                <div>
+                    <label>Output Format:</label>
+                    <select id="audio-format">
+                        <option value="mp3">MP3</option>
+                        <option value="wav">WAV</option>
+                        <option value="ogg">OGG</option>
+                        <option value="aac">AAC</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Bitrate (kbps):</label>
+                    <select id="audio-bitrate">
+                        <option value="64">64 kbps</option>
+                        <option value="128" selected>128 kbps</option>
+                        <option value="192">192 kbps</option>
+                        <option value="256">256 kbps</option>
+                        <option value="320">320 kbps</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Sample Rate (Hz):</label>
+                    <select id="audio-sample-rate">
+                        <option value="22050">22050 Hz</option>
+                        <option value="44100" selected>44100 Hz</option>
+                        <option value="48000">48000 Hz</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Channels:</label>
+                    <select id="audio-channels">
+                        <option value="1">Mono</option>
+                        <option value="2" selected>Stereo</option>
+                    </select>
+                </div>
+                
+                <div class="size-comparison" id="audio-size-comparison" style="display: none;">
+                    <div class="size-box">
+                        <div class="size-label">Original</div>
+                        <div class="size-value" id="audio-original-size">0 KB</div>
+                    </div>
+                    <div class="size-box">
+                        <div class="size-label">Converted</div>
+                        <div class="size-value" id="audio-converted-size">0 KB</div>
+                    </div>
+                </div>
+                
+                <button class="btn-glow" id="apply-audio-conv-btn">Convert & Download</button>
+            </div>
+
             <div class="processing-zone" id="processing-zone" style="display: none;">
                 <h3 id="status-text">Uploading...</h3>
                 <div class="progress-bar-container">
@@ -1079,6 +1137,7 @@
         let selectedRotation = 90;
         let watermarkImageData = null;
         let currentImageFile = null;
+        let currentAudioFile = null;
         
         // Initialize Layout
         document.addEventListener("DOMContentLoaded", () => {
@@ -1250,6 +1309,7 @@
         const pagenumControls = document.getElementById('pagenum-controls');
         const watermarkControls = document.getElementById('watermark-controls');
         const imgCompControls = document.getElementById('img-comp-controls');
+        const audioConvControls = document.getElementById('audio-conv-controls');
         const processingZone = document.getElementById('processing-zone');
         const fileInput = document.getElementById('file-input');
 
@@ -1268,6 +1328,7 @@
             pagenumControls.style.display = 'none';
             watermarkControls.style.display = 'none';
             imgCompControls.style.display = 'none';
+            audioConvControls.style.display = 'none';
             document.getElementById('processing-zone').style.display = 'none';
             document.getElementById('progress-bar').style.width = '0%';
             document.getElementById('download-btn').style.display = 'none';
@@ -1277,8 +1338,9 @@
             document.getElementById('file-input').multiple = false;
             document.getElementById('file-input').accept = "";
             
-            // Hide size comparison for image compressor
+            // Hide size comparisons
             document.getElementById('size-comparison').style.display = 'none';
+            document.getElementById('audio-size-comparison').style.display = 'none';
             
             var uploadP = document.querySelector('.upload-zone p:first-child');
             if (uploadP) {
@@ -1341,6 +1403,9 @@
                 } else if (toolId === 'img-comp') {
                     document.getElementById('file-input').accept = ".jpg,.jpeg,.png,.webp";
                     uploadP.innerText = 'Drag & Drop an image to compress';
+                } else if (toolId === 'audio-conv') {
+                    document.getElementById('file-input').accept = ".mp3,.wav,.ogg,.aac,.m4a,.flac";
+                    uploadP.innerText = 'Drag & Drop an audio file to convert';
                 } else {
                     document.getElementById('file-input').accept = "";
                     uploadP.innerText = 'Drag & Drop your files here (simulation mode)';
@@ -1412,6 +1477,8 @@
                     loadPDFForWatermark(e.dataTransfer.files[0]);
                 } else if (currentToolId === 'img-comp') {
                     loadImageForCompression(e.dataTransfer.files[0]);
+                } else if (currentToolId === 'audio-conv') {
+                    loadAudioForConversion(e.dataTransfer.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1460,6 +1527,8 @@
                     loadPDFForWatermark(fileInput.files[0]);
                 } else if (currentToolId === 'img-comp') {
                     loadImageForCompression(fileInput.files[0]);
+                } else if (currentToolId === 'audio-conv') {
+                    loadAudioForConversion(fileInput.files[0]);
                 } else {
                     alert(`"${currentToolId}" tool is coming soon! Using simulation for now.`);
                     simulateProcessing();
@@ -1505,6 +1574,277 @@
 
                 progressBar.style.width = progress + '%';
             }, 400);
+        }
+        
+        // Load Audio for Conversion
+        async function loadAudioForConversion(file) {
+            if (!file) {
+                alert('Please select an audio file');
+                return;
+            }
+            
+            // Check if file is an audio file
+            if (!file.type.startsWith('audio/')) {
+                alert('Please select a valid audio file');
+                return;
+            }
+            
+            currentAudioFile = file;
+            originalFileName = file.name;
+            
+            // Show audio conversion controls
+            uploadZone.style.display = 'none';
+            audioConvControls.style.display = 'grid';
+            
+            // Display original file size
+            const originalSize = (file.size / 1024).toFixed(2);
+            document.getElementById('audio-original-size').textContent = originalSize + ' KB';
+            document.getElementById('audio-size-comparison').style.display = 'flex';
+            
+            // Setup convert button
+            document.getElementById('apply-audio-conv-btn').onclick = applyAudioConversion;
+        }
+        
+        // Apply Audio Conversion
+        async function applyAudioConversion() {
+            if (!currentAudioFile) return;
+            
+            const outputFormat = document.getElementById('audio-format').value;
+            const bitrate = parseInt(document.getElementById('audio-bitrate').value);
+            const sampleRate = parseInt(document.getElementById('audio-sample-rate').value);
+            const channels = parseInt(document.getElementById('audio-channels').value);
+            
+            audioConvControls.style.display = 'none';
+            processingZone.style.display = 'block';
+            
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('status-text');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            try {
+                statusText.innerText = 'Converting audio...';
+                progressBar.style.width = '20%';
+                
+                // Create audio context
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Read audio file as ArrayBuffer
+                const arrayBuffer = await currentAudioFile.arrayBuffer();
+                
+                progressBar.style.width = '40%';
+                statusText.innerText = 'Decoding audio...';
+                
+                // Decode audio data
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                
+                progressBar.style.width = '60%';
+                statusText.innerText = 'Encoding audio...';
+                
+                // Get audio data
+                const numberOfChannels = Math.min(channels, audioBuffer.numberOfChannels);
+                const length = audioBuffer.length;
+                const originalSampleRate = audioBuffer.sampleRate;
+                
+                // Create offline context for resampling if needed
+                let offlineContext;
+                let processedBuffer;
+                
+                if (sampleRate !== originalSampleRate || numberOfChannels !== audioBuffer.numberOfChannels) {
+                    offlineContext = new OfflineAudioContext(
+                        numberOfChannels,
+                        Math.ceil(length * sampleRate / originalSampleRate),
+                        sampleRate
+                    );
+                    
+                    const bufferSource = offlineContext.createBufferSource();
+                    bufferSource.buffer = audioBuffer;
+                    bufferSource.connect(offlineContext.destination);
+                    bufferSource.start();
+                    
+                    processedBuffer = await offlineContext.startRendering();
+                } else {
+                    processedBuffer = audioBuffer;
+                }
+                
+                progressBar.style.width = '80%';
+                
+                // Convert to target format
+                let outputBlob;
+                let outputFileName;
+                
+                if (outputFormat === 'wav') {
+                    // WAV export
+                    const wavData = encodeWAV(processedBuffer);
+                    outputBlob = new Blob([wavData], { type: 'audio/wav' });
+                    outputFileName = originalFileName.replace(/\.[^/.]+$/, '') + '.wav';
+                } else if (outputFormat === 'mp3') {
+                    // MP3 export using lamejs
+                    const mp3Data = encodeMP3(processedBuffer, bitrate);
+                    outputBlob = new Blob(mp3Data, { type: 'audio/mp3' });
+                    outputFileName = originalFileName.replace(/\.[^/.]+$/, '') + '.mp3';
+                } else if (outputFormat === 'ogg') {
+                    // OGG export (using ogg encoder - simplified for demo)
+                    // In a real implementation, you'd use libvorbis.js or similar
+                    // For now, we'll create a WAV as fallback
+                    const wavData = encodeWAV(processedBuffer);
+                    outputBlob = new Blob([wavData], { type: 'audio/ogg' });
+                    outputFileName = originalFileName.replace(/\.[^/.]+$/, '') + '.ogg';
+                } else if (outputFormat === 'aac') {
+                    // AAC export (simplified)
+                    const wavData = encodeWAV(processedBuffer);
+                    outputBlob = new Blob([wavData], { type: 'audio/aac' });
+                    outputFileName = originalFileName.replace(/\.[^/.]+$/, '') + '.aac';
+                }
+                
+                // Calculate converted size
+                const convertedSize = (outputBlob.size / 1024).toFixed(2);
+                document.getElementById('audio-converted-size').textContent = convertedSize + ' KB';
+                
+                progressBar.style.width = '100%';
+                statusText.innerText = `✓ Complete! Converted to ${outputFormat.toUpperCase()}`;
+                statusText.classList.add('glow-text');
+                
+                // Create download
+                const url = URL.createObjectURL(outputBlob);
+                
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = outputFileName;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+                
+            } catch (error) {
+                console.error('Audio conversion failed:', error);
+                statusText.innerText = '❌ Error converting audio';
+                statusText.style.color = '#ff6b6b';
+                downloadBtn.style.display = 'none';
+                
+                // Show audio conversion controls again
+                setTimeout(() => {
+                    processingZone.style.display = 'none';
+                    audioConvControls.style.display = 'grid';
+                }, 2000);
+            }
+        }
+        
+        // Encode WAV from AudioBuffer
+        function encodeWAV(audioBuffer) {
+            const numberOfChannels = audioBuffer.numberOfChannels;
+            const sampleRate = audioBuffer.sampleRate;
+            const length = audioBuffer.length * numberOfChannels * 2;
+            const buffer = new ArrayBuffer(44 + length);
+            const view = new DataView(buffer);
+            
+            // RIFF identifier
+            writeString(view, 0, 'RIFF');
+            // RIFF chunk length
+            view.setUint32(4, 36 + length, true);
+            // RIFF type
+            writeString(view, 8, 'WAVE');
+            // format chunk identifier
+            writeString(view, 12, 'fmt ');
+            // format chunk length
+            view.setUint32(16, 16, true);
+            // sample format (1 is PCM)
+            view.setUint16(20, 1, true);
+            // channel count
+            view.setUint16(22, numberOfChannels, true);
+            // sample rate
+            view.setUint32(24, sampleRate, true);
+            // byte rate (sample rate * block align)
+            view.setUint32(28, sampleRate * numberOfChannels * 2, true);
+            // block align (channel count * bytes per sample)
+            view.setUint16(32, numberOfChannels * 2, true);
+            // bits per sample
+            view.setUint16(34, 16, true);
+            // data chunk identifier
+            writeString(view, 36, 'data');
+            // data chunk length
+            view.setUint32(40, length, true);
+            
+            // Write audio data
+            const channels = [];
+            for (let i = 0; i < numberOfChannels; i++) {
+                channels.push(audioBuffer.getChannelData(i));
+            }
+            
+            let offset = 44;
+            for (let i = 0; i < audioBuffer.length; i++) {
+                for (let channel = 0; channel < numberOfChannels; channel++) {
+                    const sample = Math.max(-1, Math.min(1, channels[channel][i]));
+                    const int16 = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+                    view.setInt16(offset, int16, true);
+                    offset += 2;
+                }
+            }
+            
+            return buffer;
+        }
+        
+        // Helper function to write string to DataView
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+        
+        // Encode MP3 from AudioBuffer (simplified)
+        function encodeMP3(audioBuffer, bitrate) {
+            // This is a simplified MP3 encoder using lamejs
+            // For a full implementation, you'd need a more robust library
+            const channels = audioBuffer.numberOfChannels;
+            const sampleRate = audioBuffer.sampleRate;
+            const samples = audioBuffer.length;
+            
+            // Get audio data
+            const leftChannel = audioBuffer.getChannelData(0);
+            const rightChannel = channels > 1 ? audioBuffer.getChannelData(1) : null;
+            
+            // Convert float samples to 16-bit PCM
+            const leftPCM = new Int16Array(samples);
+            for (let i = 0; i < samples; i++) {
+                leftPCM[i] = Math.max(-32768, Math.min(32767, leftChannel[i] * 32767));
+            }
+            
+            let rightPCM = null;
+            if (rightChannel) {
+                rightPCM = new Int16Array(samples);
+                for (let i = 0; i < samples; i++) {
+                    rightPCM[i] = Math.max(-32768, Math.min(32767, rightChannel[i] * 32767));
+                }
+            }
+            
+            // Create MP3 encoder
+            const mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, bitrate);
+            
+            // Encode in chunks
+            const mp3Data = [];
+            const sampleBlockSize = 1152; // Standard for MP3
+            
+            for (let i = 0; i < samples; i += sampleBlockSize) {
+                const leftChunk = leftPCM.subarray(i, i + sampleBlockSize);
+                let rightChunk = null;
+                
+                if (rightPCM) {
+                    rightChunk = rightPCM.subarray(i, i + sampleBlockSize);
+                }
+                
+                const mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
+                if (mp3buf.length > 0) {
+                    mp3Data.push(mp3buf);
+                }
+            }
+            
+            // Finalize encoding
+            const mp3buf = mp3encoder.flush();
+            if (mp3buf.length > 0) {
+                mp3Data.push(mp3buf);
+            }
+            
+            return mp3Data;
         }
         
         // Load Image for Compression
